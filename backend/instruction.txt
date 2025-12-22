@@ -1,0 +1,86 @@
+# Git Commands
+
+Commit This Feature
+git add backend
+git commit -m "add product entity and enable table creation"
+git push origin backend-dev
+
+🧠 Senior Dev Way: How to Create a Pull Request (Step by Step)
+
+You already did the hard part (commits + push).
+Creating a PR is mostly UI clicks.
+
+✅ STEP 1: Push your branch (you already did this)
+
+You already ran:
+
+git push origin backend-dev
+
+
+✔ This is required before a PR can exist.
+
+✅ STEP 2: Open GitHub Repository
+
+Go to your repo on GitHub
+
+You’ll usually see a banner like:
+
+“backend-dev had recent pushes”
+
+👉 Click “Compare & pull request”
+
+If you don’t see it, no problem — use Step 3.
+
+✅ STEP 3: Create PR Manually (Always Works)
+
+On GitHub, click Pull requests tab
+
+Click New pull request
+
+Now select:
+
+Base branch: main
+
+Compare branch: backend-dev
+
+GitHub will show the changes.
+
+✅ STEP 4: Fill Pull Request Details (Important)
+Title (clear & professional)
+Add product entity and initial DB schema
+
+Description (short & meaningful)
+- Added Product entity
+- Enabled Hibernate table auto-creation
+- Verified PostgreSQL connection
+
+
+This shows engineering clarity.
+
+✅ STEP 5: Create & Merge
+
+Click Create pull request
+
+Review changes (quick look)
+
+Click Merge pull request
+
+Click Confirm merge
+
+🎉 Done.
+
+✅ STEP 6: Sync Local Branches (Very Important)
+
+Back in IntelliJ terminal:
+
+git checkout main
+git pull origin main
+
+
+Then update your dev branch:
+
+git checkout backend-dev
+git pull origin main
+
+
+This keeps everything clean.
