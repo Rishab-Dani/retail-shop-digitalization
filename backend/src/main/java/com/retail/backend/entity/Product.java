@@ -1,5 +1,6 @@
 package com.retail.backend.entity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -11,14 +12,19 @@ import java.time.LocalDateTime;
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
 
+        @NotBlank(message = "Product name must not be empty")
         @Column(nullable = false)
         private String name;
 
         private String category;
 
+        @NotNull(message = "Price is required")
+        @Positive(message = "Price must be greater than zero")
         @Column(nullable = false)
         private BigDecimal price;
 
+        @NotNull(message = "Stock quantity is required")
+        @Min(value = 0, message = "Stock quantity cannot be negative")
         @Column(nullable = false)
         private Integer stockQuantity;
 
