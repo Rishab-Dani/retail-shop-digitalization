@@ -4,6 +4,10 @@ import com.retail.backend.entity.Product;
 import com.retail.backend.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+
 
 
 import java.util.List;
@@ -43,6 +47,13 @@ public class ProductService {
         }
         productRepository.deleteById(id);
     }
+
+    public Page<Product> getProducts(int page, int size, String sortBy) {
+        return productRepository.findAll(
+                PageRequest.of(page, size, Sort.by(sortBy))
+        );
+    }
+
 
 }
 
