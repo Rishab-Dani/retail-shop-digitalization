@@ -3,6 +3,7 @@ package com.retail.backend.controller;
 import com.retail.backend.entity.Product;
 import com.retail.backend.service.ProductService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +26,15 @@ public class ProductController {
     @GetMapping
     public List<Product> getAllProducts() {
         return productService.getAllProducts();
+    }
+
+    @GetMapping("/page")
+    public Page<Product> getProductsWithPagination(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy) {
+
+        return productService.getProducts(page, size, sortBy);
     }
 
     @PutMapping("/{id}")
