@@ -3,6 +3,8 @@ package com.retail.backend.service;
 import com.retail.backend.dto.OrderRequest;
 import com.retail.backend.dto.OrderItemRequest;
 import com.retail.backend.entity.*;
+import com.retail.backend.exception.BadRequestException;
+import com.retail.backend.exception.ResourceNotFoundException;
 import com.retail.backend.repository.OrderRepository;
 import com.retail.backend.repository.ProductRepository;
 import jakarta.transaction.Transactional;
@@ -36,11 +38,14 @@ public class OrderService {
         for (OrderItemRequest itemReq : request.getItems()) {
 
             Product product = productRepository.findById(itemReq.getProductId())
-                    .orElseThrow(() -> new RuntimeException("Product not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
             if (product.getStockQuantity() < itemReq.getQuantity()) {
-                throw new RuntimeException("Insufficient stock for product: " + product.getName());
+                throw new BadRequestException(
+                        "Insufficient stock for product: " + product.getName()
+                );
             }
+
 
             // reduce stock
             product.setStockQuantity(
@@ -67,4 +72,15 @@ public class OrderService {
 
         return orderRepository.save(order);
     }
+
+    //
+    public List<Order> getAllOrders() {
+        return orderRepository.findAll();
+    }
+
+    public Order getOrderById(Long id) {
+        return orderRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+    }
+
 }
