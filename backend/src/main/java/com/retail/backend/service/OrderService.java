@@ -73,7 +73,7 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
-    //
+    // GET orders apis
     public List<Order> getAllOrders() {
         return orderRepository.findAll();
     }
