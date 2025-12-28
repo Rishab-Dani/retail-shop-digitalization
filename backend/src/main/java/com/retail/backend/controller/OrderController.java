@@ -22,6 +22,7 @@ public class OrderController {
         return orderService.createOrder(request);
     }
 
+    // GET Orders apis
     @GetMapping
     public List<Order> getAllOrders() {
         return orderService.getAllOrders();
