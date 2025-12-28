@@ -38,3 +38,13 @@ Query Params:
 
 Response:
 Spring Page<Product>
+
+
+## Low Stock Products
+GET /api/dashboard/low-stock
+
+Query Params:
+- threshold (default 5)
+
+Response:
+List<Product>

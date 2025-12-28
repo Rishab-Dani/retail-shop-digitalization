@@ -6,6 +6,9 @@ import com.retail.backend.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
+import com.retail.backend.entity.Product;
+
 
 @Service                                       // analytics
 public class DashboardService {
@@ -31,4 +34,9 @@ public class DashboardService {
                 totalRevenue
         );
     }
+    // low stock counter
+    public List<Product> getLowStockProducts(int threshold) {
+        return productRepository.findByStockQuantityLessThanEqual(threshold);
+    }
+
 }
