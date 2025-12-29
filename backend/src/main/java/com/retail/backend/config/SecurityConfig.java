@@ -1,5 +1,6 @@
 package com.retail.backend.config;
 
+import com.retail.backend.security.JwtAuthEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,6 +16,11 @@ public class SecurityConfig {
                 // Disable CSRF for APIs
                 .csrf(csrf -> csrf.disable())
 
+                //JWTAuthEntryPoint
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(authEntryPoint)
+                )
+
                 // Authorization rules
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
@@ -28,4 +34,11 @@ public class SecurityConfig {
 
         return http.build();
     }
+
+    private final JwtAuthEntryPoint authEntryPoint;
+
+    public SecurityConfig(JwtAuthEntryPoint authEntryPoint) {
+        this.authEntryPoint = authEntryPoint;
+    }
+
 }
