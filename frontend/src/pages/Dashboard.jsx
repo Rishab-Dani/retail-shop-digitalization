@@ -1,5 +1,6 @@
 import React from "react";
 
+
 const Dashboard = () => {
   return (
     <div className="bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-100 h-screen w-full overflow-hidden flex font-display antialiased">
