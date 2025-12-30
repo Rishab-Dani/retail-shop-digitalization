@@ -1,175 +1,152 @@
-import React from "react";
-
+import {
+  MdMoreVert,
+  MdWarning,
+  MdInventory,
+  MdShoppingBag,
+  MdAttachMoney,
+} from "react-icons/md";
 
 const Dashboard = () => {
   return (
-    <div className="bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-100 h-screen w-full overflow-hidden flex font-display antialiased">
+    <div className="h-full w-full bg-[#f6f7fb] flex overflow-hidden">
 
-      {/* Sidebar */}
-      <aside className="w-64 bg-white dark:bg-surface-dark border-r border-border-light dark:border-border-dark hidden lg:flex flex-col">
-        <div className="h-16 flex items-center px-6 border-b">
-          <div className="flex items-center gap-3">
-            <div className="size-8 rounded-lg bg-primary flex items-center justify-center text-white">
-              <span className="material-symbols-outlined">storefront</span>
-            </div>
-            <h1 className="text-lg font-bold">RetailAdmin</h1>
-          </div>
-        </div>
+      {/* ================= MAIN ================= */}
+      <main className="flex-1 flex flex-col min-h-0">
 
-        <nav className="flex-1 p-4 space-y-1">
-          {[
-            ["dashboard", "Dashboard", true],
-            ["inventory_2", "Products"],
-            ["shopping_cart", "Orders"],
-            ["group", "Customers"],
-            ["analytics", "Reports"],
-          ].map(([icon, label, active]) => (
-            <a
-              key={label}
-              href="#"
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition ${
-                active
-                  ? "bg-primary text-white shadow-soft"
-                  : "text-slate-600 hover:bg-slate-100 hover:text-primary"
-              }`}
-            >
-              <span className="material-symbols-outlined">{icon}</span>
-              {label}
-            </a>
-          ))}
-        </nav>
-      </aside>
+        {/* CONTENT */}
+        <div className="flex-1 overflow-y-auto px-8 py-6 space-y-8">
 
-      {/* Main */}
-      <main className="flex-1 flex flex-col overflow-hidden">
+          {/* ================= STATS ================= */}
+          <div className=" p-5 grid grid-cols-4 gap-6">
 
-        {/* Header */}
-        <header className="h-16 flex items-center justify-between px-6 bg-white dark:bg-surface-dark border-b">
-          <h2 className="text-lg font-bold">Dashboard Overview</h2>
-
-          <div className="flex items-center gap-4">
-            <input
-              type="text"
-              placeholder="Search..."
-              className="hidden md:block px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-sm outline-none"
+            <Stat
+              icon={<MdInventory />}
+              title="Total Products"
+              value="452"
+              badge="+5%"
             />
-            <button className="relative">
-              <span className="material-symbols-outlined">notifications</span>
-              <span className="absolute top-0 right-0 size-2 bg-red-500 rounded-full"></span>
-            </button>
-          </div>
-        </header>
-
-        {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-8">
-
-          {/* Stats */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              ["inventory_2", "Total Products", "452", "+5%"],
-              ["shopping_bag", "Total Orders", "1,240", "+12%"],
-              ["payments", "Total Revenue", "$12,450", "+8%"],
-              ["warning", "Low Stock Items", "5", "Action Needed", true],
-            ].map(([icon, title, value, badge, danger]) => (
-              <div
-                key={title}
-                className="bg-white dark:bg-surface-dark p-5 rounded-xl border shadow-soft"
-              >
-                <div className="flex justify-between mb-3">
-                  <div
-                    className={`p-2 rounded-lg ${
-                      danger ? "bg-red-100 text-red-600" : "bg-primary/10 text-primary"
-                    }`}
-                  >
-                    <span className="material-symbols-outlined">{icon}</span>
-                  </div>
-                  <span
-                    className={`text-xs px-2 py-1 rounded-full ${
-                      danger
-                        ? "bg-red-100 text-red-600"
-                        : "bg-green-100 text-green-600"
-                    }`}
-                  >
-                    {badge}
-                  </span>
-                </div>
-                <p className="text-sm text-slate-500">{title}</p>
-                <p className="text-2xl font-bold">{value}</p>
-              </div>
-            ))}
+            <Stat
+              icon={<MdShoppingBag />}
+              title="Total Orders"
+              value="1,240"
+              badge="+12%"
+            />
+            <Stat
+              icon={<MdAttachMoney />}
+              title="Total Revenue"
+              value="$12,450"
+              badge="+8%"
+            />
+            <Stat
+              icon={<MdWarning />}
+              title="Low Stock Items"
+              value="5"
+              badge="Action Needed"
+              danger
+            />
           </div>
 
-          {/* Charts */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* ================= CHARTS ================= */}
+          <div className="grid grid-cols-3 gap-6">
 
-            {/* Orders Overview */}
-            <div className="lg:col-span-2 bg-white dark:bg-surface-dark p-6 rounded-xl border shadow-soft">
+            {/* LINE CHART */}
+            <div className="col-span-2 bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+
               <div className="flex justify-between mb-4">
                 <div>
-                  <h3 className="font-bold">Orders Overview</h3>
+                  <h3 className="font-semibold">Orders Overview</h3>
                   <p className="text-sm text-slate-500">
                     Order trends over the last 30 days
                   </p>
                 </div>
-                <button className="text-primary text-sm font-medium">
+                <button className="text-blue-600 text-sm font-medium">
                   View Report
                 </button>
               </div>
 
-              <div className="h-64 flex items-center justify-center text-slate-400">
-                📈 SVG Chart goes here
+              <svg viewBox="0 0 800 200" className="w-full h-64">
+                <defs>
+                  <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#2563eb" stopOpacity="0.25" />
+                    <stop offset="100%" stopColor="#2563eb" stopOpacity="0" />
+                  </linearGradient>
+                </defs>
+
+                <path
+                  d="M0,150 C80,100 160,140 240,90 320,40 400,120 480,70 560,30 640,90 720,50 760,30 800,20 800,20"
+                  fill="url(#g)"
+                />
+                <path
+                  d="M0,150 C80,100 160,140 240,90 320,40 400,120 480,70 560,30 640,90 720,50 760,30 800,20 800,20"
+                  fill="none"
+                  stroke="#2563eb"
+                  strokeWidth="3"
+                />
+              </svg>
+
+              <div className="flex justify-between text-xs text-slate-400 mt-2">
+                <span>Week 1</span>
+                <span>Week 2</span>
+                <span>Week 3</span>
+                <span>Week 4</span>
               </div>
             </div>
 
-            {/* Revenue */}
-            <div className="bg-white dark:bg-surface-dark p-6 rounded-xl border shadow-soft">
-              <h3 className="font-bold mb-1">Revenue Overview</h3>
-              <p className="text-sm text-slate-500 mb-6">Sales by category</p>
+            {/* BAR CHART */}
+           <div className="bg-white rounded-xl border border-slate-200  shadow-sm p-6">
+              <h3 className="font-semibold">Revenue Overview</h3>
+              <p className="text-sm text-slate-500 mb-6">
+                Sales by category
+              </p>
 
-              <div className="flex items-end justify-between h-64 gap-3">
-                {["Elec", "Cloth", "Home", "Sport"].map((c) => (
-                  <div key={c} className="flex flex-col items-center gap-2 flex-1">
-                    <div className="w-full bg-slate-200 dark:bg-slate-700 h-40 rounded-md relative">
-                      <div className="absolute bottom-0 w-full bg-primary/70 h-3/4 rounded-md"></div>
-                    </div>
-                    <span className="text-xs text-slate-500">{c}</span>
-                  </div>
-                ))}
+              <div className="flex items-end gap-4 h-64">
+                <Bar h="65%" label="Elec." />
+                <Bar h="45%" label="Cloth" />
+                <Bar h="85%" label="Home" />
+                <Bar h="55%" label="Sport" />
               </div>
             </div>
+      
           </div>
 
-          {/* Recent Orders */}
-          <div className="bg-white dark:bg-surface-dark rounded-xl border shadow-soft overflow-hidden">
-            <div className="px-6 py-4 border-b flex justify-between">
-              <h3 className="font-bold">Recent Orders</h3>
-              <button className="text-sm text-slate-500 hover:text-primary">
+          {/* ================= RECENT ORDERS ================= */}
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm">
+          <div className="flex justify-between items-center px-6 py-4 border-b border-slate-200">
+              <h3 className="font-semibold">Recent Orders</h3>
+              <button className="text-blue-600 text-sm flex items-center gap-1">
                 View All →
               </button>
             </div>
 
             <table className="w-full text-sm">
-              <thead className="bg-slate-50 dark:bg-slate-800 text-slate-500">
+              <thead className="bg-slate-50 text-slate-500">
                 <tr>
-                  <th className="px-6 py-3 text-left">Order ID</th>
-                  <th className="px-6 py-3 text-left">Customer</th>
-                  <th className="px-6 py-3 text-left">Date</th>
-                  <th className="px-6 py-3 text-left">Amount</th>
-                  <th className="px-6 py-3 text-left">Status</th>
+                  <th className="px-6 py-3 text-left">ORDER ID</th>
+                  <th className="px-6 py-3 text-left">CUSTOMER</th>
+                  <th className="px-6 py-3 text-left">DATE</th>
+                  <th className="px-6 py-3 text-left">AMOUNT</th>
+                  <th className="px-6 py-3 text-left">STATUS</th>
+                  <th className="px-6 py-3 text-right">ACTION</th>
                 </tr>
               </thead>
+
               <tbody>
-                <tr className="border-t">
-                  <td className="px-6 py-4 text-primary">#ORD-00124</td>
-                  <td className="px-6 py-4">Jane Cooper</td>
-                  <td className="px-6 py-4">Oct 24, 2023</td>
-                  <td className="px-6 py-4">$124.00</td>
-                  <td className="px-6 py-4">
-                    <span className="px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full">
-                      Completed
-                    </span>
-                  </td>
-                </tr>
+                {rows.map((r) => (
+                  <tr key={r.id} className="border-t border-slate-200">
+                    <td className="px-6 py-4 text-blue-600">{r.id}</td>
+                    <td className="px-6 py-4">{r.name}</td>
+                    <td className="px-6 py-4 text-slate-500">{r.date}</td>
+                    <td className="px-6 py-4">{r.amount}</td>
+                    <td className="px-6 py-4">
+                      <span className={`px-3 py-1 text-xs rounded-full ${r.badge}`}>
+                        {r.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-right text-slate-400">
+                      <MdMoreVert />
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
@@ -179,5 +156,53 @@ const Dashboard = () => {
     </div>
   );
 };
+
+/* ================= HELPERS ================= */
+
+const Stat = ({ icon, title, value, badge, danger }) => (
+  <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 relative">
+
+    <div
+      className={`w-10 h-10 rounded-lg flex items-center justify-center mb-4 ${
+        danger ? "bg-red-100 text-red-600" : "bg-blue-100 text-blue-600"
+      }`}
+    >
+      {icon}
+    </div>
+
+    <span
+      className={`absolute top-5 right-5 text-xs px-2 py-1 rounded-full ${
+        danger
+          ? "bg-red-100 text-red-600"
+          : "bg-green-100 text-green-600"
+      }`}
+    >
+      {badge}
+    </span>
+
+    <p className="text-sm text-slate-500">{title}</p>
+    <p className="text-2xl font-bold">{value}</p>
+  </div>
+);
+
+const Bar = ({ h, label }) => (
+  <div className="flex-1 flex flex-col items-center">
+    <div className="w-full h-48 bg-slate-100 rounded-lg flex items-end">
+      <div
+        className="w-full rounded-lg bg-blue-500"
+        style={{ height: h }}
+      />
+    </div>
+    <span className="text-xs text-slate-500 mt-2">{label}</span>
+  </div>
+);
+
+const rows = [
+  { id: "#ORD-00124", name: "Jane Cooper", date: "Oct 24, 2023", amount: "$124.00", status: "Completed", badge: "bg-green-100 text-green-700" },
+  { id: "#ORD-00123", name: "Wade Warren", date: "Oct 24, 2023", amount: "$450.00", status: "Pending", badge: "bg-yellow-100 text-yellow-700" },
+  { id: "#ORD-00122", name: "Esther Howard", date: "Oct 23, 2023", amount: "$78.50", status: "Completed", badge: "bg-green-100 text-green-700" },
+  { id: "#ORD-00121", name: "Cameron Williamson", date: "Oct 23, 2023", amount: "$32.00", status: "Cancelled", badge: "bg-red-100 text-red-700" },
+  { id: "#ORD-00120", name: "Brooklyn Simmons", date: "Oct 22, 2023", amount: "$1,299.00", status: "Completed", badge: "bg-green-100 text-green-700" },
+];
 
 export default Dashboard;
