@@ -28,7 +28,7 @@ public class AuthController {
             return ResponseEntity.status(401).build();
         }
 
-        String token = jwtUtil.generateToken(request.getUsername());
+        String token = jwtUtil.generateToken(request.getUsername(),"ADMIN");
         return ResponseEntity.ok(new LoginResponse(token));
     }
 }
