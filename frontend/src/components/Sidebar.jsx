@@ -6,6 +6,7 @@ import {
   MdPeople,
   MdBarChart,
   MdSettings,
+  MdPieChart,
 } from "react-icons/md";
 
 const Sidebar = () => {
@@ -27,6 +28,7 @@ const Sidebar = () => {
         <NavItem to="/orders" icon={<MdShoppingCart />} label="Orders" />
         <NavItem to="/customers" icon={<MdPeople />} label="Customers" />
         <NavItem to="/reports" icon={<MdBarChart />} label="Reports" />
+        <NavItem to="/analytics" icon={<MdPieChart />} label="Analytics" />
         
 
         <div className="border-t border-slate-200 my-4" />

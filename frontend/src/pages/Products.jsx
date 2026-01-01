@@ -71,7 +71,7 @@ export default function Products() {
         </div>
 
         <div className="flex gap-3">
-          <button className="border px-4 py-2 rounded-lg text-sm bg-white">
+          <button className="border border-slate-200 shadow-sm px-4 py-2 rounded-lg text-sm bg-white">
             Export
           </button>
 
@@ -102,7 +102,7 @@ export default function Products() {
             <option>Apparel</option>
           </select>
 
-          <select className="border border-slate-300 px-4 py-2.5 rounded-lg text-sm bg-white">
+          <select className="border border-slate-300 px-4 py-2.5 rounded-lg text-sm bg-white left-2">
             <option>In Stock</option>
             <option>Low Stock</option>
             <option>Out of Stock</option>
@@ -131,7 +131,7 @@ export default function Products() {
 
           <tbody className="divide-y">
             {products.map((p) => (
-              <tr key={p.sku} className="hover:bg-slate-50 group">
+              <tr key={p.sku} className="hover:bg-slate-50 group border border-slate-300">
                 <td className="px-6 py-4"><input type="checkbox" /></td>
 
                 <td className="px-6 py-4">
@@ -179,13 +179,13 @@ export default function Products() {
           </span>
 
           <div className="flex items-center gap-2">
-            <button className="px-3 py-2 border rounded-lg">‹</button>
+            <button className="px-3 py-2 border border-slate-300 shadow-sm rounded-lg">‹</button>
             <button className="px-3 py-2 bg-blue-600 text-white rounded-lg">1</button>
             <button className="px-3 py-2 rounded-lg">2</button>
             <button className="px-3 py-2 rounded-lg">3</button>
             <span>…</span>
             <button className="px-3 py-2 rounded-lg">10</button>
-            <button className="px-3 py-2 border rounded-lg">›</button>
+            <button className="px-3 py-2 border border-slate-300 shadow-sm rounded-lg">›</button>
           </div>
         </div>
       </div>
