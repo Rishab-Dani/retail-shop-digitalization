@@ -228,7 +228,7 @@ const Analytics = () => {
                                                             <img
                                                                  src={p.image}
                                                                  alt={p.name}
-                                                                 className="w-10 h-10 rounded-md object-cover border"
+                                                                 className="w-10 h-10 rounded-md object-cover border border-slate-300"
                                                             />
                                                             <span className="font-medium">{p.name}</span>
                                                        </div>
