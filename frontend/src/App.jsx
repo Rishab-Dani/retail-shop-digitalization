@@ -7,6 +7,8 @@ import Orders from "./pages/Orders";
 import Customers from "./pages/Customers";
 import Reports from "./pages/Reports";
 import Analytics from "./pages/Analytics";
+import Settings from "./pages/Setting";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
@@ -20,6 +22,8 @@ function App() {
           <Route path="/customers" element={<Customers />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/analytics" element={<Analytics />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/profile" element={<Profile />} />
         </Route>
       </Routes>
     </BrowserRouter>
