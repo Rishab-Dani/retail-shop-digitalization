@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import {
   MdSearch,
   MdFilterList,
@@ -7,6 +8,7 @@ import {
 } from "react-icons/md";
 
 export default function Customers() {
+    const navigate = useNavigate();
   return (
     <div className="flex flex-col gap-6">
 
@@ -19,7 +21,9 @@ export default function Customers() {
           </p>
         </div>
 
-        <button className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg flex items-center gap-2 font-medium shadow">
+        <button
+         onClick={() => navigate("/addCustomers")}
+         className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg flex items-center gap-2 font-medium shadow">
           <MdPersonAdd className="text-xl" />
           Add Customer
         </button>
