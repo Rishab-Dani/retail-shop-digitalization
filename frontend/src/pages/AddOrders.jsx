@@ -13,7 +13,7 @@ const AddOrders = () => {
           </p>
         </div>
 
-        <button className="px-4 py-2 border rounded-lg text-sm bg-white">
+        <button className="px-4 py-2 border border-slate-300 shadow-sm rounded-lg text-sm bg-white">
           Save as Draft
         </button>
       </div>
@@ -25,8 +25,8 @@ const AddOrders = () => {
         <div className="xl:col-span-2 space-y-6">
 
           {/* CUSTOMER DETAILS */}
-          <div className="bg-white border rounded-xl overflow-hidden">
-            <div className="px-6 py-4 border-b flex justify-between items-center bg-slate-50">
+          <div className="bg-white border border-slate-300 shadow-sm rounded-xl overflow-hidden">
+            <div className="px-6 py-4 border-b border-slate-300 flex justify-between items-center bg-slate-50">
               <h3 className="font-semibold">👤 Customer Details</h3>
               <button className="text-sm text-blue-600 font-medium">
                 New Customer
@@ -41,7 +41,7 @@ const AddOrders = () => {
                 <div className="relative">
                   <FiSearch className="absolute left-3 top-3 text-slate-400" />
                   <input
-                    className="w-full pl-10 pr-4 py-2 border rounded-lg text-sm"
+                    className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg text-sm"
                     placeholder="Type name, email, or phone number..."
                   />
                 </div>
@@ -52,7 +52,7 @@ const AddOrders = () => {
                   Email Address
                 </label>
                 <input
-                  className="w-full px-4 py-2 border rounded-lg text-sm"
+                  className="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm"
                   placeholder="customer@example.com"
                 />
               </div>
@@ -62,7 +62,7 @@ const AddOrders = () => {
                   Phone Number
                 </label>
                 <input
-                  className="w-full px-4 py-2 border rounded-lg text-sm"
+                  className="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm"
                   placeholder="+1 (555) 000-0000"
                 />
               </div>
@@ -73,7 +73,7 @@ const AddOrders = () => {
                 </label>
                 <textarea
                   rows="2"
-                  className="w-full px-4 py-2 border rounded-lg text-sm resize-none"
+                  className="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm resize-none"
                   placeholder="Enter full address..."
                 />
               </div>
@@ -81,8 +81,8 @@ const AddOrders = () => {
           </div>
 
           {/* ORDER ITEMS */}
-          <div className="bg-white border rounded-xl overflow-hidden">
-            <div className="px-6 py-4 border-b flex justify-between items-center bg-slate-50">
+          <div className="bg-white border border-slate-300 shadow-sm rounded-xl overflow-hidden">
+            <div className="px-6 py-4 border-b border-slate-300 flex justify-between items-center bg-slate-50">
               <h3 className="font-semibold">🛍 Order Items</h3>
               <button className="flex items-center gap-2 text-sm bg-blue-100 text-blue-600 px-3 py-1.5 rounded-lg">
                 <FiPlus /> Add Product
@@ -101,7 +101,7 @@ const AddOrders = () => {
             {[1, 2].map((_, i) => (
               <div
                 key={i}
-                className="grid grid-cols-1 md:grid-cols-12 gap-4 px-6 py-4 border-b items-center"
+                className="grid grid-cols-1 md:grid-cols-12 gap-4 px-6 py-4 border-b border-slate-300 items-center"
               >
                 <div className="col-span-6 flex items-center gap-4">
                   <div className="w-12 h-12 bg-slate-200 rounded-lg" />
@@ -121,10 +121,10 @@ const AddOrders = () => {
                 </div>
 
                 <div className="col-span-2 flex justify-center">
-                  <div className="flex border rounded-lg overflow-hidden">
+                  <div className="flex border border-slate-300 rounded-lg overflow-hidden">
                     <button className="px-2">-</button>
                     <input
-                      className="w-10 text-center text-sm border-x"
+                      className="w-10 text-center text-sm border-x border-slate-300"
                       value={i === 0 ? 1 : 2}
                       readOnly
                     />
@@ -151,8 +151,8 @@ const AddOrders = () => {
         <div className="space-y-6">
 
           {/* ORDER SETTINGS */}
-          <div className="bg-white border rounded-xl overflow-hidden">
-            <div className="px-6 py-4 border-b bg-slate-50 font-semibold">
+          <div className="bg-white border border-slate-300 shadow-sm rounded-xl overflow-hidden">
+            <div className="px-6 py-4 border-b border-slate-300 bg-slate-50 font-semibold">
               ⚙ Order Settings
             </div>
 
@@ -174,7 +174,7 @@ const AddOrders = () => {
                 </label>
                 <input
                   type="date"
-                  className="w-full px-4 py-2 border rounded-lg text-sm"
+                  className="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm"
                 />
               </div>
 
@@ -182,7 +182,7 @@ const AddOrders = () => {
                 <label className="text-xs font-medium text-slate-500 uppercase mb-1 block">
                   Payment Method
                 </label>
-                <select className="w-full px-4 py-2 border rounded-lg text-sm">
+                <select className="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm">
                     <option>Credit Card (Stripe)</option>
                     <option>PayPal</option>
                     <option>Bank Transfer</option>
@@ -191,13 +191,13 @@ const AddOrders = () => {
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <select className="px-3 py-2 border rounded-lg text-sm bg-green-50 text-green-700">
+                <select className="px-3 py-2 border border-slate-300 rounded-lg text-sm bg-green-50 text-green-700">
                   <option>Paid</option>
                   <option>Pending</option>
                   <option>Failed</option>
                 </select>
 
-                <select className="px-3 py-2 border rounded-lg text-sm bg-blue-50 text-blue-700">
+                <select className="px-3 py-2 border border-slate-300 rounded-lg text-sm bg-blue-50 text-blue-700">
                   <option>Processing</option>
                   <option>Shipped</option>
                   <option>Delivered</option>
@@ -208,14 +208,14 @@ const AddOrders = () => {
               <textarea
                 rows="3"
                 placeholder="Add private notes..."
-                className="w-full px-4 py-2 border rounded-lg text-sm resize-none"
+                className="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm resize-none"
               />
             </div>
           </div>
 
           {/* SUMMARY */}
-          <div className="bg-white border rounded-xl overflow-hidden">
-            <div className="px-6 py-4 border-b bg-slate-50 font-semibold">
+          <div className="bg-white border border-slate-300 shadow-sm rounded-xl overflow-hidden">
+            <div className="px-6 py-4 border-b border-slate-300 bg-slate-50 font-semibold">
               🧾 Summary
             </div>
 
@@ -225,7 +225,7 @@ const AddOrders = () => {
               <Row label="Shipping" value="$15.00" />
               <Row label="Tax (10%)" value="$29.00" />
 
-              <hr />
+              <hr className="border-slate-300"/>
 
               <div className="flex justify-between text-lg font-bold">
                 <span>Grand Total</span>
@@ -238,7 +238,7 @@ const AddOrders = () => {
 
       {/* FOOTER ACTIONS */}
       <div className="flex justify-end gap-4 mt-8">
-        <button className="px-6 py-2 border rounded-lg text-sm">
+        <button className="px-6 py-2 border border-slate-300 shadow-sm rounded-lg text-sm">
           Cancel
         </button>
         <button className="px-6 py-2 bg-blue-600 text-white rounded-lg text-sm flex items-center gap-2">

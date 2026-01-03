@@ -1,8 +1,8 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.jsx'
-import { installFetchDebug } from './utils/fetchDebug'
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import './index.css';
+import App from './App.jsx';
+import { installFetchDebug } from './utils/fetchDebug';
 
 // Install fetch debug helper in development to log invalid/non-JSON responses
 if (process.env.NODE_ENV !== 'production') {
