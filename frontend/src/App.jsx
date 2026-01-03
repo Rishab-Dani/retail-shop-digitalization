@@ -9,13 +9,14 @@ import Reports from "./pages/Reports";
 import Analytics from "./pages/Analytics";
 import Settings from "./pages/Setting";
 import Profile from "./pages/Profile";
+import AddOrders from "./pages/AddOrders";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route element={<AdminLayout />}>
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/products" element={<Products />} />
           <Route path="/products/add" element={<AddProduct />} />
           <Route path="/orders" element={<Orders />} />
@@ -24,6 +25,7 @@ function App() {
           <Route path="/analytics" element={<Analytics />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/addOrders" element={<AddOrders />} />
         </Route>
       </Routes>
     </BrowserRouter>
@@ -31,3 +33,6 @@ function App() {
 }
 
 export default App;
+
+
+
