@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import {
   MdSearch,
   MdFilterList,
@@ -75,6 +76,7 @@ const orders = [
 /* ---------------- MAIN COMPONENT ---------------- */
 
 export default function Orders() {
+  const navigate = useNavigate();
   return (
     <div className="flex flex-col gap-6">
 
@@ -92,7 +94,9 @@ export default function Orders() {
             <MdDownload size={18} /> Export
           </button>
 
-          <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white shadow-sm rounded-lg text-sm font-semibold">
+          <button 
+           onClick={() => navigate("/addOrders")}
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white shadow-sm rounded-lg text-sm font-semibold">
             <MdAdd size={18} /> Create Order
           </button>
         </div>

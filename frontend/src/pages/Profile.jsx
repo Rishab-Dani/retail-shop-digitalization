@@ -161,7 +161,7 @@ const Input = ({ label, value, className = "" }) => (
                               {activeSection === "general" && (
                                    <>
                                         {/* Personal Information */}
-                                        <div className="bg-white border border-slate-300 shadow-sm rounded-xl">
+                                        <div className="bg-white border border-slate-300 shadow-sm rounded-xl overflow-hidden">
                                              <div className="px-6 py-4 border-b border-slate-300 flex justify-between items-center">
                                                   <h3 className="font-semibold">Personal Information</h3>
                                                   <FiUser className="text-slate-400" />
@@ -207,7 +207,7 @@ const Input = ({ label, value, className = "" }) => (
                                         </div>
 
                                         {/* Sign-in Method */}
-                                        <div className="bg-white border border-slate-300 shadow-sm rounded-xl">
+                                        <div className="bg-white border border-slate-300 shadow-sm rounded-xl overflow-hidden">
                                              <div className="px-6 py-4 border-b border-slate-300 flex justify-between items-center">
                                                   <h3 className="font-semibold">Sign-in Method</h3>
                                                   <FiLock className="text-slate-400" />
@@ -230,7 +230,7 @@ const Input = ({ label, value, className = "" }) => (
                                                   </div>
                                              </div>
 
-                                             <div className="px-6 py-4  bg-slate-50 border-t border-slate-300 flex justify-end gap-3">
+                                             <div className="px-6 py-4  bg-slate-50 border-t border-slate-300 flex justify-end gap-3 ">
                                                   <button className="px-4 py-2 border border-slate-300 shadow-sm rounded-lg text-sm">
                                                        Cancel
                                                   </button>

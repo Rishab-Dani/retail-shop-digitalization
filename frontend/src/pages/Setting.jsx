@@ -94,7 +94,7 @@ const GeneralTab = () => {
       <div className="lg:col-span-2 space-y-6">
 
         {/* STORE PROFILE */}
-        <div className="bg-white rounded-xl border border-slate-300 shadow-sm">
+        <div className="bg-white rounded-xl border border-slate-300 shadow-sm overflow-hidden">
           <div className="p-4 border-b border-slate-300 bg-slate-50">
             <h3 className="font-semibold">Store Profile</h3>
             <p className="text-xs text-slate-500">
@@ -184,7 +184,7 @@ const GeneralTab = () => {
         </div>
 
         {/* REGIONAL SETTINGS */}
-        <div className="bg-white rounded-xl border border-slate-300 shadow-sm">
+        <div className="bg-white rounded-xl border border-slate-300 shadow-sm overflow-hidden">
           <div className="p-4 border-b border-slate-300 bg-slate-50">
             <h3 className="font-semibold">Regional Settings</h3>
           </div>
