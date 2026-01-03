@@ -78,7 +78,7 @@ const Input = ({ label, value, className = "" }) => (
                          </div>
 
                          <div className="flex gap-3">
-                              <button className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-300 shadow-sm  rounded-lg text-sm">
+                              <button id="shareBtn" data-share="true" className="share-button flex items-center gap-2 px-4 py-2 bg-white border border-slate-300 shadow-sm rounded-lg text-sm">
                                    <FiShare2 /> Share
                               </button>
                               <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm">
