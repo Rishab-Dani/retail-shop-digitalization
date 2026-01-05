@@ -26,41 +26,36 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         this.jwtUtil = jwtUtil;
     }
 
+    // 🔑 THIS IS THE KEY FIX
     @Override
-    protected void doFilterInternal(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain filterChain
-    ) throws ServletException, IOException {
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getServletPath();
+        return path.startsWith("/auth");
+    }
 
-        String header = request.getHeader("Authorization");
+    @Override
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain)
+            throws ServletException, IOException {
 
-        if (header != null && header.startsWith("Bearer ")) {
+        String authHeader = request.getHeader("Authorization");
 
-            String token = header.substring(7);
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
 
             if (jwtUtil.validateToken(token)) {
-
                 String username = jwtUtil.extractUsername(token);
-
                 String role = jwtUtil.extractRole(token);
-
-                GrantedAuthority authority =
-                        new SimpleGrantedAuthority("ROLE_" + role);
 
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
                                 username,
                                 null,
-                                List.of(authority)
+                                List.of(new SimpleGrantedAuthority("ROLE_" + role))
                         );
 
-                authentication.setDetails(
-                        new WebAuthenticationDetailsSource().buildDetails(request)
-                );
-
-                SecurityContextHolder.getContext()
-                        .setAuthentication(authentication);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
 

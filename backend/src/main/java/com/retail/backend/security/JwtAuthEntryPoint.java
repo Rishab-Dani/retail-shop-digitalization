@@ -12,11 +12,18 @@ import java.io.IOException;
 public class JwtAuthEntryPoint implements AuthenticationEntryPoint {
 
     @Override
-    public void commence(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            AuthenticationException authException
-    ) throws IOException {
+    public void commence(HttpServletRequest request,
+                         HttpServletResponse response,
+                         AuthenticationException authException)
+            throws IOException {
+
+        String path = request.getServletPath();
+
+        // 🔑 ALLOW AUTH ENDPOINTS WITHOUT JWT
+        if (path.startsWith("/auth")) {
+            response.setStatus(HttpServletResponse.SC_OK);
+            return;
+        }
 
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json");
@@ -30,3 +37,4 @@ public class JwtAuthEntryPoint implements AuthenticationEntryPoint {
         """);
     }
 }
+

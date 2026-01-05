@@ -84,3 +84,9 @@ git pull origin main
 
 
 This keeps everything clean.
+
+if you want to undo last commit then use this command
+
+git revert HEAD
+
+eg: Revert "remove environment config"
