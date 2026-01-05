@@ -229,9 +229,9 @@ const Login = () => {
 
                               <div className="text-center text-sm">
                                    Don&apos;t have an account?{" "}
-                                   <span className="text-blue-600 font-semibold cursor-pointer">
+                                   <a href="/register" className="text-blue-600 font-semibold cursor-pointer">
                                         Create account
-                                   </span>
+                                   </a>
                               </div>
 
                               <div className="flex justify-center gap-4 text-xs text-slate-400">
