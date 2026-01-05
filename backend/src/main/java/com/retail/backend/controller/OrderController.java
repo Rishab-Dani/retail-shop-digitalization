@@ -1,8 +1,12 @@
 package com.retail.backend.controller;
 
 import com.retail.backend.dto.OrderRequest;
+import com.retail.backend.dto.PlaceOrderRequest;
 import com.retail.backend.entity.Order;
 import com.retail.backend.service.OrderService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,19 +22,18 @@ public class OrderController {
     }
 
     @PostMapping
-    public Order createOrder(@RequestBody OrderRequest request) {
-        return orderService.createOrder(request);
-    }
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<?> placeOrder(
+            @RequestBody PlaceOrderRequest request,
+            Authentication authentication
+    ) {
+        String email = authentication.getName();
 
-    // GET Orders apis
-    @GetMapping
-    public List<Order> getAllOrders() {
-        return orderService.getAllOrders();
-    }
+        Order order = orderService.placeOrder(
+                email,
+                request.getTotalAmount()
+        );
 
-    @GetMapping("/{id}")
-    public Order getOrderById(@PathVariable Long id) {
-        return orderService.getOrderById(id);
+        return ResponseEntity.ok(order);
     }
-
 }
