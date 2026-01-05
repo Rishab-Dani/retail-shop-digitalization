@@ -10,19 +10,21 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String name;
-
-    @Column(nullable = false, unique = true)
+    @Column(unique = true, nullable = false)
     private String email;
 
     @Column(nullable = false)
-    private String password; // BCrypt hash
+    private String password;
 
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    private boolean enabled = true;
+    private boolean enabled;
+    private String name;
+
+
+    // getters & setters
+
 
     public Long getId() {
         return id;
@@ -30,14 +32,6 @@ public class User {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getEmail() {
@@ -71,7 +65,12 @@ public class User {
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
-// getters & setters
 
+    public String getName() {
+        return name;
+    }
 
+    public void setName(String name) {
+        this.name = name;
+    }
 }

@@ -3,12 +3,14 @@ package com.retail.backend.security;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
 
+@Slf4j
 @Service
 public class JwtService {
 
@@ -16,6 +18,8 @@ public class JwtService {
     private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
     public String generateToken(Authentication authentication) {
+        log.debug("Authentication.getName{}",authentication.getName());
+        System.out.println("Authentication.getName " + authentication.getName());
         return Jwts.builder()
                 .setSubject(authentication.getName())
                 .setIssuedAt(new Date())
@@ -23,4 +27,5 @@ public class JwtService {
                 .signWith(key)
                 .compact();
     }
+
 }
