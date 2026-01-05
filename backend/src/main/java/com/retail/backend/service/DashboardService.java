@@ -26,7 +26,7 @@ public class DashboardService {
 
         long totalProducts = productRepository.count();
         long totalOrders = orderRepository.count();
-        BigDecimal totalRevenue = orderRepository.getTotalRevenue();
+        Double totalRevenue = orderRepository.getTotalRevenue();
 
         return new DashboardSummary(
                 totalProducts,

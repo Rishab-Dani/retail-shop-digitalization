@@ -10,10 +10,10 @@ public class DashboardSummary {
 
 
     // analytics
-    public DashboardSummary(long totalProducts, long totalOrders, BigDecimal totalRevenue) {
+    public DashboardSummary(long totalProducts, long totalOrders, Double totalRevenue) {
         this.totalProducts = totalProducts;
         this.totalOrders = totalOrders;
-        this.totalRevenue = totalRevenue;
+        this.totalRevenue = BigDecimal.valueOf(totalRevenue);
     }
 
     // getters
