@@ -4,9 +4,11 @@ import com.retail.backend.entity.User;
 import com.retail.backend.entity.Role;
 import com.retail.backend.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+@Profile("dev")
 @Component
 public class DataInitializer {
 
