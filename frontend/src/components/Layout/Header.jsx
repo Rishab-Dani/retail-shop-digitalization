@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 const Header = () => {
   const [cartCount] = useState(0);
 
+
+
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-slate-200">
       <div className="max-w-[1280px] mx-auto px-4 md:px-8">

@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 const categories = [
   "All",
   "Electronics",
@@ -15,7 +17,7 @@ const products = [
     stock: 12,
     image:
       "https://saltgears.com/cdn/shop/products/Rockster-01.jpg?v=1673958890",
-     
+
   },
   {
     id: 2,
@@ -52,7 +54,7 @@ const products = [
     stock: 12,
     image:
       "https://saltgears.com/cdn/shop/products/Rockster-01.jpg?v=1673958890",
-     
+
   },
   {
     id: 2,
@@ -89,7 +91,7 @@ const products = [
     stock: 12,
     image:
       "https://saltgears.com/cdn/shop/products/Rockster-01.jpg?v=1673958890",
-     
+
   },
   {
     id: 2,
@@ -126,7 +128,7 @@ const products = [
     stock: 12,
     image:
       "https://saltgears.com/cdn/shop/products/Rockster-01.jpg?v=1673958890",
-     
+
   },
   {
     id: 2,
@@ -163,7 +165,7 @@ const products = [
     stock: 12,
     image:
       "https://saltgears.com/cdn/shop/products/Rockster-01.jpg?v=1673958890",
-     
+
   },
   {
     id: 2,
@@ -200,7 +202,7 @@ const products = [
     stock: 12,
     image:
       "https://saltgears.com/cdn/shop/products/Rockster-01.jpg?v=1673958890",
-     
+
   },
   {
     id: 2,
@@ -237,7 +239,7 @@ const products = [
     stock: 12,
     image:
       "https://saltgears.com/cdn/shop/products/Rockster-01.jpg?v=1673958890",
-     
+
   },
   {
     id: 2,
@@ -269,6 +271,35 @@ const products = [
 ];
 
 export default function MainProductSection() {
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [maxPrice, setMaxPrice] = useState(3000);
+  const [inStockOnly, setInStockOnly] = useState(false);
+  const [cart, setCart] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+
+
+const filteredProducts = products.filter((p) => {
+  const matchCategory =
+    selectedCategory === "All" || p.category === selectedCategory;
+
+  const matchPrice = p.price <= maxPrice;
+
+  const matchStock = inStockOnly ? p.stock > 0 : true;
+
+  const matchSearch = p.name
+    .toLowerCase()
+    .includes(searchQuery.toLowerCase());
+
+  return matchCategory && matchPrice && matchStock && matchSearch;
+});
+
+
+  const addToCart = (product) => {
+    if (!cart.find((item) => item.id === product.id)) {
+      setCart([...cart, product]);
+    }
+  };
+
   return (
     <main className="container mx-auto px-4 py-8 flex-1">
 
@@ -285,9 +316,12 @@ export default function MainProductSection() {
 
         <div className="relative w-full sm:w-64">
           <input
-            className="w-full pl-9 pr-4 py-2 rounded-lg border border-slate-200 bg-white text-sm focus:ring-1 focus:ring-blue-600 focus:border-blue-600 outline-none"
-            placeholder="Search products..."
-          />
+  className="w-full pl-9 pr-4 py-2 rounded-lg border border-slate-200 bg-white text-sm focus:ring-1 focus:ring-blue-600 focus:border-blue-600 outline-none"
+  placeholder="Search products..."
+  value={searchQuery}
+  onChange={(e) => setSearchQuery(e.target.value)}
+/>
+
           <span className="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-lg">
             search
           </span>
@@ -296,55 +330,68 @@ export default function MainProductSection() {
 
       {/* FILTER BAR */}
       <div className="sticky top-16 z-40 mb-8">
-      <div className="bg-white/90 backdrop-blur p-4 rounded-xl border border-slate-200 mb-8 flex flex-col xl:flex-row xl:items-center justify-between gap-6">
+        <div className="bg-white/90 backdrop-blur p-4 rounded-xl border border-slate-200 mb-8 flex flex-col xl:flex-row xl:items-center justify-between gap-6">
 
-        {/* CATEGORIES */}
-        <div className="flex items-center gap-3 overflow-x-auto">
-          <span className="text-sm font-semibold text-slate-900 whitespace-nowrap">
-            Categories:
-          </span>
-          {categories.map((cat, index) => (
-            <button
-              key={cat}
-              className={`px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition
-                ${
-                  index === 0
+          {/* CATEGORIES */}
+          <div className="flex items-center gap-3 overflow-x-auto">
+            <span className="text-sm font-semibold text-slate-900 whitespace-nowrap">
+              Categories:
+            </span>
+            {categories.map((cat, index) => (
+              <button
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                className={`px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition
+      ${selectedCategory === cat
                     ? "bg-blue-600 text-white"
                     : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-
-        {/* PRICE + STOCK */}
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-3">
-            <span className="text-sm font-semibold text-slate-900">
-              Price:
-            </span>
-            <div className="flex items-center gap-3 bg-slate-100 px-3 py-1.5 rounded-lg">
-              <input type="range" className="w-28" />
-              <span className="text-xs font-bold text-blue-600">
-                Max: ₹3,000
-              </span>
-            </div>
+                  }`}
+              >
+                {cat}
+              </button>
+            ))}
           </div>
 
-          <label className="flex items-center gap-2 text-sm text-slate-600">
-            <input type="checkbox" />
-            In Stock Only
-          </label>
+          {/* PRICE + STOCK */}
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-3">
+              <span className="text-sm font-semibold text-slate-900">
+                Price:
+              </span>
+              <div className="flex items-center gap-3 bg-slate-100 px-3 py-1.5 rounded-lg">
+                <input
+                  type="range"
+                  min="0"
+                  max="5000"
+                  value={maxPrice}
+                  onChange={(e) => setMaxPrice(Number(e.target.value))}
+                  className="w-28"
+                />
+
+                <span className="text-xs font-bold text-blue-600">
+  Max: ₹{maxPrice.toLocaleString()}
+</span>
+
+              </div>
+            </div>
+
+            <label className="flex items-center gap-2 text-sm text-slate-600">
+              <input
+                type="checkbox"
+                checked={inStockOnly}
+                onChange={(e) => setInStockOnly(e.target.checked)}
+              />
+              In Stock Only
+            </label>
+          </div>
         </div>
-      </div>
       </div>
 
       {/* PRODUCT GRID */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {products.map((p) => (
+        {filteredProducts.map((p, index) => (
           <div
-            key={p.id}
+            key={`${p.id}-${index}`}
             className="bg-white rounded-xl border border-slate-200 overflow-hidden hover:shadow-md transition"
           >
             {/* IMAGE */}
@@ -352,9 +399,8 @@ export default function MainProductSection() {
               <img
                 src={p.image}
                 alt={p.name}
-                className={`w-full h-full object-cover ${
-                  p.stock === 0 ? "grayscale" : ""
-                }`}
+                className={`w-full h-full object-cover ${p.stock === 0 ? "grayscale" : ""
+                  }`}
               />
 
               {p.stock === 0 && (
@@ -382,11 +428,10 @@ export default function MainProductSection() {
                 </span>
 
                 <span
-                  className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
-                    p.stock > 0
+                  className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${p.stock > 0
                       ? "bg-green-100 text-green-700"
                       : "bg-red-100 text-red-700"
-                  }`}
+                    }`}
                 >
                   {p.stock > 0
                     ? `${p.stock} in stock`
@@ -395,16 +440,19 @@ export default function MainProductSection() {
               </div>
 
               <button
-                disabled={p.stock === 0}
+                onClick={() => addToCart(p)}
+                disabled={p.stock === 0 || cart.some((item) => item.id === p.id)}
                 className={`mt-4 py-2 rounded-lg text-sm font-medium transition
-                  ${
-                    p.stock > 0
-                      ? "bg-blue-600 text-white hover:bg-blue-700"
-                      : "bg-slate-200 text-slate-400 cursor-not-allowed"
+    ${p.stock > 0 && !cart.some((item) => item.id === p.id)
+                    ? "bg-blue-600 text-white hover:bg-blue-700"
+                    : "bg-slate-200 text-slate-400 cursor-not-allowed"
                   }`}
               >
-                Add to Cart
+                {cart.some((item) => item.id === p.id)
+                  ? "Added"
+                  : "Add to Cart"}
               </button>
+
             </div>
           </div>
         ))}
