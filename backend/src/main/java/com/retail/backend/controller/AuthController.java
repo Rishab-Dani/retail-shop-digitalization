@@ -1,10 +1,7 @@
 package com.retail.backend.controller;
 
 import com.retail.backend.dto.LoginRequest;
-import com.retail.backend.dto.LoginResponse;
 import com.retail.backend.security.JwtService;
-import com.retail.backend.security.JwtUtil;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;

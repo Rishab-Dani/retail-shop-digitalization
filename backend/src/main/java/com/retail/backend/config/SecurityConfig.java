@@ -2,16 +2,14 @@ package com.retail.backend.config;
 
 import com.retail.backend.security.JwtAuthenticationFilter;
 import com.retail.backend.security.JwtAuthEntryPoint;
-import com.retail.backend.service.CustomUserDetailsService;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -19,22 +17,16 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtFilter;
-    private final JwtAuthEntryPoint authEntryPoint;
-    private final CustomUserDetailsService userDetailsService;
-    private final PasswordEncoder passwordEncoder;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final JwtAuthEntryPoint jwtAuthEntryPoint;
 
-    public SecurityConfig(JwtAuthenticationFilter jwtFilter,
-                          JwtAuthEntryPoint authEntryPoint,
-                          CustomUserDetailsService userDetailsService,
-                          PasswordEncoder passwordEncoder) {
-        this.jwtFilter = jwtFilter;
-        this.authEntryPoint = authEntryPoint;
-        this.userDetailsService = userDetailsService;
-        this.passwordEncoder = passwordEncoder;
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
+                          JwtAuthEntryPoint jwtAuthEntryPoint) {
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.jwtAuthEntryPoint = jwtAuthEntryPoint;
     }
 
-    // 🔑 THIS BEAN WAS MISSING / WRONG
+    // 🔑 Required for /auth/login
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration configuration) throws Exception {
@@ -42,23 +34,33 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
                 .csrf(csrf -> csrf.disable())
-                .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint(authEntryPoint)
-                )
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
+
+                        // Public endpoints
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/api/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
+
+                        // Orders (JWT required)
+                        .requestMatchers(HttpMethod.POST, "/api/orders/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/orders/**").authenticated()
+
+                        // Everything else
+                        .anyRequest().authenticated()
                 )
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                .formLogin(form -> form.disable())
-                .httpBasic(basic -> basic.disable());
+                .exceptionHandling(ex ->
+                        ex.authenticationEntryPoint(jwtAuthEntryPoint)
+                )
+                .addFilterBefore(
+                        jwtAuthenticationFilter,
+                        UsernamePasswordAuthenticationFilter.class
+                );
 
         return http.build();
     }

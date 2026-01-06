@@ -23,19 +23,14 @@ public class OrderController {
         this.orderService = orderService;
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
     @PostMapping
-    @PreAuthorize("hasRole('CUSTOMER')")
-    public ResponseEntity<?> placeOrder(
+    public ResponseEntity<Order> placeOrder(
             @RequestBody PlaceOrderRequest request,
             Authentication authentication
     ) {
         String email = authentication.getName();
-
-        Order order = orderService.placeOrder(
-                email,
-                request.getTotalAmount()
-        );
-
+        Order order = orderService.placeOrder(email, request.getTotalAmount());
         return ResponseEntity.ok(order);
     }
 
