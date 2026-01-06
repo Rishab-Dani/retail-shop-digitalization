@@ -14,7 +14,6 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 @Service
-@Transactional
 public class OrderService {
 
     private final OrderRepository orderRepository;
@@ -52,6 +51,7 @@ public class OrderService {
 
 
     // ✅ STEP 2: Add Items to Order
+    @Transactional
     public void addItemsToOrder(UUID orderId, AddOrderItemsRequest request) {
 
         Order order = orderRepository.findById(orderId)
@@ -62,6 +62,16 @@ public class OrderService {
             Product product = productRepository.findById(itemReq.getProductId())
                     .orElseThrow(() -> new RuntimeException("Product not found"));
 
+            // ✅ Stock check
+            if (product.getStockQuantity() < itemReq.getQuantity()) {
+                throw new RuntimeException("Insufficient stock for product: " + product.getName());
+            }
+
+            // ✅ Reduce stock
+            product.setStockQuantity(
+                    product.getStockQuantity() - itemReq.getQuantity()
+            );
+
             OrderItem item = new OrderItem();
             item.setOrder(order);
             item.setProduct(product);
@@ -69,10 +79,10 @@ public class OrderService {
             item.setPrice(product.getPrice());
 
             orderItemRepository.save(item);
+            productRepository.save(product); // save updated stock
         }
 
-        // ❌ DO NOT save(order) again
-
+        // ❌ DO NOT save(order)
     }
 
 }

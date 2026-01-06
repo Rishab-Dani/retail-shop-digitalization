@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -15,7 +16,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
+
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final JwtAuthEntryPoint jwtAuthEntryPoint;
@@ -26,7 +29,7 @@ public class SecurityConfig {
         this.jwtAuthEntryPoint = jwtAuthEntryPoint;
     }
 
-    // 🔑 Required for /auth/login
+    // 🔑 REQUIRED for AuthController
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration configuration) throws Exception {
@@ -43,13 +46,12 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
 
-                        // Public endpoints
+                        // Public
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
 
-                        // Orders (JWT required)
-                        .requestMatchers(HttpMethod.POST, "/api/orders/**").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/orders/**").authenticated()
+                        // Orders
+                        .requestMatchers("/api/orders/**").authenticated()
 
                         // Everything else
                         .anyRequest().authenticated()
@@ -57,8 +59,7 @@ public class SecurityConfig {
                 .exceptionHandling(ex ->
                         ex.authenticationEntryPoint(jwtAuthEntryPoint)
                 )
-                .addFilterBefore(
-                        jwtAuthenticationFilter,
+                .addFilterBefore(jwtAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class
                 );
 

@@ -52,26 +52,5 @@ public class AuthController {
         }
     }
 
-
-//    @PostMapping("/login")
-//    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-//        log.debug("Login method calling");
-//        System.out.println("Login method calling");
-//        Authentication auth = authenticationManager.authenticate(
-//                new UsernamePasswordAuthenticationToken(
-//                        request.getEmail(),
-//                        request.getPassword()
-//                )
-//        );
-//        log.debug("Auth value{}",auth);
-//        System.out.println("Auth value " + auth);
-//        String token = jwtService.generateToken(auth);
-//        log.debug("Token value{}",token);
-//        System.out.println("token value " + token);
-//        return ResponseEntity.ok(
-//                Map.of("token", token)
-//        );
-//    }
-
 }
 
