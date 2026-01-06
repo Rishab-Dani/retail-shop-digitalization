@@ -34,13 +34,13 @@ public class OrderController {
         return ResponseEntity.ok(order);
     }
 
+    // ✅ FIXED ENDPOINT
     @PostMapping("/{orderId}/items")
-    public ResponseEntity<?> addItems(
+    public ResponseEntity<String> addItems(
             @PathVariable UUID orderId,
             @RequestBody AddOrderItemsRequest request
     ) {
         orderService.addItemsToOrder(orderId, request);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("Order items added successfully");
     }
-
 }
