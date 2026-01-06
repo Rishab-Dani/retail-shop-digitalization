@@ -15,7 +15,7 @@ const Login = () => {
      }, []);
 
      return (
-          <div className="font-display bg-neutral-50  text-slate-900 min-h-screen flex flex-col">
+          <div className="font-display bg-neutral-50  text-slate-900 min-h-screen flex flex-col ">
                <div className="relative flex min-h-screen w-full overflow-hidden">
 
                     {/* LEFT PANEL */}
@@ -58,9 +58,9 @@ const Login = () => {
                                         <span className="material-symbols-outlined text-white">person</span>
                                    </div>
                                    <div>
-                                        <p className="text-white font-semibold">Sarah Chen</p>
+                                        <p className="text-white font-semibold">Ravi Rishab</p>
                                         <p className="text-blue-100 text-sm">
-                                             Operations Director, FashionForward
+                                             Frontend Developer, Backend Developer
                                         </p>
                                    </div>
                               </div>
@@ -68,7 +68,7 @@ const Login = () => {
                     </div>
 
                     {/* RIGHT PANEL */}
-                    <div className="w-full lg:w-1/2 flex items-center justify-center p-6 lg:p-24 bg-white dark:bg-slate-900">
+                    <div className="w-full lg:w-1/2 flex items-center justify-center p-6 lg:p-24 dark:bg-slate-900 bg-white">
                          <div className="w-full max-w-[440px] flex flex-col gap-8">
 
                               <div>
@@ -80,7 +80,7 @@ const Login = () => {
 
                               {/* OAuth */}
                               <div className="grid grid-cols-2 gap-4">
-                                   <button className="flex items-center justify-center gap-3 px-4 py-2.5 border border-slate-300 dark:border-input-border-dark rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors bg-white dark:bg-slate-800">
+                                   <button className="flex items-center justify-center gap-3 px-4 py-2.5 border border-slate-300 dark:border-input-border-dark rounded-lg hover:bg-slate-50 transition-colors bg-white">
                                         <svg className="h-5 w-5" viewBox="0 0 24 24">
                                              <path
                                                   d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -127,7 +127,7 @@ const Login = () => {
                                         <div className="w-full border-t border-slate-300"></div>
                                    </div>
                                    <div className="relative flex justify-center text-xs">
-                                        <span className="bg-white dark:bg-slate-900 px-4 text-slate-400">
+                                        <span className="bg-white px-4 text-slate-400">
                                              Or sign in with email
                                         </span>
                                    </div>
@@ -214,9 +214,14 @@ const Login = () => {
                                                   Remember for 30 days
                                              </label>
                                         </div>
-                                        <span className="text-xs text-blue-600 font-semibold cursor-pointer">
+
+                                        <a
+                                             href="/forgot-password"
+                                             className="text-xs text-blue-600 font-semibold cursor-pointer"
+                                        >
                                              Forgot password?
-                                        </span>
+                                        </a>
+
                                    </div>
 
 
