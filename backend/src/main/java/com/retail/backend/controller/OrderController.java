@@ -1,5 +1,6 @@
 package com.retail.backend.controller;
 
+import com.retail.backend.dto.AddOrderItemsRequest;
 import com.retail.backend.dto.OrderRequest;
 import com.retail.backend.dto.PlaceOrderRequest;
 import com.retail.backend.entity.Order;
@@ -10,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -36,4 +38,14 @@ public class OrderController {
 
         return ResponseEntity.ok(order);
     }
+
+    @PostMapping("/{orderId}/items")
+    public ResponseEntity<?> addItems(
+            @PathVariable UUID orderId,
+            @RequestBody AddOrderItemsRequest request
+    ) {
+        orderService.addItemsToOrder(orderId, request);
+        return ResponseEntity.ok().build();
+    }
+
 }
