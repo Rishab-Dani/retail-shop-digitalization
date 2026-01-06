@@ -25,6 +25,10 @@ import AddCustomers from "./pages/Admin/AddCustomers";
 
 // Customer pages
 import ProductList from "./pages/Customer/ProductList";
+import ProductDetails from "./pages/Customer/ProductDetails";
+import Cart from "./pages/Customer/Cart";
+import Checkout from "./pages/Customer/Checkout";
+
 
 
 function App() {
@@ -59,8 +63,11 @@ function App() {
          {/* CUSTOMER ROUTES */}
 <Route path="/customer" element={<CustomerLayout />}>
   <Route path="products" element={<ProductList />} />
+  <Route path="product/:id" element={<ProductDetails />} />
+   <Route path="cart" element={<Cart />} />
+  <Route path="/customer/checkout" element={<Checkout />} />
   {/* future */}
-  {/* <Route path="cart" element={<Cart />} /> */}
+  {/* */}
   {/* <Route path="profile" element={<CustomerProfile />} /> */}
 </Route>
 
