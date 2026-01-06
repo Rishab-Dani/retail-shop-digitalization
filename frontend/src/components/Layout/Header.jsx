@@ -1,11 +1,6 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 
-const Header = () => {
-  const [cartCount] = useState(0);
-
-
-
+const Header = ({ cartCount, searchQuery, setSearchQuery }) => {
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-slate-200">
       <div className="max-w-[1280px] mx-auto px-4 md:px-8">
@@ -30,10 +25,13 @@ const Header = () => {
                 search
               </span>
               <input
-                type="text"
-                placeholder="Search products..."
-                className="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
+  type="text"
+  placeholder="Search products..."
+  value={searchQuery}
+  onChange={(e) => setSearchQuery(e.target.value)}
+  className="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-300 text-sm"
+/>
+
             </div>
           </div>
 

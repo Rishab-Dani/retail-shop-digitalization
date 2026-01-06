@@ -11,20 +11,20 @@ import ForgotPassword from "./pages/auth/ForgotPassword";
 import ResetPassword from "./pages/auth/ResetPassword";
 
 // Private pages
-import Dashboard from "./pages/Dashboard";
-import Products from "./pages/Products";
-import AddProduct from "./pages/AddProduct";
-import Orders from "./pages/Orders";
-import Customers from "./pages/Customers";
-import Reports from "./pages/Reports";
-import Analytics from "./pages/Analytics";
-import Settings from "./pages/Setting";
-import Profile from "./pages/Profile";
-import AddOrders from "./pages/AddOrders";
-import AddCustomers from "./pages/AddCustomers";
+import Dashboard from "./pages/Admin/Dashboard";
+import Products from "./pages/Admin/Products";
+import AddProduct from "./pages/Admin/AddProduct";
+import Orders from "./pages/Admin/Orders";
+import Customers from "./pages/Admin/Customers";
+import Reports from "./pages/Admin/Reports";
+import Analytics from "./pages/Admin/Analytics";
+import Settings from "./pages/Admin/Setting";
+import Profile from "./pages/Admin/Profile";
+import AddOrders from "./pages/Admin/AddOrders";
+import AddCustomers from "./pages/Admin/AddCustomers";
 
 // Customer pages
-import ProductList from "./pages/customer/ProductList";
+import ProductList from "./pages/Customer/ProductList";
 
 
 function App() {
@@ -44,9 +44,9 @@ function App() {
         {/* PRIVATE ROUTES */}
         <Route element={<DashboardLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/products" element={<Products />} />
+          <Route path="/admin-products" element={<Products />} />
           <Route path="/orders" element={<Orders />} />
-          <Route path="/addProducts" element={<AddProduct />} />
+          <Route path="/add-products" element={<AddProduct />} />
           <Route path="/customers" element={<Customers />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/analytics" element={<Analytics />} />
@@ -56,13 +56,14 @@ function App() {
           <Route path="/addCustomers" element={<AddCustomers />} />
         </Route>
 
-         {/* Customer ROUTES */}
-         <Route element={<CustomerLayout />}>
-           <Route path="/customer/productlist" element={<ProductList />} />
-           {/*
-           <Route path="/customer/cart" element={<Orders />} />
-           <Route path="/customer/profile" element={<Profile />} /> */}
-         </Route>
+         {/* CUSTOMER ROUTES */}
+<Route path="/customer" element={<CustomerLayout />}>
+  <Route path="products" element={<ProductList />} />
+  {/* future */}
+  {/* <Route path="cart" element={<Cart />} /> */}
+  {/* <Route path="profile" element={<CustomerProfile />} /> */}
+</Route>
+
 
 
 
