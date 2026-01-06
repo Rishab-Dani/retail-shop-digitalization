@@ -23,7 +23,7 @@ const Register = () => {
 
 
      return (
-          <div className="font-display bg-neutral-50 min-h-screen flex items-center justify-center px-4">
+          <div className="font-display bg-neutral-50 min-h-screen flex items-center justify-center px-4 bg-gradient-to-b from-blue-500/5">
                <div className="w-full max-w-[640px] bg-white rounded-xl shadow-2xl p-8 md:p-12 flex flex-col gap-8">
 
                     {/* STEPPER */}
@@ -94,11 +94,12 @@ const Register = () => {
 
                               <div className="flex flex-col gap-5">
                                    <input
+                                        required
                                         className="form-input rounded-lg px-4 py-3 border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
                                         placeholder="Full Name"
                                         value={formData.fullName}
                                         onChange={(e) =>
-                                             setFormData({ ...formData, fullName: e.target.value })
+                                        setFormData({ ...formData, fullName: e.target.value })
                                         }
                                    />
 

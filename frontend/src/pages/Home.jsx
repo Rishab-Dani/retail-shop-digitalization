@@ -29,9 +29,14 @@ const Home = () => {
               </nav>
 
               <div className="flex gap-3">
+               
+                <a
+                href="/login"
+              >
                 <button className="h-10 px-5 rounded-3xl border border-gray-200 font-bold hover:bg-gray-100">
                   Login
                 </button>
+              </a>
                 <button className="h-10 px-5 rounded-3xl bg-blue-600 text-white font-bold shadow-lg hover:bg-blue-700">
                   Get Started
                 </button>
