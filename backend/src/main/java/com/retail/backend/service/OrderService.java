@@ -35,19 +35,21 @@ public class OrderService {
     }
 
     // ✅ STEP 1: Place Order
+    @Transactional
     public Order placeOrder(String email, BigDecimal totalAmount) {
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         Order order = new Order();
-        order.setId(UUID.randomUUID());
         order.setUser(user);
-        order.setStatus(String.valueOf(OrderStatus.PLACED));
+        order.setStatus("PLACED");
         order.setTotalAmount(totalAmount);
 
+        // ✅ SAVE ONCE
         return orderRepository.save(order);
     }
+
 
     // ✅ STEP 2: Add Items to Order
     public void addItemsToOrder(UUID orderId, AddOrderItemsRequest request) {
@@ -61,7 +63,6 @@ public class OrderService {
                     .orElseThrow(() -> new RuntimeException("Product not found"));
 
             OrderItem item = new OrderItem();
-            item.setId(UUID.randomUUID());
             item.setOrder(order);
             item.setProduct(product);
             item.setQuantity(itemReq.getQuantity());
@@ -69,5 +70,9 @@ public class OrderService {
 
             orderItemRepository.save(item);
         }
+
+        // ❌ DO NOT save(order) again
+
     }
+
 }

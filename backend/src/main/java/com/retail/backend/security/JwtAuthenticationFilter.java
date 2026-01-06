@@ -4,57 +4,52 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
+import com.retail.backend.service.CustomUserDetailsService;
 import java.io.IOException;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-    private final UserDetailsService userDetailsService;
+    private final CustomUserDetailsService userDetailsService;
 
-    public JwtAuthenticationFilter(JwtService jwtService,
-                                   UserDetailsService userDetailsService) {
+    public JwtAuthenticationFilter(
+            JwtService jwtService,
+            CustomUserDetailsService userDetailsService) {
         this.jwtService = jwtService;
         this.userDetailsService = userDetailsService;
     }
 
-    // 🚫 Skip JWT check for auth endpoints
-
-    //@PreAuthorize("hasRole('CUSTOMER')")
     @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
-        return request.getServletPath().startsWith("/auth");
-    }
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain
+    ) throws ServletException, IOException {
 
-    @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain)
-            throws ServletException, IOException {
+        final String authHeader = request.getHeader("Authorization");
 
-        String authHeader = request.getHeader("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
-        // ✅ Check Bearer token
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+        final String token = authHeader.substring(7);
+        final String username = jwtService.extractUsername(token);
 
-            String jwt = authHeader.substring(7);
+        if (username != null &&
+                SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            if (jwtService.validateToken(jwt)) {
+            UserDetails userDetails =
+                    userDetailsService.loadUserByUsername(username);
 
-                String email = jwtService.extractUsername(jwt);
-
-                UserDetails userDetails =
-                        userDetailsService.loadUserByUsername(email);
+            if (jwtService.validateToken(token, userDetails)) {
 
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
@@ -68,8 +63,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                 .buildDetails(request)
                 );
 
-                SecurityContextHolder.getContext()
+                // 🔥🔥 THIS WAS MISSING / BROKEN 🔥🔥
+                SecurityContextHolder
+                        .getContext()
                         .setAuthentication(authentication);
+
+                System.out.println("AUTH SET IN CONTEXT = " + authentication);
             }
         }
 
