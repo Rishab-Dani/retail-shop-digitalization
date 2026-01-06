@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import PublicLayout from "./layouts/PublicLayout";
 import DashboardLayout from "./layouts/DashboardLayout";
+import CustomerLayout from "./layouts/CustomerLayout";
 
 // Public pages
 import Home from "./pages/Home";
@@ -21,6 +22,10 @@ import Settings from "./pages/Setting";
 import Profile from "./pages/Profile";
 import AddOrders from "./pages/AddOrders";
 import AddCustomers from "./pages/AddCustomers";
+
+// Customer pages
+import ProductList from "./pages/customer/ProductList";
+
 
 function App() {
   return (
@@ -50,6 +55,16 @@ function App() {
           <Route path="/addOrders" element={<AddOrders />} />
           <Route path="/addCustomers" element={<AddCustomers />} />
         </Route>
+
+         {/* Customer ROUTES */}
+         <Route element={<CustomerLayout />}>
+           <Route path="/customer/productlist" element={<ProductList />} />
+           {/*
+           <Route path="/customer/cart" element={<Orders />} />
+           <Route path="/customer/profile" element={<Profile />} /> */}
+         </Route>
+
+
 
       </Routes>
     </BrowserRouter>

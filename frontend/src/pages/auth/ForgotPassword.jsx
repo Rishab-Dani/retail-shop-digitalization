@@ -11,7 +11,7 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="font-display bg-neutral-50 min-h-screen flex flex-col items-center justify-center px-4  bg-gradient-to-b from-blue-500/5">
+    <div className="font-display bg-neutral-50 min-h-screen flex flex-col items-center justify-center px-4 bg-gradient-to-b from-blue-500/5">
       
       {/* LOGO */}
       <div className="flex items-center gap-2 mb-8">
