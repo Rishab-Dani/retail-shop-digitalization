@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useOutletContext } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 
 const categories = [
@@ -58,25 +59,25 @@ export default function MainProductSection() {
 
 
 
-const filteredProducts = products.filter((p) => {
-  const matchCategory =
-    selectedCategory === "All" || p.category === selectedCategory;
+  const filteredProducts = products.filter((p) => {
+    const matchCategory =
+      selectedCategory === "All" || p.category === selectedCategory;
 
-  const matchPrice = p.price <= maxPrice;
+    const matchPrice = p.price <= maxPrice;
 
-  const matchStock = inStockOnly ? p.stock > 0 : true;
+    const matchStock = inStockOnly ? p.stock > 0 : true;
 
-  const matchSearch = p.name
-    .toLowerCase()
-    .includes(searchQuery.toLowerCase());
+    const matchSearch = p.name
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
 
-  return matchCategory && matchPrice && matchStock && matchSearch;
-});
+    return matchCategory && matchPrice && matchStock && matchSearch;
+  });
 
 
   const addToCart = (product) => {
     if (!cart.find((item) => item.id === product.id)) {
-      setCart([...cart, product]);
+      setCart([...cart, { ...product, qty: 1 }]);
     }
   };
 
@@ -96,11 +97,11 @@ const filteredProducts = products.filter((p) => {
 
         <div className="relative w-full sm:w-64">
           <input
-  className="w-full pl-9 pr-4 py-2 rounded-lg border border-slate-200 bg-white text-sm focus:ring-1 focus:ring-blue-600 focus:border-blue-600 outline-none"
-  placeholder="Search products..."
-  value={searchQuery}
-  onChange={(e) => setSearchQuery(e.target.value)}
-/>
+            className="w-full pl-9 pr-4 py-2 rounded-lg border border-slate-200 bg-white text-sm focus:ring-1 focus:ring-blue-600 focus:border-blue-600 outline-none"
+            placeholder="Search products..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
 
           <span className="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-lg">
             search
@@ -149,8 +150,8 @@ const filteredProducts = products.filter((p) => {
                 />
 
                 <span className="text-xs font-bold text-blue-600">
-  Max: ₹{maxPrice.toLocaleString()}
-</span>
+                  Max: ₹{maxPrice.toLocaleString()}
+                </span>
 
               </div>
             </div>
@@ -176,12 +177,14 @@ const filteredProducts = products.filter((p) => {
           >
             {/* IMAGE */}
             <div className="relative h-48 bg-slate-100">
-              <img
-                src={p.image}
-                alt={p.name}
-                className={`w-full h-full object-cover ${p.stock === 0 ? "grayscale" : ""
-                  }`}
-              />
+              <Link to={`/customer/product/${p.id}`} className="block h-full">
+                <img
+                  src={p.image}
+                  alt={p.name}
+                  className={`w-full h-full object-cover transition-transform duration-300 hover:scale-105 ${p.stock === 0 ? "grayscale" : ""
+                    }`}
+                />
+              </Link>
 
               {p.stock === 0 && (
                 <div className="absolute inset-0 bg-white/60 flex items-center justify-center">
@@ -191,6 +194,7 @@ const filteredProducts = products.filter((p) => {
                 </div>
               )}
             </div>
+
 
             {/* DETAILS */}
             <div className="p-4 flex flex-col">
@@ -209,8 +213,8 @@ const filteredProducts = products.filter((p) => {
 
                 <span
                   className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${p.stock > 0
-                      ? "bg-green-100 text-green-700"
-                      : "bg-red-100 text-red-700"
+                    ? "bg-green-100 text-green-700"
+                    : "bg-red-100 text-red-700"
                     }`}
                 >
                   {p.stock > 0
