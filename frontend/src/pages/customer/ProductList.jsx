@@ -77,7 +77,14 @@ export default function MainProductSection() {
 
   const addToCart = (product) => {
     if (!cart.find((item) => item.id === product.id)) {
-      setCart([...cart, { ...product, qty: 1 }]);
+      setCart([
+  ...cart,
+  {
+    ...product,
+    quantity: 1, // 🔥 THIS LINE FIXES EVERYTHING
+  },
+]);
+
     }
   };
 
