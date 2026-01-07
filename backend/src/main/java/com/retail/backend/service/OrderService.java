@@ -33,7 +33,7 @@ public class OrderService {
         this.userRepository = userRepository;
     }
 
-    // ✅ STEP 1: Place Order
+    // STEP 1: Place Order
     @Transactional
     public Order placeOrder(String email, BigDecimal totalAmount) {
 
@@ -45,41 +45,45 @@ public class OrderService {
         order.setStatus("PLACED");
         order.setTotalAmount(totalAmount);
 
-        // ✅ SAVE ONCE
         return orderRepository.save(order);
     }
 
-
-    // ✅ STEP 2: Add Items to Order
     @Transactional
     public void addItemsToOrder(UUID orderId, AddOrderItemsRequest request) {
 
+        // 1. Fetch order
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
 
+        // 2. Loop items
         for (AddOrderItemRequest itemReq : request.getItems()) {
 
+            // 3. Fetch product
             Product product = productRepository.findById(itemReq.getProductId())
                     .orElseThrow(() -> new RuntimeException("Product not found"));
 
-            // ✅ Stock check
+            // 4. Stock validation
             if (product.getStockQuantity() < itemReq.getQuantity()) {
-                throw new RuntimeException("Insufficient stock for product: " + product.getName());
+                throw new RuntimeException(
+                        "Insufficient stock for product: " + product.getName()
+                );
             }
 
-            // ✅ Reduce stock
+            // 5. Reduce stock
             product.setStockQuantity(
                     product.getStockQuantity() - itemReq.getQuantity()
             );
 
+            // 6. Create OrderItem
             OrderItem item = new OrderItem();
             item.setOrder(order);
             item.setProduct(product);
             item.setQuantity(itemReq.getQuantity());
             item.setPrice(product.getPrice());
 
+            // 7. Save child entities
             orderItemRepository.save(item);
-            productRepository.save(product); // save updated stock
+            productRepository.save(product);
         }
 
         // ❌ DO NOT save(order)
