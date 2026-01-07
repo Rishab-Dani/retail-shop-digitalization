@@ -208,7 +208,7 @@ const Login = () => {
                                                   type="checkbox"
                                                   checked={rememberMe}
                                                   onChange={(e) => setRememberMe(e.target.checked)}
-                                                  className="h-4 w-4 rounded border-input-border-light text-primary"
+                                                  className="h-4 w-4 rounded border-input-border-light text-blue-600"
                                              />
                                              <label className="text-xs font-medium text-slate-600">
                                                   Remember for 30 days
