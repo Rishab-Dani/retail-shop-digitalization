@@ -1,5 +1,6 @@
 package com.retail.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -13,7 +14,7 @@ public class OrderItem {
     private UUID id;
 
     @ManyToOne
-    @JoinColumn(name = "order_id")
+    @JsonBackReference
     private Order order;
 
     @ManyToOne
@@ -22,6 +23,9 @@ public class OrderItem {
 
     private int quantity;
     private BigDecimal price;
+
+
+
 
 // getters & setters
 

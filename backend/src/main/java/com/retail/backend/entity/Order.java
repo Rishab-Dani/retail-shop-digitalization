@@ -1,5 +1,6 @@
 package com.retail.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -26,6 +27,11 @@ public class Order {
 
     @Column(updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<OrderItem> items;
+
 
 
     // getters & setters
@@ -69,5 +75,13 @@ public class Order {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public List<OrderItem> getItems() {
+        return items;
+    }
+
+    public void setItems(List<OrderItem> items) {
+        this.items = items;
     }
 }

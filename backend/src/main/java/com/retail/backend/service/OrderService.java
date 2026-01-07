@@ -7,10 +7,11 @@ import com.retail.backend.repository.OrderItemRepository;
 import com.retail.backend.repository.OrderRepository;
 import com.retail.backend.repository.ProductRepository;
 import com.retail.backend.repository.UserRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -88,5 +89,22 @@ public class OrderService {
 
         // ❌ DO NOT save(order)
     }
+
+    @Transactional(readOnly = true)
+    public List<Order> getOrdersForUser(String email, boolean isAdmin) {
+
+        if (isAdmin) {
+            return orderRepository.findAll();
+        }
+
+        return orderRepository.findByUserEmail(email);
+    }
+
+    @Transactional(readOnly = true)
+    public Order getOrderById(UUID orderId) {
+        return orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+    }
+
 
 }

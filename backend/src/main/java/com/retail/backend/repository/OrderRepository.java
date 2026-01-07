@@ -13,6 +13,10 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
 
     @Query("SELECT COALESCE(SUM(o.totalAmount), 0) FROM Order o")
     Double getTotalRevenue();
+
+        // For CUSTOMER
+        List<Order> findByUserEmail(String email);
+
 }
 
 

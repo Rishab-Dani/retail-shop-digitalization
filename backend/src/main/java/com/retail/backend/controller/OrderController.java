@@ -10,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -42,4 +43,30 @@ public class OrderController {
         orderService.addItemsToOrder(orderId, request);
         return ResponseEntity.ok("Order items added successfully");
     }
+
+    @PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
+    @GetMapping
+    public ResponseEntity<List<Order>> getOrders(Authentication authentication) {
+
+        String email = authentication.getName();
+        boolean isAdmin = authentication.getAuthorities()
+                .stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        return ResponseEntity.ok(
+                orderService.getOrdersForUser(email, isAdmin)
+        );
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
+    @GetMapping("/{orderId}")
+    public ResponseEntity<Order> getOrderById(
+            @PathVariable UUID orderId
+    ) {
+        return ResponseEntity.ok(
+                orderService.getOrderById(orderId)
+        );
+    }
+
+
 }
