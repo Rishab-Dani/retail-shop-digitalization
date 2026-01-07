@@ -1,7 +1,6 @@
 package com.retail.backend.controller;
 
 import com.retail.backend.dto.AddOrderItemsRequest;
-import com.retail.backend.dto.OrderRequest;
 import com.retail.backend.dto.PlaceOrderRequest;
 import com.retail.backend.entity.Order;
 import com.retail.backend.service.OrderService;
@@ -10,7 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+
 import java.util.UUID;
 
 @RestController
