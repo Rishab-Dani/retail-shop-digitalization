@@ -43,7 +43,7 @@ public class OrderService {
 
         Order order = new Order();
         order.setUser(user);
-        order.setStatus("PLACED");
+        order.setStatus(OrderStatus.PLACED);
         order.setTotalAmount(totalAmount);
 
         return orderRepository.save(order);
