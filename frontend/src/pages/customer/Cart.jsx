@@ -1,9 +1,9 @@
-import { useOutletContext, Link } from "react-router-dom";
+import { useOutletContext, Link, useNavigate } from "react-router-dom";
 
 const Cart = () => {
   const { cart, setCart } = useOutletContext();
+  const navigate = useNavigate();
 
-  // Quantity functions
   const increaseQty = (id) => {
     setCart(cart.map(item =>
       item.id === id
@@ -24,7 +24,6 @@ const Cart = () => {
     setCart(cart.filter(item => item.id !== id));
   };
 
-  // Calculations
   const subtotal = cart.reduce(
     (sum, item) => sum + item.price * (item.quantity || 1),
     0
@@ -33,51 +32,53 @@ const Cart = () => {
   const tax = subtotal * 0.08;
   const total = subtotal + tax;
 
+  // ✅ EMPTY CART
   if (cart.length === 0) {
+    return (
+      <main className="max-w-7xl mx-auto px-4 py-20 flex flex-col items-center text-center">
+
+        {/* ICON */}
+        <div className="w-24 h-24 rounded-full bg-slate-100 flex items-center justify-center mb-6">
+          <span className="material-symbols-outlined text-[48px] text-slate-400">
+            shopping_cart
+          </span>
+        </div>
+
+        {/* TEXT */}
+        <h2 className="text-2xl font-bold mb-2">
+          Your cart is empty
+        </h2>
+
+        <p className="text-slate-500 mb-8 max-w-md">
+          Looks like you haven’t added anything to your cart yet.
+          Start exploring products and add what you love.
+        </p>
+
+        {/* ACTION */}
+        <Link
+          to="/customer/products"
+          className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition"
+        >
+          Continue Shopping
+        </Link>
+      </main>
+    );
+  }
+
+  // ✅ NORMAL CART
   return (
-    <main className="max-w-7xl mx-auto px-4 py-20 flex flex-col items-center text-center">
-      
-      {/* ICON */}
-      <div className="w-24 h-24 rounded-full bg-slate-100 flex items-center justify-center mb-6">
-        <span className="material-symbols-outlined text-[48px] text-slate-400">
-          shopping_cart
-        </span>
-      </div>
+     <main className="max-w-7xl mx-auto px-4 py-8">
 
-      {/* TEXT */}
-      <h2 className="text-2xl font-bold mb-2">
-        Your cart is empty
-      </h2>
-
-      <p className="text-slate-500 mb-8 max-w-md">
-        Looks like you haven’t added anything to your cart yet.
-        Start exploring products and add what you love.
-      </p>
-
-      {/* ACTION */}
-      <Link
-        to="/customer/products"
-        className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition"
-      >
-        Continue Shopping
-      </Link>
-    </main>
-  );
-}
-
-  return (
-    <main className="max-w-7xl mx-auto px-4 py-8">
-
-      {/* HEADER */}
-      <div className="flex justify-between items-center mb-8">
+     {/* HEADER */}
+     <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-extrabold">
           Shopping Cart{" "}
           <span className="text-lg font-medium text-slate-500">
             ({cart.length} items)
-          </span>
-        </h1>
+         </span>
+       </h1>
 
-        <Link
+         <Link
           to="/customer/products"
           className="text-blue-600 font-medium flex items-center gap-2"
         >
@@ -211,11 +212,11 @@ const Cart = () => {
             </div>
 
             {/* CHECKOUT */}
-            <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-lg flex items-center justify-center gap-2">
-              Proceed to Checkout
-              <span className="material-symbols-outlined">
-                arrow_forward
-              </span>
+            <button
+              onClick={() => navigate("/customer/checkout")}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-lg flex items-center justify-center gap-2"
+            >
+              Proceed to Checkout →
             </button>
 
             {/* SECURE */}
@@ -243,3 +244,4 @@ const Cart = () => {
 };
 
 export default Cart;
+

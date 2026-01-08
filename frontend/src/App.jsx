@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route} from "react-router-dom";
 import PublicLayout from "./layouts/PublicLayout";
 import DashboardLayout from "./layouts/DashboardLayout";
 import CustomerLayout from "./layouts/CustomerLayout";
@@ -65,16 +65,10 @@ function App() {
   <Route path="products" element={<ProductList />} />
   <Route path="product/:id" element={<ProductDetails />} />
    <Route path="cart" element={<Cart />} />
-  <Route path="/customer/checkout" element={<Checkout />} />
-  {/* future */}
-  {/* */}
-  {/* <Route path="profile" element={<CustomerProfile />} /> */}
+ <Route path="checkout" element={<Checkout />}/>
+{/* <Route path="profile" element={<CustomerProfile />} /> */}
 </Route>
-
-
-
-
-      </Routes>
+</Routes>
     </BrowserRouter>
   );
 }
