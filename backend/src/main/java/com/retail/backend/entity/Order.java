@@ -19,8 +19,8 @@ public class Order {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(nullable = false)
-    private String status; // PLACED
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status; // PLACED
 
     @Column(nullable = false)
     private BigDecimal totalAmount;
@@ -31,6 +31,9 @@ public class Order {
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<OrderItem> items;
+
+
+
 
 
 
@@ -53,11 +56,11 @@ public class Order {
         this.user = user;
     }
 
-    public String getStatus() {
+    public OrderStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(OrderStatus status) {
         this.status = status;
     }
 
