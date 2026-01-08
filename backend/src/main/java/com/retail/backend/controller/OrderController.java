@@ -3,6 +3,7 @@ package com.retail.backend.controller;
 import com.retail.backend.dto.AddOrderItemsRequest;
 import com.retail.backend.dto.PlaceOrderRequest;
 import com.retail.backend.entity.Order;
+import com.retail.backend.entity.OrderStatus;
 import com.retail.backend.service.OrderService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -68,5 +69,14 @@ public class OrderController {
         );
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/{orderId}/status")
+    public ResponseEntity<String> updateOrderStatus(
+            @PathVariable UUID orderId,
+            @RequestParam OrderStatus status
+    ) {
+        orderService.updateOrderStatus(orderId, status);
+        return ResponseEntity.ok("Order status updated to " + status);
+    }
 
 }

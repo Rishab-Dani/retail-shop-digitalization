@@ -106,5 +106,24 @@ public class OrderService {
                 .orElseThrow(() -> new RuntimeException("Order not found"));
     }
 
+    @Transactional
+    public void updateOrderStatus(UUID orderId, OrderStatus newStatus) {
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        OrderStatus currentStatus = order.getStatus();
+
+        // 🔒 Simple business rule
+        if (currentStatus == OrderStatus.CANCELLED ||
+                currentStatus == OrderStatus.DELIVERED) {
+            throw new RuntimeException(
+                    "Cannot change status after " + currentStatus
+            );
+        }
+
+        order.setStatus(newStatus);
+        orderRepository.save(order);
+    }
 
 }
