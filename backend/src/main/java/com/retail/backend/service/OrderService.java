@@ -91,14 +91,23 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public List<Order> getOrdersForUser(String email, boolean isAdmin) {
+    public List<Order> getOrders(
+            String email,
+            boolean isAdmin,
+            OrderStatus status
+    ) {
 
         if (isAdmin) {
-            return orderRepository.findAll();
+            return (status == null)
+                    ? orderRepository.findAll()
+                    : orderRepository.findByStatus(status);
         }
 
-        return orderRepository.findByUserEmail(email);
+        return (status == null)
+                ? orderRepository.findByUserEmail(email)
+                : orderRepository.findByUserEmailAndStatus(email, status);
     }
+
 
     @Transactional(readOnly = true)
     public Order getOrderById(UUID orderId) {
