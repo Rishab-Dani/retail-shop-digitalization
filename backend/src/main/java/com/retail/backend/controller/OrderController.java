@@ -47,17 +47,21 @@ public class OrderController {
 
     @PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
     @GetMapping
-    public ResponseEntity<List<Order>> getOrders(Authentication authentication) {
-
+    public ResponseEntity<List<Order>> getOrders(
+            @RequestParam(required = false) OrderStatus status,
+            Authentication authentication
+    ) {
         String email = authentication.getName();
         boolean isAdmin = authentication.getAuthorities()
                 .stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
 
-        return ResponseEntity.ok(
-                orderService.getOrdersForUser(email, isAdmin)
-        );
+        List<Order> orders =
+                orderService.getOrders(email, isAdmin, status);
+
+        return ResponseEntity.ok(orders);
     }
+
 
     @PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
     @GetMapping("/{orderId}")

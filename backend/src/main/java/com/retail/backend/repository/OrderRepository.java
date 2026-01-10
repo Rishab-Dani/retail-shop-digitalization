@@ -1,6 +1,7 @@
 package com.retail.backend.repository;
 
 import com.retail.backend.entity.Order;
+import com.retail.backend.entity.OrderStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -16,6 +17,14 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
 
         // For CUSTOMER
         List<Order> findByUserEmail(String email);
+
+        List<Order> findByStatus(OrderStatus status);
+
+        List<Order> findByUserEmailAndStatus(
+            String email,
+            OrderStatus status
+    );
+
 
 }
 
