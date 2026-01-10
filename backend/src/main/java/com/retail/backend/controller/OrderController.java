@@ -66,11 +66,16 @@ public class OrderController {
     @PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
     @GetMapping("/{orderId}")
     public ResponseEntity<Order> getOrderById(
-            @PathVariable UUID orderId
+            @PathVariable UUID orderId,
+            Authentication authentication
     ) {
-        return ResponseEntity.ok(
-                orderService.getOrderById(orderId)
-        );
+        String email = authentication.getName();
+        boolean isAdmin = authentication.getAuthorities()
+                .stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        Order order = orderService.getOrderById(orderId, email, isAdmin);
+        return ResponseEntity.ok(order);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
