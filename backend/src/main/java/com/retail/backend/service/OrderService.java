@@ -110,10 +110,22 @@ public class OrderService {
 
 
     @Transactional(readOnly = true)
-    public Order getOrderById(UUID orderId) {
-        return orderRepository.findById(orderId)
+    public Order getOrderById(
+            UUID orderId,
+            String email,
+            boolean isAdmin
+    ) {
+        Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        // 🔐 CUSTOMER can access only their own order
+        if (!isAdmin && !order.getUser().getEmail().equals(email)) {
+            throw new RuntimeException("Access denied");
+        }
+
+        return order;
     }
+
 
     @Transactional
     public void updateOrderStatus(UUID orderId, OrderStatus newStatus) {
