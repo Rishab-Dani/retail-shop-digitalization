@@ -147,4 +147,29 @@ public class OrderService {
         orderRepository.save(order);
     }
 
+    @Transactional
+    public void cancelOrder(UUID orderId) {
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        if (order.getStatus() == OrderStatus.DELIVERED ||
+                order.getStatus() == OrderStatus.CANCELLED) {
+            throw new RuntimeException("Order cannot be cancelled");
+        }
+
+        // 🔄 Restore stock
+        for (OrderItem item : order.getItems()) {
+            Product product = item.getProduct();
+            product.setStockQuantity(
+                    product.getStockQuantity() + item.getQuantity()
+            );
+            productRepository.save(product);
+        }
+
+        order.setStatus(OrderStatus.CANCELLED);
+        orderRepository.save(order);
+    }
+
+
 }
