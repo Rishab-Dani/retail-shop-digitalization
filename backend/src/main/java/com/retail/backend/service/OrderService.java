@@ -60,6 +60,10 @@ public class OrderService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
 
+        if (order.getStatus() != OrderStatus.PLACED) {
+            throw new IllegalStateException("Order cannot be modified after confirmation");
+        }
+
         // 2. Loop items
         for (AddOrderItemRequest itemReq : request.getItems()) {
 
@@ -89,9 +93,6 @@ public class OrderService {
             // 7. Save child entities
             orderItemRepository.save(item);
             productRepository.save(product);
-        }
-        if (order.getStatus() != OrderStatus.PLACED) {
-            throw new IllegalStateException("Order cannot be modified after confirmation");
         }
 
         // ❌ DO NOT save(order)
@@ -153,7 +154,7 @@ public class OrderService {
         validateOrderStatusTransition(order.getStatus(), newStatus);
 
         order.setStatus(newStatus);
-        return orderRepository.save(order); // return need or not ?
+        return orderRepository.save(order);
 
     }
 
@@ -179,10 +180,6 @@ public class OrderService {
 
         order.setStatus(OrderStatus.CANCELLED);
         orderRepository.save(order);
-
-        if (order.getStatus() != OrderStatus.PLACED) {
-            throw new IllegalStateException("Order cannot be modified after confirmation");
-        }
 
     }
 
