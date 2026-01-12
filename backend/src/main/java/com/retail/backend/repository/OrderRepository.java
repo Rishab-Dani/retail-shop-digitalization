@@ -4,8 +4,8 @@ import com.retail.backend.entity.Order;
 import com.retail.backend.entity.OrderStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-
-import java.math.BigDecimal;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,6 +25,7 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
             OrderStatus status
     );
 
+    Page<Order> findByUserEmail(String email, Pageable pageable);
 
 }
 
