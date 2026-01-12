@@ -5,6 +5,8 @@ import com.retail.backend.dto.PlaceOrderRequest;
 import com.retail.backend.entity.Order;
 import com.retail.backend.entity.OrderStatus;
 import com.retail.backend.service.OrderService;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -45,21 +49,32 @@ public class OrderController {
         return ResponseEntity.ok("Order items added successfully");
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
+    // GET /api/orders?page=0&size=5
     @GetMapping
-    public ResponseEntity<List<Order>> getOrders(
-            @RequestParam(required = false) OrderStatus status,
-            Authentication authentication
+    @PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
+    public ResponseEntity<Page<Order>> getOrders(
+            Authentication authentication,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "createdAt,desc") String sort
     ) {
-        String email = authentication.getName();
         boolean isAdmin = authentication.getAuthorities()
                 .stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
 
-        List<Order> orders =
-                orderService.getOrders(email, isAdmin, status);
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                Sort.by(sort.split(",")[0]).descending()
+        );
 
-        return ResponseEntity.ok(orders);
+        return ResponseEntity.ok(
+                orderService.getOrderHistory(
+                        authentication.getName(),
+                        isAdmin,
+                        pageable
+                )
+        );
     }
 
 
@@ -88,11 +103,17 @@ public class OrderController {
         return ResponseEntity.ok("Order status updated to " + status);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
-    @PutMapping("/{orderId}/cancel")
-    public ResponseEntity<String> cancelOrder(@PathVariable UUID orderId) {
-        orderService.cancelOrder(orderId);
-        return ResponseEntity.ok("Order cancelled successfully");
+
+
+    // GET /api/orders/status?status=CONFIRMED
+    @GetMapping("/status")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<Order>> getOrdersByStatus(
+            @RequestParam OrderStatus status
+    ) {
+        return ResponseEntity.ok(
+                orderService.getOrdersByStatus(status)
+        );
     }
 
 }

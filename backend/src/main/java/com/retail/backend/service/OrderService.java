@@ -14,6 +14,9 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 @Service
 public class OrderService {
 
@@ -169,6 +172,23 @@ public class OrderService {
 
         order.setStatus(OrderStatus.CANCELLED);
         orderRepository.save(order);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Order> getOrderHistory(
+            String email,
+            boolean isAdmin,
+            Pageable pageable
+    ) {
+        if (isAdmin) {
+            return orderRepository.findAll(pageable);
+        }
+        return orderRepository.findByUserEmail(email, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Order> getOrdersByStatus(OrderStatus status) {
+        return orderRepository.findByStatus(status);
     }
 
 
