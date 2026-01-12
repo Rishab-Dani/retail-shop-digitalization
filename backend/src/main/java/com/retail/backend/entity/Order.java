@@ -32,11 +32,6 @@ public class Order {
     @JsonManagedReference
     private List<OrderItem> items;
 
-
-
-
-
-
     // getters & setters
 
 
