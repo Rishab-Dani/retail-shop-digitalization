@@ -1,5 +1,7 @@
 import { useOutletContext, Link, useNavigate } from "react-router-dom";
 
+
+
 const Cart = () => {
   const { cart, setCart } = useOutletContext();
   const navigate = useNavigate();

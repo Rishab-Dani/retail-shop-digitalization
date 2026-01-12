@@ -27,6 +27,8 @@ useEffect(() => {
   const shipping = 0;
   const total = subtotal + tax + shipping;
 
+  
+
   return (
     <main className="max-w-[960px] mx-auto px-6 py-12">
 

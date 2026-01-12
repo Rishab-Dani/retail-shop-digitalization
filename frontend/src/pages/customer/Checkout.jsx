@@ -224,8 +224,11 @@ const placeOrder = () => {
             <div className="p-6 space-y-6">
               <div className="flex justify-between text-sm">
                 <span>Subtotal</span>
-                <span className="font-medium">$348.00</span>
+                 <span className="font-medium">₹{subtotal.toFixed(2)}</span>
+                <span>₹{tax.toFixed(2)}</span>
               </div>
+             
+
 
               <div className="flex justify-between text-sm">
                 <span>Shipping</span>
