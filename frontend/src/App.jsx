@@ -28,6 +28,7 @@ import ProductList from "./pages/Customer/ProductList";
 import ProductDetails from "./pages/Customer/ProductDetails";
 import Cart from "./pages/Customer/Cart";
 import Checkout from "./pages/Customer/Checkout";
+import OrderSuccess from "./pages/Customer/OrderSuccess"
 
 
 
@@ -66,6 +67,7 @@ function App() {
   <Route path="product/:id" element={<ProductDetails />} />
    <Route path="cart" element={<Cart />} />
  <Route path="checkout" element={<Checkout />}/>
+ <Route path="order-success" element={<OrderSuccess />}/>
 {/* <Route path="profile" element={<CustomerProfile />} /> */}
 </Route>
 </Routes>
