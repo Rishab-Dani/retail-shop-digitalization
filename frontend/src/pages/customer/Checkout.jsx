@@ -55,14 +55,24 @@ const validate = () => {
 const placeOrder = () => {
   if (!validate()) return;
 
-  console.log("ORDER DATA", {
+  const orderData = {
     cart,
     shipping: form,
-    total
-  });
+    delivery,
+    payment,
+    subtotal,
+    tax,
+    total,
+    createdAt: new Date().toISOString()
+  };
 
-  navigate("/customer/order-success");
+  console.log("ORDER DATA", orderData);
+
+  navigate("/customer/order-success", {
+    state: orderData
+  });
 };
+
 
    const [delivery, setDelivery] = useState("standard");
   const [payment, setPayment] = useState("card");
@@ -84,10 +94,10 @@ const placeOrder = () => {
           </div>
 
           {/* SHIPPING ADDRESS */}
-          <section className="bg-white rounded-xl shadow-sm border overflow-hidden">
-            <div className="flex items-center gap-3 px-6 py-4 border-b">
+          <section className="bg-white rounded-xl shadow-sm border border-slate-300 overflow-hidden">
+            <div className="flex items-center gap-3 px-6 py-4 border-b border-slate-300">
               <div className="size-8 rounded-full bg-blue-600/10 text-blue-600 flex items-center justify-center">
-                <span className="material-symbols-outlined">location_on</span>
+                <span className="material-symbols-outlined">local_shipping</span>
               </div>
               <h3 className="text-lg font-bold">Shipping Address</h3>
             </div>
@@ -108,12 +118,12 @@ const placeOrder = () => {
 
          
            {/* DELIVERY */}
-        <section className="bg-white rounded-xl py-3 shadow-sm border overflow-hidden">
-          <div className="flex items-center gap-3 px-6 py-2 border-b">
+        <section className="bg-white rounded-xl py-3 shadow-sm border border-slate-300 overflow-hidden">
+          <div className="flex items-center gap-3 px-6 py-2 border-b border-slate-300">
            <div className="size-8 rounded-full bg-blue-600/10 text-blue-600 flex items-center justify-center">
                 <span className="material-symbols-outlined">location_on</span>
               </div>
-          <h3 className="font-bold mb-4">Delivery Method</h3>
+          <h3 className="text-lg font-bold mb-4">Delivery Method</h3>
           </div>
        <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-5">
            {[
@@ -121,7 +131,7 @@ const placeOrder = () => {
             { id: "express", label: "Express Delivery", sub: "1–2 business days", price: "$15.00" }
           ].map(o => (
             <label key={o.id}
-              className={`flex items-center justify-between border rounded-lg p-4 mb-6 cursor-pointer
+              className={`flex items-center justify-between border border-slate-300 rounded-lg p-4 mb-6 cursor-pointer
               ${delivery === o.id ? "border-blue-600 bg-blue-50" : ""}`}>
               <div className="flex gap-3">
                 <input
@@ -142,15 +152,20 @@ const placeOrder = () => {
 
         
           {/* PAYMENT */}
-        <section className="bg-white rounded-xl p-6 shadow-sm">
-          <h3 className="font-bold mb-4">Payment Details</h3>
+        <section className="bg-white rounded-xl py-3 shadow-sm border border-slate-300 overflow-hidden">
+         <div className="flex items-center gap-3 px-6 py-4 border-b border-slate-300">
+              <div className="size-8 rounded-full bg-blue-600/10 text-blue-600 flex items-center justify-center">
+                <span className="material-symbols-outlined">credit_card</span>
+              </div>
+              <h3 className="text-lg font-bold">Payment Method</h3>
+            </div>
 
-          <div className="grid grid-cols-2 gap-4 mb-6">
+          <div className="grid grid-cols-2 gap-4 mb-6 px-6 py-6">
              {["card", "paypal"].map(p => (
               <button
                 key={p}
                 onClick={() => setPayment(p)}
-                className={`border rounded-lg py-3 font-medium
+                className={`border border-slate-300 rounded-lg py-3 font-medium
                 ${payment === p ? "border-blue-600 bg-blue-50" : ""}`}>
                 {p === "card" ? "Credit Card" : "PayPal"}
               </button>
@@ -158,34 +173,36 @@ const placeOrder = () => {
           </div>
 
           {payment === "card" && (
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-4 px-6 py-2">
               <input className="input col-span-2" placeholder="Card Number" />
               <input className="input" placeholder="MM / YY" />
               <input className="input" placeholder="CVC" />
               <input className="input col-span-2" placeholder="Cardholder Name" />
+
+                <label className="flex items-center gap-2 py-3 text-sm text-slate-500">
+                <input type="checkbox" />
+                Save card securely for future purchases
+              </label>
             </div>
 
              
           )}
-            <label className="flex items-center gap-2 text-sm text-slate-500">
-                <input type="checkbox" />
-                Save card securely for future purchases
-              </label>
+          
         </section>
         </div>
 
         {/* RIGHT COLUMN – ORDER SUMMARY */}
         <div className="lg:col-span-5 xl:col-span-4 lg:sticky lg:top-24">
-          <div className="bg-white rounded-xl shadow-lg border overflow-hidden">
-            <div className="p-6 border-b bg-slate-50">
+          <div className="bg-white rounded-xl shadow-lg border border-slate-300 overflow-hidden">
+            <div className="p-6 border-b border-slate-300 bg-slate-50">
               <h3 className="text-lg font-bold">Order Summary</h3>
             </div>
 
             {/* CART ITEMS */}
-            <div className="space-y-6 mb-8 max-h-[320px] overflow-y-auto pr-2">
+            <div className="space-y-6 mb-8 max-h-[320px] overflow-y-auto px-6 py-6">
               {cart.map(item => (
                 <div key={item.id} className="flex gap-4">
-                  <div className="w-20 h-20 rounded-lg bg-slate-100 overflow-hidden border relative">
+                  <div className="w-20 h-20 rounded-lg bg-slate-100 overflow-hidden border border-slate-300 relative">
                     <img src={item.image} className="w-full h-full object-cover" />
                     <span className="absolute top-0 right-0 bg-slate-900/80 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-bl">
                       x{item.quantity || 1}
