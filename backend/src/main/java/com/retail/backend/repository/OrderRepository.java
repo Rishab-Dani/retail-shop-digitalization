@@ -6,16 +6,45 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 
 public interface OrderRepository extends JpaRepository<Order, UUID> {
 
+    long countByStatusNot(OrderStatus status);
+
     @Query("SELECT COALESCE(SUM(o.totalAmount), 0) FROM Order o")
     Double getTotalRevenue();
 
-        // For CUSTOMER
+    @Query("""
+    SELECT COUNT(o)
+    FROM Order o
+    WHERE o.createdAt >= :start
+      AND o.createdAt < :end
+""")
+    long countTodayOrders(
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end
+    );
+
+
+    @Query("""
+    SELECT COALESCE(SUM(o.totalAmount), 0)
+    FROM Order o
+    WHERE o.createdAt >= :start
+      AND o.createdAt < :end
+""")
+    Double sumTodayRevenue(
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end
+    );
+
+
+    // For CUSTOMER
         List<Order> findByUserEmail(String email);
 
         List<Order> findByStatus(OrderStatus status);
@@ -26,6 +55,8 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
     );
 
     Page<Order> findByUserEmail(String email, Pageable pageable);
+
+
 
 }
 

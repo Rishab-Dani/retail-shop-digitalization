@@ -1,22 +1,19 @@
 package com.retail.backend.dto;
 
-import java.math.BigDecimal;
-
 public class DashboardSummary {
 
     private long totalProducts;
     private long totalOrders;
-    private BigDecimal totalRevenue;
+    private double totalRevenue;
 
-
-    // analytics
-    public DashboardSummary(long totalProducts, long totalOrders, Double totalRevenue) {
+    public DashboardSummary(long totalProducts,
+                            long totalOrders,
+                            double totalRevenue) {
         this.totalProducts = totalProducts;
         this.totalOrders = totalOrders;
-        this.totalRevenue = BigDecimal.valueOf(totalRevenue);
+        this.totalRevenue = totalRevenue;
     }
 
-    // getters
     public long getTotalProducts() {
         return totalProducts;
     }
@@ -25,9 +22,7 @@ public class DashboardSummary {
         return totalOrders;
     }
 
-    public BigDecimal getTotalRevenue() {
+    public double getTotalRevenue() {
         return totalRevenue;
     }
-
-
 }
