@@ -3,6 +3,9 @@ package com.retail.backend.service;
 import com.retail.backend.dto.AddOrderItemRequest;
 import com.retail.backend.dto.AddOrderItemsRequest;
 import com.retail.backend.entity.*;
+import com.retail.backend.exception.AccessDeniedException;
+import com.retail.backend.exception.BusinessException;
+import com.retail.backend.exception.ResourceNotFoundException;
 import com.retail.backend.repository.OrderItemRepository;
 import com.retail.backend.repository.OrderRepository;
 import com.retail.backend.repository.ProductRepository;
@@ -43,7 +46,8 @@ public class OrderService {
     public Order placeOrder(String email, BigDecimal totalAmount) {
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+
 
         Order order = new Order();
         order.setUser(user);
@@ -58,7 +62,8 @@ public class OrderService {
 
         // 1. Fetch order
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+
 
         if (order.getStatus() != OrderStatus.PLACED) {
             throw new IllegalStateException("Order cannot be modified after confirmation");
@@ -124,11 +129,13 @@ public class OrderService {
             boolean isAdmin
     ) {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+
 
         // 🔐 CUSTOMER can access only their own order
         if (!isAdmin && !order.getUser().getEmail().equals(email)) {
-            throw new RuntimeException("Access denied");
+            throw new AccessDeniedException("Access denied");
+
         }
 
         return order;
@@ -139,7 +146,8 @@ public class OrderService {
     public Order updateOrderStatus(UUID orderId, OrderStatus newStatus) {
 
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+
 
         OrderStatus currentStatus = order.getStatus();
 
@@ -162,11 +170,12 @@ public class OrderService {
     public void cancelOrder(UUID orderId) {
 
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+
 
         if (order.getStatus() == OrderStatus.DELIVERED ||
                 order.getStatus() == OrderStatus.CANCELLED) {
-            throw new RuntimeException("Order cannot be cancelled");
+            new BusinessException("Order cannot be cancelled");
         }
 
         // 🔄 Restore stock
