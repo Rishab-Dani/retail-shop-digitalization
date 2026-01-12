@@ -90,6 +90,9 @@ public class OrderService {
             orderItemRepository.save(item);
             productRepository.save(product);
         }
+        if (order.getStatus() != OrderStatus.PLACED) {
+            throw new IllegalStateException("Order cannot be modified after confirmation");
+        }
 
         // ❌ DO NOT save(order)
     }
@@ -132,7 +135,7 @@ public class OrderService {
 
 
     @Transactional
-    public void updateOrderStatus(UUID orderId, OrderStatus newStatus) {
+    public Order updateOrderStatus(UUID orderId, OrderStatus newStatus) {
 
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
@@ -147,8 +150,11 @@ public class OrderService {
             );
         }
 
+        validateOrderStatusTransition(order.getStatus(), newStatus);
+
         order.setStatus(newStatus);
-        orderRepository.save(order);
+        return orderRepository.save(order); // return need or not ?
+
     }
 
     @Transactional
@@ -173,6 +179,11 @@ public class OrderService {
 
         order.setStatus(OrderStatus.CANCELLED);
         orderRepository.save(order);
+
+        if (order.getStatus() != OrderStatus.PLACED) {
+            throw new IllegalStateException("Order cannot be modified after confirmation");
+        }
+
     }
 
     @Transactional(readOnly = true)
@@ -192,6 +203,27 @@ public class OrderService {
         return orderRepository.findByStatus(status);
     }
 
+    private void validateOrderStatusTransition(
+            OrderStatus current,
+            OrderStatus next
+    ) {
+        switch (current) {
+            case PLACED -> {
+                if (!(next == OrderStatus.CONFIRMED || next == OrderStatus.CANCELLED))
+                    throw new IllegalStateException("Invalid status transition from PLACED");
+            }
+            case CONFIRMED -> {
+                if (!(next == OrderStatus.SHIPPED || next == OrderStatus.CANCELLED))
+                    throw new IllegalStateException("Invalid status transition from CONFIRMED");
+            }
+            case SHIPPED -> {
+                if (next != OrderStatus.DELIVERED)
+                    throw new IllegalStateException("Invalid status transition from SHIPPED");
+            }
+            case DELIVERED, CANCELLED ->
+                    throw new IllegalStateException("Order is already completed");
+        }
+    }
 
 
 }
