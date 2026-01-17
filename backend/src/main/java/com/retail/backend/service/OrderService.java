@@ -190,6 +190,10 @@ public class OrderService {
         order.setStatus(OrderStatus.CANCELLED);
         orderRepository.save(order);
 
+        if (order.getItems() == null || order.getItems().isEmpty()) {
+            throw new BusinessException("No items found to restore stock");
+        }
+
     }
 
     @Transactional(readOnly = true)
@@ -224,7 +228,7 @@ public class OrderService {
             }
             case SHIPPED -> {
                 if (next != OrderStatus.DELIVERED)
-                    throw new IllegalStateException("Invalid status transition from SHIPPED");
+                    throw new BusinessException("Invalid status transition from SHIPPED");
             }
             case DELIVERED, CANCELLED ->
                     throw new IllegalStateException("Order is already completed");
