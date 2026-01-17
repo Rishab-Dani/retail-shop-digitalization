@@ -66,7 +66,7 @@ public class OrderService {
 
 
         if (order.getStatus() != OrderStatus.PLACED) {
-            throw new IllegalStateException("Order cannot be modified after confirmation");
+            throw new BusinessException("Order cannot be modified after confirmation");
         }
 
         // 2. Loop items
@@ -74,11 +74,11 @@ public class OrderService {
 
             // 3. Fetch product
             Product product = productRepository.findById(itemReq.getProductId())
-                    .orElseThrow(() -> new RuntimeException("Product not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
             // 4. Stock validation
             if (product.getStockQuantity() < itemReq.getQuantity()) {
-                throw new RuntimeException(
+                throw new BusinessException(
                         "Insufficient stock for product: " + product.getName()
                 );
             }
@@ -154,7 +154,7 @@ public class OrderService {
         // 🔒 Simple business rule
         if (currentStatus == OrderStatus.CANCELLED ||
                 currentStatus == OrderStatus.DELIVERED) {
-            throw new RuntimeException(
+            throw new BusinessException(
                     "Cannot change status after " + currentStatus
             );
         }
@@ -172,10 +172,16 @@ public class OrderService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
 
+        // ✅ Cancel is allowed ONLY in these states
+        if (order.getStatus() != OrderStatus.PLACED &&
+                order.getStatus() != OrderStatus.CONFIRMED) {
+            throw new BusinessException(
+                    "Order cannot be cancelled after it is " + order.getStatus()
+            );
+        }
 
-        if (order.getStatus() == OrderStatus.DELIVERED ||
-                order.getStatus() == OrderStatus.CANCELLED) {
-            new BusinessException("Order cannot be cancelled");
+        if (order.getItems() == null || order.getItems().isEmpty()) {
+            throw new BusinessException("Order has no items to cancel");
         }
 
         // 🔄 Restore stock
@@ -189,11 +195,6 @@ public class OrderService {
 
         order.setStatus(OrderStatus.CANCELLED);
         orderRepository.save(order);
-
-        if (order.getItems() == null || order.getItems().isEmpty()) {
-            throw new BusinessException("No items found to restore stock");
-        }
-
     }
 
     @Transactional(readOnly = true)
@@ -219,19 +220,19 @@ public class OrderService {
     ) {
         switch (current) {
             case PLACED -> {
-                if (!(next == OrderStatus.CONFIRMED || next == OrderStatus.CANCELLED))
-                    throw new IllegalStateException("Invalid status transition from PLACED");
+                if (next != OrderStatus.CONFIRMED)
+                    throw new BusinessException("Invalid status transition from PLACED");
             }
             case CONFIRMED -> {
-                if (!(next == OrderStatus.SHIPPED || next == OrderStatus.CANCELLED))
-                    throw new IllegalStateException("Invalid status transition from CONFIRMED");
+                if (next != OrderStatus.SHIPPED)
+                    throw new BusinessException("Invalid status transition from CONFIRMED");
             }
             case SHIPPED -> {
                 if (next != OrderStatus.DELIVERED)
                     throw new BusinessException("Invalid status transition from SHIPPED");
             }
             case DELIVERED, CANCELLED ->
-                    throw new IllegalStateException("Order is already completed");
+                    throw new BusinessException("Order is already completed");
         }
     }
 
