@@ -28,9 +28,13 @@ public class Order {
     @Column(updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @OneToMany(
+            mappedBy = "order",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER
+    )
     private List<OrderItem> items;
+
 
     // getters & setters
 
