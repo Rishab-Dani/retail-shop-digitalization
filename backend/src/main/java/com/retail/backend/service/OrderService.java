@@ -169,22 +169,20 @@ public class OrderService {
     @Transactional
     public void cancelOrder(UUID orderId) {
 
-        Order order = orderRepository.findById(orderId)
+        Order order = orderRepository.findByIdWithItems(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
 
-        // ✅ Cancel is allowed ONLY in these states
         if (order.getStatus() != OrderStatus.PLACED &&
                 order.getStatus() != OrderStatus.CONFIRMED) {
             throw new BusinessException(
-                    "Order cannot be cancelled after it is " + order.getStatus()
+                    "Order cannot be cancelled after " + order.getStatus()
             );
         }
-
-        if (order.getItems() == null || order.getItems().isEmpty()) {
-            throw new BusinessException("Order has no items to cancel");
+        if (order.getItems().isEmpty()) {
+            throw new BusinessException("No items found to restore stock");
         }
 
-        // 🔄 Restore stock
+
         for (OrderItem item : order.getItems()) {
             Product product = item.getProduct();
             product.setStockQuantity(
@@ -196,6 +194,8 @@ public class OrderService {
         order.setStatus(OrderStatus.CANCELLED);
         orderRepository.save(order);
     }
+
+
 
     @Transactional(readOnly = true)
     public Page<Order> getOrderHistory(
@@ -214,25 +214,31 @@ public class OrderService {
         return orderRepository.findByStatus(status);
     }
 
-    private void validateOrderStatusTransition(
-            OrderStatus current,
-            OrderStatus next
-    ) {
+    private void validateOrderStatusTransition(OrderStatus current, OrderStatus next) {
+
         switch (current) {
+
             case PLACED -> {
-                if (next != OrderStatus.CONFIRMED)
+                if (next != OrderStatus.CONFIRMED && next != OrderStatus.CANCELLED) {
                     throw new BusinessException("Invalid status transition from PLACED");
+                }
             }
+
             case CONFIRMED -> {
-                if (next != OrderStatus.SHIPPED)
+                if (next != OrderStatus.SHIPPED && next != OrderStatus.CANCELLED) {
                     throw new BusinessException("Invalid status transition from CONFIRMED");
+                }
             }
+
             case SHIPPED -> {
-                if (next != OrderStatus.DELIVERED)
+                if (next != OrderStatus.DELIVERED) {
                     throw new BusinessException("Invalid status transition from SHIPPED");
+                }
             }
-            case DELIVERED, CANCELLED ->
-                    throw new BusinessException("Order is already completed");
+
+            case DELIVERED, CANCELLED -> {
+                throw new BusinessException("Order is already completed");
+            }
         }
     }
 
