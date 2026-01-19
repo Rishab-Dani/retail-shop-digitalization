@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 
@@ -43,6 +44,13 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
             @Param("end") LocalDateTime end
     );
 
+    @Query("""
+    SELECT o FROM Order o
+    LEFT JOIN FETCH o.items i
+    LEFT JOIN FETCH i.product
+    WHERE o.id = :orderId
+""")
+    Optional<Order> findByIdWithItems(UUID orderId);
 
     // For CUSTOMER
         List<Order> findByUserEmail(String email);
@@ -55,7 +63,6 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
     );
 
     Page<Order> findByUserEmail(String email, Pageable pageable);
-
 
 
 }
