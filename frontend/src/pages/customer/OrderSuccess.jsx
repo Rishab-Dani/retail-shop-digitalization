@@ -2,30 +2,47 @@ import { useOutletContext,useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useMemo } from "react";
 
 const OrderSuccess = () => {
-  const { cart, setCart } = useOutletContext();
-  const {state} = useLocation();
+   const { state } = useLocation();   // 👈 order data
+  const { setCart } = useOutletContext();
   const navigate = useNavigate();
 
-  // Redirect if someone opens directly
-useEffect(() => {
-  if (!state || !cart || cart.length === 0) {
-    navigate("/customer/products");
-  }
-}, [state, cart, navigate]);
+  // Protect route (no direct access)
+  useEffect(() => {
+    if (!state) {
+      navigate("/customer/products");
+    }
+  }, [state, navigate]);
 
+  // Clear cart ONCE after success
+  useEffect(() => {
+    setCart([]);
+  }, [setCart]);
+
+  if (!state) return null;
+
+  const {
+    cart,
+    subtotal,
+    tax,
+    total,
+    shipping,
+    delivery,
+    payment
+  } = state;
 
   const orderId = useMemo(
     () => `ORD-${Math.random().toString(36).slice(2, 8).toUpperCase()}`,
     []
   );
 
-  const subtotal = cart.reduce(
-    (sum, i) => sum + i.price * (i.quantity || 1),
-    0
-  );
-  const tax = subtotal * 0.08;
-  const shipping = 0;
-  const total = subtotal + tax + shipping;
+
+  // const subtotal = cart.reduce(
+  //   (sum, i) => sum + i.price * (i.quantity || 1),
+  //   0
+  // );
+  // const tax = subtotal * 0.08;
+  // const shipping = 0;
+  // const total = subtotal + tax + shipping;
 
   
 
