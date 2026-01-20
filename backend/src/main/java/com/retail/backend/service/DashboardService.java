@@ -3,11 +3,16 @@ package com.retail.backend.service;
 import com.retail.backend.dto.DashboardSummary;
 import com.retail.backend.repository.OrderRepository;
 import com.retail.backend.repository.ProductRepository;
+import com.retail.backend.repository.projection.RevenueByStatus;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import com.retail.backend.entity.Product;
 
 
@@ -53,4 +58,18 @@ public class DashboardService {
         return productRepository.findByStockQuantityLessThanEqual(threshold);
     }
 
+    // get Revenue By Status
+    public Map<String, BigDecimal> getRevenueByStatus() {
+
+        Map<String, BigDecimal> revenueMap = new HashMap<>();
+
+        for (RevenueByStatus row : orderRepository.revenueGroupedByStatus()) {
+            revenueMap.put(
+                    row.getStatus().name(),
+                    row.getTotal() == null ? BigDecimal.ZERO : row.getTotal()
+            );
+        }
+
+        return revenueMap;
+    }
 }

@@ -2,12 +2,16 @@ package com.retail.backend.repository;
 
 import com.retail.backend.entity.Order;
 import com.retail.backend.entity.OrderStatus;
+import com.retail.backend.repository.projection.DailyMetric;
+import com.retail.backend.repository.projection.TopProduct;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
+import com.retail.backend.repository.projection.RevenueByStatus;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -71,13 +75,15 @@ ORDER BY DATE(o.createdAt)
 
     // daily revenue
     @Query("""
-SELECT DATE(o.createdAt), SUM(o.totalAmount)
-FROM Order o
-WHERE o.status = 'DELIVERED'
-GROUP BY DATE(o.createdAt)
-ORDER BY DATE(o.createdAt)
+    SELECT DATE(o.createdAt) AS date,
+           SUM(o.totalAmount) AS value
+    FROM Order o
+    WHERE o.status = 'DELIVERED'
+      AND o.createdAt >= CURRENT_DATE - 7
+    GROUP BY DATE(o.createdAt)
+    ORDER BY date
 """)
-    List<Object[]> dailyRevenue();
+    List<DailyMetric> dailyRevenue();
 
     // top Selling Products
     @Query("""
@@ -88,6 +94,47 @@ GROUP BY p.name
 ORDER BY SUM(oi.quantity) DESC
 """)
     List<Object[]> topSellingProducts();
+
+// totalRevenue
+    @Query("""
+    SELECT COALESCE(SUM(o.totalAmount), 0)
+    FROM Order o
+    WHERE o.status = 'DELIVERED'
+""")
+    BigDecimal totalRevenue();
+
+
+    // revenueGroupedByStatus
+    @Query("""
+    SELECT o.status AS status,
+           SUM(o.totalAmount) AS total
+    FROM Order o
+    GROUP BY o.status
+""")
+    List<RevenueByStatus> revenueGroupedByStatus();
+
+    // dailyOrders
+    @Query("""
+    SELECT DATE(o.createdAt) AS date,
+           COUNT(o) AS value
+    FROM Order o
+    WHERE o.createdAt >= CURRENT_DATE - 7
+    GROUP BY DATE(o.createdAt)
+    ORDER BY date
+""")
+    List<DailyMetric> dailyOrders();
+
+    // top products
+    @Query("""
+    SELECT p.name AS productName,
+           SUM(oi.quantity) AS quantitySold
+    FROM OrderItem oi
+    JOIN oi.product p
+    GROUP BY p.name
+    ORDER BY quantitySold DESC
+""")
+    List<TopProduct> topProducts(Pageable pageable);
+
 
     // For CUSTOMER
         List<Order> findByUserEmail(String email);
@@ -100,6 +147,9 @@ ORDER BY SUM(oi.quantity) DESC
     );
 
     Page<Order> findByUserEmail(String email, Pageable pageable);
+
+    @Query("SELECT COUNT(o) FROM Order o")
+    long countTotalOrders();
 
 
 }
