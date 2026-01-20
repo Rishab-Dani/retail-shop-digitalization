@@ -1,19 +1,18 @@
 package com.retail.backend.controller;
 
 import com.retail.backend.dto.DashboardSummary;
+import com.retail.backend.dto.dashboard.DashboardMetricsResponse;
 import com.retail.backend.entity.Product;
 import com.retail.backend.service.DashboardService;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/dashboard")
 @PreAuthorize("hasRole('ADMIN')")
+@CrossOrigin // frontend ready
 public class DashboardController {
 
     private final DashboardService dashboardService;
@@ -22,14 +21,24 @@ public class DashboardController {
         this.dashboardService = dashboardService;
     }
 
+
+    // 1️⃣ BASIC DASHBOARD SUMMARY
     @GetMapping("/summary")
     public DashboardSummary getSummary() {
         return dashboardService.getSummary();
     }
 
+    // 2️⃣ ADVANCED DASHBOARD METRICS
+    @GetMapping("/metrics")
+    public DashboardMetricsResponse getAdvancedMetrics() {
+        return dashboardService.getAdvancedDashboardMetrics();
+    }
+
+    // 3️⃣ LOW STOCK PRODUCTS
     @GetMapping("/low-stock")
     public List<Product> getLowStockProducts(
-            @RequestParam(defaultValue = "5") int threshold) {
+            @RequestParam(defaultValue = "5") int threshold
+    ) {
         return dashboardService.getLowStockProducts(threshold);
     }
 }

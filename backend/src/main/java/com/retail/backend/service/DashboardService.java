@@ -111,8 +111,11 @@ public class DashboardService {
             dashboard.setRevenueByStatus(revenueByStatus);
 
             // 3️⃣ Daily orders
+            LocalDateTime sevenDaysAgo =
+                    LocalDate.now().minusDays(7).atStartOfDay();
+
             List<com.retail.backend.dto.dashboard.DailyMetric> dailyOrders =
-                    orderRepository.dailyOrders()
+                    orderRepository.dailyOrders(sevenDaysAgo)
                             .stream()
                             .map(p -> new com.retail.backend.dto.dashboard.DailyMetric(
                                     p.getDate(),
@@ -123,8 +126,11 @@ public class DashboardService {
             dashboard.setDailyOrders(dailyOrders);
 
             // 4️⃣ Daily revenue
+//            LocalDateTime sevenDaysAgo =
+//                    LocalDate.now().minusDays(7).atStartOfDay();
+
             List<com.retail.backend.dto.dashboard.DailyMetric> dailyRevenue =
-                    orderRepository.dailyRevenue()
+                    orderRepository.dailyRevenue(sevenDaysAgo)
                             .stream()
                             .map(p -> new com.retail.backend.dto.dashboard.DailyMetric(
                                     p.getDate(),

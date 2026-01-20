@@ -79,11 +79,11 @@ ORDER BY DATE(o.createdAt)
            SUM(o.totalAmount) AS value
     FROM Order o
     WHERE o.status = 'DELIVERED'
-      AND o.createdAt >= CURRENT_DATE - 7
+      AND o.createdAt >= :startDate
     GROUP BY DATE(o.createdAt)
     ORDER BY date
 """)
-    List<DailyMetric> dailyRevenue();
+    List<DailyMetric> dailyRevenue(@Param("startDate") LocalDateTime startDate);
 
     // top Selling Products
     @Query("""
@@ -118,11 +118,12 @@ ORDER BY SUM(oi.quantity) DESC
     SELECT DATE(o.createdAt) AS date,
            COUNT(o) AS value
     FROM Order o
-    WHERE o.createdAt >= CURRENT_DATE - 7
+    WHERE o.createdAt >= :startDate
     GROUP BY DATE(o.createdAt)
     ORDER BY date
 """)
-    List<DailyMetric> dailyOrders();
+    List<DailyMetric> dailyOrders(@Param("startDate") LocalDateTime startDate);
+
 
     // top products
     @Query("""
