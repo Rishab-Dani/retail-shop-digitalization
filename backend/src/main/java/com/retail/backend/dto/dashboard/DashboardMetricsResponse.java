@@ -6,18 +6,20 @@ import java.util.Map;
 
 public class DashboardMetricsResponse {
 
-    // existing / base metrics
     private long totalOrders;
     private long totalCustomers;
     private BigDecimal totalRevenue;
 
-    // advanced metrics
     private Map<String, BigDecimal> revenueByStatus;
+
     private List<DailyMetric> dailyOrders;
     private List<DailyMetric> dailyRevenue;
+
     private List<TopProductMetric> topProducts;
 
     // getters & setters
+
+
     public long getTotalOrders() {
         return totalOrders;
     }
