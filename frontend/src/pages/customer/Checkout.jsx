@@ -163,7 +163,7 @@ const Checkout = () => {
 
         {/* RIGHT */}
         <div className="lg:col-span-5 xl:col-span-4 sticky top-24">
-          <div className="bg-white rounded-xl border border-slate-300">
+          <div className="bg-white rounded-xl border border-slate-300 shadow-sm">
             <div className="p-6 border-b font-bold">Order Summary</div>
 
             <div className="p-6 space-y-4">
