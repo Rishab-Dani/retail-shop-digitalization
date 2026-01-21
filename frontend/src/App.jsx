@@ -29,6 +29,7 @@ import ProductDetails from "./pages/Customer/ProductDetails";
 import Cart from "./pages/Customer/Cart";
 import Checkout from "./pages/Customer/Checkout";
 import OrderSuccess from "./pages/Customer/OrderSuccess"
+import CustomerProfile from "./pages/Customer/CustomerProfile";
 
 
 
@@ -68,7 +69,7 @@ function App() {
    <Route path="cart" element={<Cart />} />
  <Route path="checkout" element={<Checkout />}/>
  <Route path="order-success" element={<OrderSuccess />}/>
-{/* <Route path="profile" element={<CustomerProfile />} /> */}
+<Route path="profile" element={<CustomerProfile />} />
 </Route>
 </Routes>
     </BrowserRouter>
