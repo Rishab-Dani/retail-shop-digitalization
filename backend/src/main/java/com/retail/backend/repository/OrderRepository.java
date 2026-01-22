@@ -95,7 +95,7 @@ ORDER BY SUM(oi.quantity) DESC
 """)
     List<Object[]> topSellingProducts();
 
-// totalRevenue
+    // totalRevenue
     @Query("""
     SELECT COALESCE(SUM(o.totalAmount), 0)
     FROM Order o
@@ -140,11 +140,11 @@ ORDER BY SUM(oi.quantity) DESC
     long countTotalOrders();
 
     // For CUSTOMER
-        List<Order> findByUserEmail(String email);
+    List<Order> findByUserEmail(String email);
 
-        List<Order> findByStatus(OrderStatus status);
+    List<Order> findByStatus(OrderStatus status);
 
-        List<Order> findByUserEmailAndStatus(
+    List<Order> findByUserEmailAndStatus(
             String email,
             OrderStatus status
     );
