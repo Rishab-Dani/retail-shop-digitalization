@@ -93,9 +93,11 @@ public class OrderController {
         return ResponseEntity.ok(order);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
     @PutMapping("/{orderId}/cancel")
     public ResponseEntity<String> cancelOrder(
-            @PathVariable("orderId") UUID orderId
+            @PathVariable UUID orderId,
+            Authentication authentication
     ) {
         orderService.cancelOrder(orderId);
         return ResponseEntity.ok("Order cancelled successfully");

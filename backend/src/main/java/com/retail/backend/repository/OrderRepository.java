@@ -49,12 +49,13 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
     );
 
     @Query("""
-    SELECT o FROM Order o
-    LEFT JOIN FETCH o.items i
-    LEFT JOIN FETCH i.product
-    WHERE o.id = :orderId
+SELECT DISTINCT o FROM Order o
+LEFT JOIN FETCH o.items i
+LEFT JOIN FETCH i.product
+WHERE o.id = :orderId
 """)
-    Optional<Order> findByIdWithItems(UUID orderId);
+    Optional<Order> findByIdWithItems(@Param("orderId") UUID orderId);
+
 
     // revenue By Status
     @Query("""
