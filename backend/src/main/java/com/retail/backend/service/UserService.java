@@ -1,6 +1,7 @@
 package com.retail.backend.service;
 
 import com.retail.backend.dto.CustomerProfileResponse;
+import com.retail.backend.dto.UpdateCustomerProfileRequest;
 import com.retail.backend.entity.User;
 import com.retail.backend.exception.ResourceNotFoundException;
 import com.retail.backend.repository.UserRepository;
@@ -38,5 +39,20 @@ public class UserService {
                 user.isEnabled()
         );
     }
+
+    @Transactional
+    public void updateMyProfile(
+            String email,
+            UpdateCustomerProfileRequest request
+    ) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        user.setName(request.getName());
+
+        userRepository.save(user);
+    }
+
 
 }
