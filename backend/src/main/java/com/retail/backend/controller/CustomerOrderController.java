@@ -1,15 +1,17 @@
 package com.retail.backend.controller;
 
+import com.retail.backend.dto.AddOrderItemsRequest;
+import com.retail.backend.dto.PlaceOrderRequest;
 import com.retail.backend.entity.Order;
 import com.retail.backend.entity.OrderStatus;
 import com.retail.backend.service.OrderService;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/customer/orders")
@@ -21,7 +23,29 @@ public class CustomerOrderController {
     public CustomerOrderController(OrderService orderService) {
         this.orderService = orderService;
     }
+    @PostMapping("/{orderId}/items")
+    public ResponseEntity<String> addItems(
+            @PathVariable UUID orderId,
+            @RequestBody AddOrderItemsRequest request,
+            Authentication authentication
+    ) {
+        orderService.addItemsToOrder(orderId, request);
+        return ResponseEntity.ok("Order items added successfully");
+    }
 
+    // ✅ PLACE ORDER (CUSTOMER)
+    @PostMapping
+    public Order placeOrder(
+            @RequestBody PlaceOrderRequest request,
+            Authentication authentication
+    ) {
+        return orderService.placeOrder(
+                authentication.getName(),
+                request.getTotalAmount()
+        );
+    }
+
+    // ✅ GET CUSTOMER ORDERS (pagination + sorting + filtering)
     @GetMapping
     public Page<Order> getCustomerOrders(
             @RequestParam(defaultValue = "0") int page,
@@ -40,4 +64,14 @@ public class CustomerOrderController {
                 sortDir
         );
     }
+
+    @PutMapping("/{orderId}/cancel")
+    public ResponseEntity<String> cancelOrder(
+            @PathVariable UUID orderId,
+            Authentication authentication
+    ) {
+        orderService.cancelOrder(orderId);
+        return ResponseEntity.ok("Order cancelled successfully");
+    }
+
 }

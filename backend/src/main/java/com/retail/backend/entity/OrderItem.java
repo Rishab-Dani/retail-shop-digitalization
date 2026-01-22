@@ -13,10 +13,10 @@ public class OrderItem {
     @GeneratedValue
     private UUID id;
 
-    @ManyToOne
-    @JoinColumn(name = "order_id")
-    @JsonBackReference
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id", nullable = false)
     private Order order;
+
 
     @ManyToOne
     @JoinColumn(name = "product_id")

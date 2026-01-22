@@ -12,6 +12,7 @@ import com.retail.backend.repository.ProductRepository;
 import com.retail.backend.repository.UserRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
@@ -64,7 +65,7 @@ public class OrderService {
     public void addItemsToOrder(UUID orderId, AddOrderItemsRequest request) {
 
         // 1. Fetch order
-        Order order = orderRepository.findById(orderId)
+        Order order = orderRepository.findByIdWithItems(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
 
 
@@ -98,6 +99,8 @@ public class OrderService {
             item.setQuantity(itemReq.getQuantity());
             item.setPrice(product.getPrice());
 
+            order.getItems().add(item);
+
             // 7. Save child entities
             orderItemRepository.save(item);
             productRepository.save(product);
@@ -126,19 +129,13 @@ public class OrderService {
 
 
     @Transactional(readOnly = true)
-    public Order getOrderById(
-            UUID orderId,
-            String email,
-            boolean isAdmin
-    ) {
-        Order order = orderRepository.findById(orderId)
+    public Order getOrderById(UUID orderId, String email, boolean isAdmin) {
+
+        Order order = orderRepository.findByIdWithItems(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
 
-
-        // 🔐 CUSTOMER can access only their own order
         if (!isAdmin && !order.getUser().getEmail().equals(email)) {
             throw new AccessDeniedException("Access denied");
-
         }
 
         return order;
@@ -175,18 +172,34 @@ public class OrderService {
         Order order = orderRepository.findByIdWithItems(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
 
+        // 🔐 FIX: Ownership check (ADD HERE)
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        String loggedInEmail = authentication.getName();
+
+        if (!order.getUser().getEmail().equals(loggedInEmail)) {
+            throw new AccessDeniedException(
+                    "You are not allowed to cancel this order"
+            );
+        }
+
+        // 🚫 Status validation
         if (order.getStatus() != OrderStatus.PLACED &&
                 order.getStatus() != OrderStatus.CONFIRMED) {
             throw new BusinessException(
                     "Order cannot be cancelled after " + order.getStatus()
             );
         }
-        if (order.getItems().isEmpty()) {
+
+        List<OrderItem> items = order.getItems();
+
+        if (items == null || items.isEmpty()) {
             throw new BusinessException("No items found to restore stock");
         }
 
-
-        for (OrderItem item : order.getItems()) {
+        // 🔄 Restore stock
+        for (OrderItem item : items) {
             Product product = item.getProduct();
             product.setStockQuantity(
                     product.getStockQuantity() + item.getQuantity()
@@ -197,6 +210,7 @@ public class OrderService {
         order.setStatus(OrderStatus.CANCELLED);
         orderRepository.save(order);
     }
+
 
 
 
