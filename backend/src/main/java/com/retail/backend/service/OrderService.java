@@ -10,6 +10,9 @@ import com.retail.backend.repository.OrderItemRepository;
 import com.retail.backend.repository.OrderRepository;
 import com.retail.backend.repository.ProductRepository;
 import com.retail.backend.repository.UserRepository;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -241,6 +244,27 @@ public class OrderService {
             }
         }
     }
+    public Page<Order> getCustomerOrders(
+            String email,
+            OrderStatus status,
+            int page,
+            int size,
+            String sortBy,
+            String sortDir
+    ) {
+        Sort sort = sortDir.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        if (status != null) {
+            return orderRepository.findByUserEmailAndStatus(email, status, pageable);
+        }
+
+        return orderRepository.findByUserEmail(email, pageable);
+    }
+
 
 
 }
