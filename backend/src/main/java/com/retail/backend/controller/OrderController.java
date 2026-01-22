@@ -124,5 +124,25 @@ public class OrderController {
         );
     }
 
+    @GetMapping("/customer/orders")
+    public Page<Order> getCustomerOrders(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortDir,
+            @RequestParam(required = false) OrderStatus status,
+            Authentication authentication
+    ) {
+        String email = authentication.getName();
+
+        return orderService.getCustomerOrders(
+                email,
+                status,
+                page,
+                size,
+                sortBy,
+                sortDir
+        );
+    }
 
 }

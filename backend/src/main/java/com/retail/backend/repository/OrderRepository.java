@@ -136,6 +136,8 @@ ORDER BY SUM(oi.quantity) DESC
 """)
     List<TopProduct> topProducts(Pageable pageable);
 
+    @Query("SELECT COUNT(o) FROM Order o")
+    long countTotalOrders();
 
     // For CUSTOMER
         List<Order> findByUserEmail(String email);
@@ -149,8 +151,11 @@ ORDER BY SUM(oi.quantity) DESC
 
     Page<Order> findByUserEmail(String email, Pageable pageable);
 
-    @Query("SELECT COUNT(o) FROM Order o")
-    long countTotalOrders();
+    Page<Order> findByUserEmailAndStatus(
+            String email,
+            OrderStatus status,
+            Pageable pageable
+    );
 
 
 }
