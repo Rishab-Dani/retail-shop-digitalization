@@ -1,4 +1,7 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { loginApi } from "../../api/authService";
+
 
 const Login = () => {
      const [email, setEmail] = useState("");
@@ -13,6 +16,8 @@ const Login = () => {
                setRememberMe(true);
           }
      }, []);
+
+     const navigate = useNavigate();
 
      return (
           <div className="font-display bg-neutral-50  text-slate-900 min-h-screen flex flex-col ">
@@ -136,19 +141,27 @@ const Login = () => {
                               {/* Form */}
                               <form
                                    className="flex flex-col gap-5"
-                                   onSubmit={(e) => {
+                                   onSubmit={async (e) => {
                                         e.preventDefault();
 
-                                        if (rememberMe) {
-                                             localStorage.setItem("rememberEmail", email);
-                                        } else {
-                                             localStorage.removeItem("rememberEmail");
-                                        }
+                                        try {
+                                             const response = await loginApi(email, password);
 
-                                        // TODO: Call backend login API here
-                                        console.log("Login submitted", { email, password, rememberMe });
+                                             localStorage.setItem("token", response.token);
+
+                                             if (rememberMe) {
+                                                  localStorage.setItem("rememberEmail", email);
+                                             } else {
+                                                  localStorage.removeItem("rememberEmail");
+                                             }
+
+                                             navigate("/customer/products");
+                                        } catch (err) {
+                                             alert("Login failed. Check email or password.");
+                                        }
                                    }}
                               >
+
 
                                    <div className="flex flex-col gap-1.5">
                                         <label className="text-slate-900 dark:text-white text-xs font-medium">
@@ -227,13 +240,13 @@ const Login = () => {
 
 
 
-                                   <button className="bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700">
-                                        <a
-                                             href="/customer/products" 
-                                        >
-                                             Sign In
-                                        </a>
+                                   <button
+                                        type="submit"
+                                        className="bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700"
+                                   >
+                                        Sign In
                                    </button>
+
                               </form>
 
                               <div className="text-center text-sm">
