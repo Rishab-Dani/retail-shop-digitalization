@@ -244,6 +244,8 @@ public class OrderService {
             }
         }
     }
+
+    @Transactional(readOnly = true)
     public Page<Order> getCustomerOrders(
             String email,
             OrderStatus status,
@@ -252,6 +254,14 @@ public class OrderService {
             String sortBy,
             String sortDir
     ) {
+        // FIX 3 – validate sort field
+        List<String> allowedSortFields =
+                List.of("createdAt", "totalAmount", "status");
+
+        if (!allowedSortFields.contains(sortBy)) {
+            sortBy = "createdAt"; // fallback
+        }
+
         Sort sort = sortDir.equalsIgnoreCase("desc")
                 ? Sort.by(sortBy).descending()
                 : Sort.by(sortBy).ascending();
@@ -259,12 +269,15 @@ public class OrderService {
         Pageable pageable = PageRequest.of(page, size, sort);
 
         if (status != null) {
-            return orderRepository.findByUserEmailAndStatus(email, status, pageable);
+            return orderRepository.findByUserEmailAndStatus(
+                    email,
+                    status,
+                    pageable
+            );
         }
 
         return orderRepository.findByUserEmail(email, pageable);
     }
-
 
 
 }

@@ -14,6 +14,7 @@ public class OrderItem {
     private UUID id;
 
     @ManyToOne
+    @JoinColumn(name = "order_id")
     @JsonBackReference
     private Order order;
 

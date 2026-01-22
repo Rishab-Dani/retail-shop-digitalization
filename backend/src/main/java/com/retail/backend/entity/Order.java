@@ -1,5 +1,6 @@
 package com.retail.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
@@ -16,8 +17,14 @@ public class Order {
     private UUID id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
+    @JsonIgnoreProperties({"orders", "password"})
     private User user;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<OrderItem> items;
+
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status; // PLACED
@@ -27,13 +34,6 @@ public class Order {
 
     @Column(updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
-
-    @OneToMany(
-            mappedBy = "order",
-            cascade = CascadeType.ALL,
-            fetch = FetchType.EAGER
-    )
-    private List<OrderItem> items;
 
 
     // getters & setters
