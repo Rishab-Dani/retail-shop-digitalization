@@ -220,3 +220,34 @@ Content-Type: application/json
 
 http://localhost:3000
 http://localhost:5173
+
+# Customer Profile APIs
+
+## Get My Profile
+GET /api/customer/profile
+
+Headers:
+Authorization: Bearer <JWT>
+
+Response:
+{
+"name": "string",
+"email": "string",
+"role": "CUSTOMER",
+"enabled": boolean
+}
+
+
+## Update My Profile
+PUT /api/customer/profile
+
+Headers:
+Authorization: Bearer <JWT>
+
+Request:
+{
+"name": "string"
+}
+
+Response: 200 OK
+Profile updated successfully
