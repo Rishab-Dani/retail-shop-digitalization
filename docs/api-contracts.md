@@ -251,3 +251,48 @@ Request:
 
 Response: 200 OK
 Profile updated successfully
+
+
+## Change Password
+PUT /api/customer/profile/password
+
+Headers:
+Authorization: Bearer <JWT>
+
+Request:
+{
+"currentPassword": "string",
+"newPassword": "string"
+}
+
+Response: 200 OK
+Password changed successfully
+
+## Forgot Password
+
+POST /auth/forgot-password
+
+Request:
+
+{
+"email": "string"
+}
+
+
+Response: 200 OK
+Reset token generated (check logs)
+
+## Reset Password
+
+POST /auth/reset-password
+
+Request:
+
+{
+"token": "string",
+"newPassword": "string"
+}
+
+
+Response: 200 OK
+Password reset successfully
