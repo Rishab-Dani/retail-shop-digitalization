@@ -1,5 +1,6 @@
 package com.retail.backend.controller;
 
+import com.retail.backend.dto.ChangePasswordRequest;
 import com.retail.backend.dto.CustomerProfileResponse;
 import com.retail.backend.dto.UpdateCustomerProfileRequest;
 import com.retail.backend.service.UserService;
@@ -32,6 +33,15 @@ public class CustomerProfileController {
     ) {
         userService.updateMyProfile(authentication.getName(), request);
         return ResponseEntity.ok("Profile updated successfully");
+    }
+
+    @PutMapping("/password")
+    public ResponseEntity<String> changePassword(
+            @RequestBody @Valid ChangePasswordRequest request,
+            Authentication authentication
+    ) {
+        userService.changePassword(authentication.getName(), request);
+        return ResponseEntity.ok("Password changed successfully");
     }
 
 }
