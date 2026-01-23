@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 const Register = () => {
@@ -13,14 +14,66 @@ const Register = () => {
           confirmPassword: "",
      });
 
+     const isValidEmail = (email) => {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+};
+
+const validateStep1 = () => {
+  if (!formData.fullName.trim()) {
+    alert("Full Name is required");
+    return false;
+  }
+  if (!formData.email.trim()) {
+    alert("Email is required");
+    return false;
+  }
+  if (!isValidEmail(formData.email)) {
+    alert("Please enter a valid email address");
+    return false;
+  }
+  return true;
+};
+
+const validateStep2 = () => {
+  if (!formData.firstName.trim()) {
+    alert("First Name is required");
+    return false;
+  }
+  if (!formData.lastName.trim()) {
+    alert("Last Name is required");
+    return false;
+  }
+  if (!formData.phone.trim()) {
+    alert("Phone number is required");
+    return false;
+  }
+  if (!formData.password) {
+    alert("Password is required");
+    return false;
+  }
+  if (formData.password.length < 6) {
+    alert("Password must be at least 6 characters");
+    return false;
+  }
+  if (formData.password !== formData.confirmPassword) {
+    alert("Passwords do not match");
+    return false;
+  }
+  return true;
+};
+
      const nextStep = () => {
-          if (step < 3) setStep(step + 1);
-     };
+  if (step === 1 && !validateStep1()) return;
+  if (step === 2 && !validateStep2()) return;
+
+  if (step < 3) setStep(step + 1);
+};
 
      const prevStep = () => {
           if (step > 1) setStep(step - 1);
      };
 
+const navigate = useNavigate();
 
      return (
           <div className="font-display bg-neutral-50 min-h-screen flex items-center justify-center px-4 bg-gradient-to-b from-blue-500/5">
@@ -278,11 +331,20 @@ const Register = () => {
                                         Back
                                    </button>
 
-                                   <button
-                                        className="w-1/2 bg-blue-600 text-white font-semibold py-3 rounded-lg"
-                                   >
-                                        Create Account
-                                   </button>
+                                  <button
+  className="w-1/2 bg-blue-600 text-white font-semibold py-3 rounded-lg"
+  onClick={() => {
+    if (!validateStep1()) return;
+    if (!validateStep2()) return;
+
+    alert("Form validated successfully (ready for backend)");
+    navigate("/login");
+  }}
+>
+  Create Account
+</button>
+
+
                               </div>
 
                          </>
