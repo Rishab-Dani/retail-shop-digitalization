@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { registerApi } from "../../api/authService";
 
 const Register = () => {
      const [step, setStep] = useState(1);
@@ -331,14 +332,30 @@ const navigate = useNavigate();
                                         Back
                                    </button>
 
-                                  <button
+                                 <button
   className="w-1/2 bg-blue-600 text-white font-semibold py-3 rounded-lg"
-  onClick={() => {
+  onClick={async () => {
     if (!validateStep1()) return;
     if (!validateStep2()) return;
 
-    alert("Form validated successfully (ready for backend)");
-    navigate("/login");
+    try {
+      const payload = {
+        name: formData.fullName,
+        email: formData.email,
+        password: formData.password,
+        role: "CUSTOMER",
+      };
+
+      await registerApi(payload);
+
+      alert("Account created successfully. Please login.");
+      navigate("/login");
+    } catch (error) {
+      alert(
+        error.response?.data?.message ||
+        "Registration failed. Please try again."
+      );
+    }
   }}
 >
   Create Account
