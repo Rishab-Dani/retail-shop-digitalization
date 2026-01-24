@@ -296,3 +296,23 @@ Request:
 
 Response: 200 OK
 Password reset successfully
+
+## Register
+
+POST /api/auth/register
+
+Request
+
+{
+"name": "Rishi",
+"email": "rishi@gmail.com",
+"password": "password123",
+"phone": "9876543210"
+}
+
+Success Response
+
+{
+"customerId": 1,
+"message": "Registration successful"
+}

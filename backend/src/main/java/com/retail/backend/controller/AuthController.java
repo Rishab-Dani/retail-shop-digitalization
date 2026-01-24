@@ -1,11 +1,12 @@
 package com.retail.backend.controller;
 
-import com.retail.backend.dto.ForgotPasswordRequest;
-import com.retail.backend.dto.LoginRequest;
-import com.retail.backend.dto.ResetPasswordRequest;
+import com.retail.backend.dto.*;
 import com.retail.backend.security.JwtService;
+import com.retail.backend.service.AuthService;
 import com.retail.backend.service.UserService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,14 +24,17 @@ public class AuthController {
     private final JwtService jwtService;
     private final UserService userService;
 
+    private final AuthService authService;
 
 
     public AuthController(AuthenticationManager authenticationManager,
                           JwtService jwtService,
-                          UserService userService) {
+                          UserService userService,
+                          AuthService authService) {
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
         this.userService = userService;
+        this.authService = authService;
     }
 
     @PostMapping("/login")
@@ -77,6 +81,15 @@ public class AuthController {
                 request.getNewPassword()
         );
         return ResponseEntity.ok("Password reset successfully");
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<RegisterResponse> register(
+            @Valid @RequestBody RegisterRequest request) {
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(authService.register(request));
     }
 }
 
