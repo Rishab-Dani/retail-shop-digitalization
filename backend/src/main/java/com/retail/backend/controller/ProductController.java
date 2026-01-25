@@ -4,11 +4,13 @@ import com.retail.backend.entity.Product;
 import com.retail.backend.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@PreAuthorize("hasRole('ADMIN')")
 @RequestMapping("/api/products")
 public class ProductController {
 
@@ -17,8 +19,7 @@ public class ProductController {
     public ProductController(ProductService productService) {
         this.productService = productService;
     }
-
-    @PostMapping
+    @PostMapping("/admin/products")
     public Product createProduct(@Valid @RequestBody Product product) {
         return productService.createProduct(product);
     }

@@ -1,7 +1,9 @@
 package com.retail.backend.service;
 
 import com.retail.backend.entity.Customer;
+import com.retail.backend.entity.User;
 import com.retail.backend.repository.CustomerRepository;
+import com.retail.backend.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -28,6 +30,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .withUsername(customer.getEmail())
                 .password(customer.getPassword())
                 .roles(customer.getRole().name())
+                .disabled(!customer.isActive())
                 .build();
     }
 }
