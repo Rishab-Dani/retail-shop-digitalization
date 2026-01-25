@@ -7,15 +7,25 @@ import com.retail.backend.entity.PasswordResetToken;
 import com.retail.backend.entity.User;
 import com.retail.backend.exception.BusinessException;
 import com.retail.backend.exception.ResourceNotFoundException;
+import com.retail.backend.repository.CustomerRepository;
 import com.retail.backend.repository.PasswordResetTokenRepository;
 import com.retail.backend.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
-
+/**
+ * UserService is used for:
+ * - Admin users
+ * - Authentication flows
+ * - Forgot / Reset password
+ *
+ * Customer-related operations are handled in CustomerService.
+ */
+@Slf4j
 @Service
 public class UserService {
 
@@ -85,44 +95,6 @@ public class UserService {
 
         userRepository.save(user);
     }
-    // ✅ FORGOT PASSWORD
-    @Transactional
-    public void forgotPassword(String email) {
 
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-
-        tokenRepository.deleteByUser_Id(user.getId());
-
-        String token = UUID.randomUUID().toString();
-
-        PasswordResetToken resetToken = new PasswordResetToken();
-        resetToken.setToken(token);
-        resetToken.setUser(user);
-        resetToken.setExpiryTime(LocalDateTime.now().plusMinutes(15));
-
-        tokenRepository.save(resetToken);
-
-        // DEV MODE
-        System.out.println("PASSWORD RESET TOKEN = " + token);
-    }
-
-    // ✅ RESET PASSWORD
-    @Transactional
-    public void resetPassword(String token, String newPassword) {
-
-        PasswordResetToken resetToken = tokenRepository.findByToken(token)
-                .orElseThrow(() -> new BusinessException("Invalid reset token"));
-
-        if (resetToken.getExpiryTime().isBefore(LocalDateTime.now())) {
-            throw new BusinessException("Reset token expired");
-        }
-
-        User user = resetToken.getUser();
-        user.setPassword(passwordEncoder.encode(newPassword));
-
-        userRepository.save(user);
-        tokenRepository.delete(resetToken);
-    }
 
 }

@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
+@Table(name = "password_reset_token")
 public class PasswordResetToken {
 
     @Id
@@ -15,14 +16,14 @@ public class PasswordResetToken {
     @Column(nullable = false, unique = true)
     private String token;
 
-    @OneToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
-    @Column(nullable = false)
+    @Column(name = "expiry_time", nullable = false)
     private LocalDateTime expiryTime;
 
-    //getters and setters
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false) // ✅ EXACT DB COLUMN
+    private User user;
+
+    // getters & setters
 
 
     public UUID getId() {
@@ -41,19 +42,19 @@ public class PasswordResetToken {
         this.token = token;
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
     public LocalDateTime getExpiryTime() {
         return expiryTime;
     }
 
     public void setExpiryTime(LocalDateTime expiryTime) {
         this.expiryTime = expiryTime;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

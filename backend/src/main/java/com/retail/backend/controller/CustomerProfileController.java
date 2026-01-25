@@ -9,9 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
 @RestController
-@RequestMapping("/api/customer/profile")
+@RequestMapping("/api/customer")
 @PreAuthorize("hasRole('CUSTOMER')")
 public class CustomerProfileController {
 
@@ -21,13 +20,13 @@ public class CustomerProfileController {
         this.userService = userService;
     }
 
-    @GetMapping
-    public CustomerProfileResponse getMyProfile(Authentication authentication) {
+    @GetMapping("/profile")
+    public CustomerProfileResponse getProfile(Authentication authentication) {
         return userService.getMyProfile(authentication.getName());
     }
 
-    @PutMapping
-    public ResponseEntity<String> updateMyProfile(
+    @PutMapping("/profile")
+    public ResponseEntity<String> updateProfile(
             @RequestBody @Valid UpdateCustomerProfileRequest request,
             Authentication authentication
     ) {
@@ -35,7 +34,7 @@ public class CustomerProfileController {
         return ResponseEntity.ok("Profile updated successfully");
     }
 
-    @PutMapping("/password")
+    @PutMapping("/profile/password")
     public ResponseEntity<String> changePassword(
             @RequestBody @Valid ChangePasswordRequest request,
             Authentication authentication
@@ -43,5 +42,4 @@ public class CustomerProfileController {
         userService.changePassword(authentication.getName(), request);
         return ResponseEntity.ok("Password changed successfully");
     }
-
 }

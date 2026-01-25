@@ -1,8 +1,10 @@
 package com.retail.backend.controller;
 
 import com.retail.backend.dto.*;
+import com.retail.backend.service.CustomerService;
 import com.retail.backend.security.JwtService;
 import com.retail.backend.service.AuthService;
+import com.retail.backend.service.CustomerService;
 import com.retail.backend.service.UserService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -17,23 +19,24 @@ import java.util.Map;
 
 @Slf4j
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
-    private final UserService userService;
+    private final CustomerService customerService;
+
 
     private final AuthService authService;
 
 
     public AuthController(AuthenticationManager authenticationManager,
                           JwtService jwtService,
-                          UserService userService,
+                          CustomerService customerService,
                           AuthService authService) {
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
-        this.userService = userService;
+        this.customerService = customerService;
         this.authService = authService;
     }
 
@@ -68,21 +71,21 @@ public class AuthController {
     public ResponseEntity<String> forgotPassword(
             @RequestBody ForgotPasswordRequest request
     ) {
-        userService.forgotPassword(request.getEmail());
+        customerService.forgotPassword(request.getEmail());
         return ResponseEntity.ok("Reset token generated (check logs)");
     }
-
 
     @PostMapping("/reset-password")
     public ResponseEntity<String> resetPassword(
             @RequestBody ResetPasswordRequest request
     ) {
-        userService.resetPassword(
+        customerService.resetPassword(
                 request.getToken(),
                 request.getNewPassword()
         );
         return ResponseEntity.ok("Password reset successfully");
     }
+
 
     @PostMapping("/register")
     public ResponseEntity<RegisterResponse> register(
