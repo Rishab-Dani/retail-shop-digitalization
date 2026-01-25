@@ -6,10 +6,17 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
+  const isAuthApi =
+    config.url.includes("/auth/login") ||
+    config.url.includes("/auth/register") ||
+    config.url.includes("/auth/forgot-password") ||
+    config.url.includes("/auth/reset-password");
 
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+  if (!isAuthApi) {
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
   }
 
   return config;

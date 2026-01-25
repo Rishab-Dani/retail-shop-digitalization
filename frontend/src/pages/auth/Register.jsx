@@ -2,7 +2,8 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { registerApi } from "../../api/authService";
 
-const Register = async() => {
+// const Register = async() => {
+     const Register = () => {
      const [step, setStep] = useState(1);
 
      const [formData, setFormData] = useState({
@@ -76,21 +77,21 @@ const validateStep2 = () => {
 
 const navigate = useNavigate();
 
-const [isSubmitting, setIsSubmitting] = useState(false);
+// const [isSubmitting, setIsSubmitting] = useState(false);
 
-if (isSubmitting) return;
+// if (isSubmitting) return;
 
-setIsSubmitting(true);
+// setIsSubmitting(true);
 
-try {
-  await registerApi(payload);
-  alert("Account created successfully. Please login.");
-  navigate("/login");
-} catch (error) {
-  alert("Registration failed. Please try again.");
-} finally {
-  setIsSubmitting(false);
-}
+// try {
+//   await registerApi(payload);
+//   alert("Account created successfully. Please login.");
+//   navigate("/login");
+// } catch (error) {
+//   alert("Registration failed. Please try again.");
+// } finally {
+//   setIsSubmitting(false);
+// }
 
 
      return (
