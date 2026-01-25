@@ -11,6 +11,7 @@ public interface PasswordResetTokenRepository
 
     Optional<PasswordResetToken> findByToken(String token);
 
-    void deleteByUser_Id(Long userId);
+    void deleteByCustomer_Id(Long customerId);
 }
+
 
