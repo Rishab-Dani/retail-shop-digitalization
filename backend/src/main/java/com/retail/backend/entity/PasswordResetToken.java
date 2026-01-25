@@ -20,8 +20,8 @@ public class PasswordResetToken {
     private LocalDateTime expiryTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false) // ✅ EXACT DB COLUMN
-    private User user;
+    @JoinColumn(name = "customer_id", nullable = false)
+    private Customer customer;
 
     // getters & setters
 
@@ -50,11 +50,11 @@ public class PasswordResetToken {
         this.expiryTime = expiryTime;
     }
 
-    public User getUser() {
-        return user;
+    public Customer getCustomer() {
+        return customer;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 }

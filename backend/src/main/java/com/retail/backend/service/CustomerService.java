@@ -5,12 +5,10 @@ import com.retail.backend.dto.CustomerProfileResponse;
 import com.retail.backend.dto.UpdateCustomerProfileRequest;
 import com.retail.backend.entity.Customer;
 import com.retail.backend.entity.PasswordResetToken;
-import com.retail.backend.entity.User;
 import com.retail.backend.exception.BusinessException;
 import com.retail.backend.exception.ResourceNotFoundException;
 import com.retail.backend.repository.CustomerRepository;
 import com.retail.backend.repository.PasswordResetTokenRepository;
-import com.retail.backend.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -26,20 +24,15 @@ import java.util.UUID;
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
-    private final PasswordEncoder passwordEncoder;
     private final PasswordResetTokenRepository tokenRepository;
-    private final UserRepository userRepository;
-
-
+    private final PasswordEncoder passwordEncoder;
 
     public CustomerService(CustomerRepository customerRepository,
-                           PasswordEncoder passwordEncoder,
                            PasswordResetTokenRepository tokenRepository,
-                           UserRepository userRepository) {
+                           PasswordEncoder passwordEncoder) {
         this.customerRepository = customerRepository;
-        this.passwordEncoder = passwordEncoder;
         this.tokenRepository = tokenRepository;
-        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
 
@@ -85,41 +78,45 @@ public class CustomerService {
         customerRepository.save(customer);
     }
 
-    @Transactional
+    // ✅ FORGOT PASSWORD
     public void forgotPassword(String email) {
 
-        userRepository.findByEmail(email).ifPresent(user -> {
+        Customer customer = customerRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Customer not found"));
 
-            tokenRepository.deleteByUser_Id(user.getId());
+        // delete old tokens
+        tokenRepository.deleteByCustomer_Id(customer.getId());
 
-            String token = UUID.randomUUID().toString();
+        String token = UUID.randomUUID().toString();
 
-            PasswordResetToken resetToken = new PasswordResetToken();
-            resetToken.setToken(token);
-            resetToken.setUser(user); // ✅ USER
-            resetToken.setExpiryTime(LocalDateTime.now().plusMinutes(15));
+        PasswordResetToken resetToken = new PasswordResetToken();
+        resetToken.setToken(token);
+        resetToken.setCustomer(customer);
+        resetToken.setExpiryTime(LocalDateTime.now().plusMinutes(15));
 
-            tokenRepository.save(resetToken);
-            // DEV ONLY
-            System.out.println("CUSTOMER RESET TOKEN = " + token);
-            log.info("PASSWORD RESET TOKEN = {}", token);
-        });
+        tokenRepository.save(resetToken);
+
+        // DEV ONLY
+        log.info("CUSTOMER RESET TOKEN = {}", token);
+        System.out.println("CUSTOMER RESET TOKEN = " + token);
     }
 
-    @Transactional
+    // ✅ RESET PASSWORD
     public void resetPassword(String token, String newPassword) {
 
         PasswordResetToken resetToken = tokenRepository.findByToken(token)
-                .orElseThrow(() -> new BusinessException("Invalid reset token"));
+                .orElseThrow(() ->
+                        new BusinessException("Invalid reset token"));
 
         if (resetToken.getExpiryTime().isBefore(LocalDateTime.now())) {
             throw new BusinessException("Reset token expired");
         }
 
-        User user = resetToken.getUser();
-        user.setPassword(passwordEncoder.encode(newPassword));
+        Customer customer = resetToken.getCustomer();
+        customer.setPassword(passwordEncoder.encode(newPassword));
 
-        userRepository.save(user);
+        customerRepository.save(customer);
         tokenRepository.delete(resetToken);
     }
 
