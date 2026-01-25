@@ -1,22 +1,29 @@
 package com.retail.backend.dto;
+
 public class LoginResponse {
 
     private String token;
+    private String email;
+    private String role;
 
-    // REQUIRED for Jackson
-    public LoginResponse() {
-    }
-
-    public LoginResponse(String token) {
+    public LoginResponse(String token, String email, String role) {
         this.token = token;
+        this.email = email;
+        this.role = role;
     }
+
+    // getters
+
 
     public String getToken() {
         return token;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public String getEmail() {
+        return email;
+    }
+
+    public String getRole() {
+        return role;
     }
 }
-

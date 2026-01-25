@@ -58,9 +58,10 @@ public class AuthController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(401).body(
-                    Map.of("error", e.getMessage())
-            );
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Invalid email or password"));
+
         }
     }
     @PostMapping("/forgot-password")
@@ -91,5 +92,6 @@ public class AuthController {
                 .status(HttpStatus.CREATED)
                 .body(authService.register(request));
     }
+
 }
 
