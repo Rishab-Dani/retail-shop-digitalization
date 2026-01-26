@@ -358,10 +358,11 @@ const navigate = useNavigate();
 
     try {
       const payload = {
-        name: formData.fullName,
+        name: formData.fullName.lastName,
         email: formData.email,
+        phone:formData.phone,
         password: formData.password,
-        role: "CUSTOMER",
+        
       };
 
       await registerApi(payload);
@@ -396,3 +397,5 @@ const navigate = useNavigate();
 };
 
 export default Register;
+
+
