@@ -11,7 +11,8 @@ export const loginApi = async (email, password) => {
   return res.data; // { token: "..." }
 };
 
-export  const registerApi = async (data) => {
-  const res = await api.post("/auth/register", data);
+
+export const registerApi = async (data) => {
+  const res = await api.post("/api/auth/register", data); // ✅ FIXED
   return res.data;
 };
