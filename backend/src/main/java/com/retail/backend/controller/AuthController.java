@@ -4,8 +4,6 @@ import com.retail.backend.dto.*;
 import com.retail.backend.service.CustomerService;
 import com.retail.backend.security.JwtService;
 import com.retail.backend.service.AuthService;
-import com.retail.backend.service.CustomerService;
-import com.retail.backend.service.UserService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

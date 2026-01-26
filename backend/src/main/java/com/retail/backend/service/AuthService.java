@@ -9,12 +9,13 @@ import com.retail.backend.entity.Role;
 import com.retail.backend.core.JwtUtil;
 import com.retail.backend.exception.BusinessException;
 import com.retail.backend.repository.CustomerRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
 import java.time.LocalDateTime;
-
+@Slf4j
 @Service
 public class AuthService {
 
@@ -36,6 +37,9 @@ public class AuthService {
         if (customerRepository.existsByEmail(request.getEmail())) {
             throw new BusinessException("Email already registered");
         }
+        if (customerRepository.existsByPhone(request.getPhone())) {
+            throw new BusinessException("Phone already registered");
+        }
 
         Customer customer = new Customer();
         customer.setName(request.getName());
@@ -47,6 +51,12 @@ public class AuthService {
         customer.setCreatedAt(LocalDateTime.now());
 
         Customer savedCustomer = customerRepository.save(customer);
+
+        log.info("REGISTER PAYLOAD -> name={}, email={}, phone={}, password={}",
+                request.getName(),
+                request.getEmail(),
+                request.getPhone(),
+                request.getPassword());
 
         return new RegisterResponse(
                 savedCustomer.getId(),

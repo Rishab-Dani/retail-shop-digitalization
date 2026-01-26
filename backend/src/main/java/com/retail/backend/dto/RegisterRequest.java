@@ -13,11 +13,13 @@ public class RegisterRequest {
     @NotBlank
     private String email;
 
+    private String phone;
+
     @NotBlank
     @Size(min = 6)
     private String password;
 
-    private String phone;
+
 
 
     public String getName() {
