@@ -3,11 +3,9 @@ package com.retail.backend.service;
 import com.retail.backend.dto.ChangePasswordRequest;
 import com.retail.backend.dto.CustomerProfileResponse;
 import com.retail.backend.dto.UpdateCustomerProfileRequest;
-import com.retail.backend.entity.PasswordResetToken;
 import com.retail.backend.entity.User;
 import com.retail.backend.exception.BusinessException;
 import com.retail.backend.exception.ResourceNotFoundException;
-import com.retail.backend.repository.CustomerRepository;
 import com.retail.backend.repository.PasswordResetTokenRepository;
 import com.retail.backend.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -15,8 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
 /**
  * UserService is used for:
  * - Admin users

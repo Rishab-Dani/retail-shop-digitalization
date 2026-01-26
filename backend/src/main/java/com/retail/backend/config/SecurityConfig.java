@@ -13,7 +13,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import com.retail.backend.config.PasswordConfig;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -107,7 +106,8 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:3000",   // React
                 "http://localhost:5173",   // Vite
-                "http://localhost:4200"    // Angular
+                "http://localhost:4200",   // Angular
+                "http://192.168.1.3:5173"  // ipconfig
         ));
 
         configuration.setAllowedMethods(List.of(
