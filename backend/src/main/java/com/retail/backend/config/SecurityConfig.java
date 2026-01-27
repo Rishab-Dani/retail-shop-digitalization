@@ -107,7 +107,7 @@ public class SecurityConfig {
                 "http://localhost:3000",   // React
                 "http://localhost:5173",   // Vite
                 "http://localhost:4200",   // Angular
-                "http://192.168.1.3:5173"  // ipconfig
+                "http://192.168.1.3:5173"  // ipConfig
         ));
 
         configuration.setAllowedMethods(List.of(
