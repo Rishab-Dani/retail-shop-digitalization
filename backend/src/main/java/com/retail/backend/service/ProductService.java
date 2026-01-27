@@ -57,25 +57,30 @@ public class ProductService {
             String sortBy,
             String search,
             String category,
-            BigDecimal minPrice,
-            BigDecimal maxPrice
+            Double minPrice,
+            Double maxPrice,
+            Boolean inStockOnly
     ) {
         log.info("Customer products API hit");
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
 
-        // normalize empty strings
-        search = (search == null || search.isBlank()) ? null : search;
-        category = (category == null || category.isBlank()) ? null : category;
+        String searchPattern = null;
+        if (search != null && !search.isBlank()) {
+            searchPattern = "%" + search.trim() + "%";
+        }
 
         return productRepository.findCustomerProducts(
-                search,
+                searchPattern,
                 category,
                 minPrice,
                 maxPrice,
+                Boolean.TRUE.equals(inStockOnly),
                 pageable
         );
     }
+
+
 
     // ================= ADMIN =================
 

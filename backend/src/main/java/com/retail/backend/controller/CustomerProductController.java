@@ -30,12 +30,14 @@ public class CustomerProductController {
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(required = false) String search,
             @RequestParam(required = false) String category,
-            @RequestParam(required = false) BigDecimal minPrice,
-            @RequestParam(required = false) BigDecimal maxPrice
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice,
+            @RequestParam(defaultValue = "false") Boolean inStockOnly
     ) {
         return productService.getCustomerProducts(
-                page, size, sortBy, search, category, minPrice, maxPrice
+                page, size, sortBy, search, category, minPrice, maxPrice, inStockOnly
         );
     }
+
 
 }
