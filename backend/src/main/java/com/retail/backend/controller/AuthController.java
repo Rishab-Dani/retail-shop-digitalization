@@ -39,7 +39,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequest request) {
 
         try {
             Authentication auth = authenticationManager.authenticate(
@@ -49,11 +49,11 @@ public class AuthController {
                     )
             );
 
-            System.out.println("AUTH OBJECT = " + auth);
+            log.info("AUTH OBJECT = " + auth);
 
             String token = jwtService.generateToken(auth);
 
-            System.out.println("GENERATED TOKEN = " + token);
+            log.info("GENERATED TOKEN = " + token);
 
             return ResponseEntity.ok(Map.of("token", token));
 
