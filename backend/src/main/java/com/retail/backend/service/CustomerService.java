@@ -26,13 +26,16 @@ public class CustomerService {
     private final CustomerRepository customerRepository;
     private final PasswordResetTokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
     public CustomerService(CustomerRepository customerRepository,
                            PasswordResetTokenRepository tokenRepository,
-                           PasswordEncoder passwordEncoder) {
+                           PasswordEncoder passwordEncoder,
+                           EmailService emailService) {
         this.customerRepository = customerRepository;
         this.tokenRepository = tokenRepository;
         this.passwordEncoder = passwordEncoder;
+        this.emailService = emailService;
     }
 
 
@@ -79,13 +82,13 @@ public class CustomerService {
     }
 
     // ✅ FORGOT PASSWORD
+    @Transactional
     public void forgotPassword(String email) {
 
         Customer customer = customerRepository.findByEmail(email)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Customer not found"));
 
-        // delete old tokens
         tokenRepository.deleteByCustomer_Id(customer.getId());
 
         String token = UUID.randomUUID().toString();
@@ -97,10 +100,25 @@ public class CustomerService {
 
         tokenRepository.save(resetToken);
 
+        String resetLink =
+                "http://localhost:5173/reset-password?token=" + token;
+
+
+        try {
+            emailService.sendResetPasswordMail(customer.getEmail(), resetLink);
+            log.info("Reset password email sent to {}", customer.getEmail());
+        } catch (Exception e) {
+            log.error("EMAIL FAILED", e);
+            throw new BusinessException("Failed to send reset email");
+        }
+
+
         // DEV ONLY
         log.info("CUSTOMER RESET TOKEN = {}", token);
         System.out.println("CUSTOMER RESET TOKEN = " + token);
     }
+
+
 
     // ✅ RESET PASSWORD
     public void resetPassword(String token, String newPassword) {
