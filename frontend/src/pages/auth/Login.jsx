@@ -8,6 +8,10 @@ const Login = () => {
      const [password, setPassword] = useState("");
      const [rememberMe, setRememberMe] = useState(false);
      const [showPassword, setShowPassword] = useState(false);
+     const [errors, setErrors] = useState({});
+
+     const navigate = useNavigate();
+
 
      useEffect(() => {
           const savedEmail = localStorage.getItem("rememberEmail");
@@ -17,7 +21,20 @@ const Login = () => {
           }
      }, []);
 
-     const navigate = useNavigate();
+const validateLogin = () => {
+  const newErrors = {};
+
+  if (!email.trim()) {
+    newErrors.email = "Email is required";
+  }
+
+  if (!password.trim()) {
+    newErrors.password = "Password is required";
+  }
+
+  setErrors(newErrors);
+  return Object.keys(newErrors).length === 0;
+};
 
      return (
           <div className="font-display bg-neutral-50  text-slate-900 min-h-screen flex flex-col ">
@@ -141,25 +158,30 @@ const Login = () => {
                               {/* Form */}
                               <form
                                    className="flex flex-col gap-5"
-                                   onSubmit={async (e) => {
-                                        e.preventDefault();
+                                    onSubmit={async (e) => {
+    e.preventDefault();
 
-                                        try {
-                                             const response = await loginApi(email, password);
+    if (!validateLogin()) return;
 
-                                             localStorage.setItem("token", response.token);
+    try {
+      const response = await loginApi(email, password);
 
-                                             if (rememberMe) {
-                                                  localStorage.setItem("rememberEmail", email);
-                                             } else {
-                                                  localStorage.removeItem("rememberEmail");
-                                             }
+      localStorage.setItem("token", response.token);
 
-                                             navigate("/customer/products");
-                                        } catch (err) {
-                                             alert("Login failed. Check email or password.");
-                                        }
-                                   }}
+      if (rememberMe) {
+        localStorage.setItem("rememberEmail", email);
+      } else {
+        localStorage.removeItem("rememberEmail");
+      }
+
+      navigate("/customer/products");
+    } catch (err) {
+      setErrors({
+        email: "Invalid email or password",
+        password: "Invalid email or password",
+      });
+    }
+  }}
                               >
 
 
@@ -170,12 +192,22 @@ const Login = () => {
 
                                         <div className="relative">
                                              <input
-                                                  type="email"
-                                                  value={email}
-                                                  onChange={(e) => setEmail(e.target.value)}
-                                                  placeholder="name@company.com"
-                                                  className="form-input block w-full rounded-lg h-11 px-3.5 pr-10 text-sm border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-                                             />
+  type="email"
+  value={email}
+  onChange={(e) => {
+    setEmail(e.target.value);
+    setErrors((prev) => ({ ...prev, email: "" }));
+  }}
+  placeholder="name@company.com"
+  className={`form-input block w-full rounded-lg h-11 px-3.5 pr-10 text-sm border
+    ${errors.email ? "border-red-500" : "border-slate-300"}
+    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}
+/>
+
+{errors.email && (
+  <p className="text-xs text-red-500 mt-1">{errors.email}</p>
+)}
+
 
 
                                              {/* Email Icon */}
@@ -192,13 +224,23 @@ const Login = () => {
                                         </label>
 
                                         <div className="relative">
-                                             <input
-                                                  type={showPassword ? "text" : "password"}
-                                                  value={password}
-                                                  onChange={(e) => setPassword(e.target.value)}
-                                                  placeholder="••••••••"
-                                                  className="form-input block w-full rounded-lg h-11 px-3.5 pr-10 text-sm border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-                                             />
+                                            <input
+  type={showPassword ? "text" : "password"}
+  value={password}
+  onChange={(e) => {
+    setPassword(e.target.value);
+    setErrors((prev) => ({ ...prev, password: "" }));
+  }}
+  placeholder="••••••••"
+  className={`form-input block w-full rounded-lg h-11 px-3.5 pr-10 text-sm border
+    ${errors.password ? "border-red-500" : "border-slate-300"}
+    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}
+/>
+
+{errors.password && (
+  <p className="text-xs text-red-500 mt-1">{errors.password}</p>
+)}
+
 
 
                                              {/* Eye Toggle Button */}
