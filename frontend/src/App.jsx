@@ -31,48 +31,106 @@ import Checkout from "./pages/Customer/Checkout";
 import OrderSuccess from "./pages/Customer/OrderSuccess"
 import CustomerProfile from "./pages/Customer/CustomerProfile";
 
+// Protected Route
+import ProtectedRoute from "./routes/ProtectedRoute";
+
 
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
+//     <BrowserRouter>
+//       <Routes>
 
-        {/* PUBLIC ROUTES */}
-        <Route element={<PublicLayout />}>
-           <Route path="/" element={<Home />} />
-           <Route path="/login" element={<Login />} />
-           <Route path="/register" element={<Register />} />
-           <Route path="/forgot-password" element={<ForgotPassword />} />
-           <Route path="/reset-password" element={<ResetPassword />} />
-        </Route>
+//         {/* PUBLIC ROUTES */}
+//         <Route element={<PublicLayout />}>
+//            <Route path="/" element={<Home />} />
+//            <Route path="/login" element={<Login />} />
+//            <Route path="/register" element={<Register />} />
+//            <Route path="/forgot-password" element={<ForgotPassword />} />
+//            <Route path="/reset-password" element={<ResetPassword />} />
+//         </Route>
 
-        {/* PRIVATE ROUTES */}
-        <Route element={<DashboardLayout />}>
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/admin-products" element={<Products />} />
-          <Route path="/orders" element={<Orders />} />
-          <Route path="/add-products" element={<AddProduct />} />
-          <Route path="/customers" element={<Customers />} />
-          <Route path="/reports" element={<Reports />} />
-          <Route path="/analytics" element={<Analytics />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/addOrders" element={<AddOrders />} />
-          <Route path="/addCustomers" element={<AddCustomers />} />
-        </Route>
+//         {/* PRIVATE ROUTES */}
+//         <Route element={<DashboardLayout />}>
+//           <Route path="/dashboard" element={<Dashboard />} />
+//           <Route path="/admin-products" element={<Products />} />
+//           <Route path="/orders" element={<Orders />} />
+//           <Route path="/add-products" element={<AddProduct />} />
+//           <Route path="/customers" element={<Customers />} />
+//           <Route path="/reports" element={<Reports />} />
+//           <Route path="/analytics" element={<Analytics />} />
+//           <Route path="/settings" element={<Settings />} />
+//           <Route path="/profile" element={<Profile />} />
+//           <Route path="/addOrders" element={<AddOrders />} />
+//           <Route path="/addCustomers" element={<AddCustomers />} />
+//         </Route>
 
-         {/* CUSTOMER ROUTES */}
-<Route path="/customer" element={<CustomerLayout />}>
-  <Route path="products" element={<ProductList />} />
-  <Route path="product/:id" element={<ProductDetails />} />
-   <Route path="cart" element={<Cart />} />
- <Route path="checkout" element={<Checkout />}/>
- <Route path="order-success" element={<OrderSuccess />}/>
-<Route path="profile" element={<CustomerProfile />} />
-</Route>
-</Routes>
-    </BrowserRouter>
+//          {/* CUSTOMER ROUTES */}
+// <Route path="/customer" element={<CustomerLayout />}>
+//   <Route path="products" element={<ProductList />} />
+
+
+// <Route
+//   path="/customer/products"
+//   element={
+//     <ProtectedRoute>
+//       <Products />
+//     </ProtectedRoute>
+//   }
+// />
+
+//   <Route path="product/:id" element={<ProductDetails />} />
+//    <Route path="cart" element={<Cart />} />
+//  <Route path="checkout" element={<Checkout />}/>
+//  <Route path="order-success" element={<OrderSuccess />}/>
+// <Route path="profile" element={<CustomerProfile />} />
+// </Route>
+// </Routes>
+//     </BrowserRouter>
+<BrowserRouter>
+  <Routes>
+
+    {/* PUBLIC ROUTES */}
+    <Route element={<PublicLayout />}>
+      <Route path="/" element={<Home />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
+    </Route>
+
+    {/* PROTECTED ADMIN ROUTES */}
+    <Route element={<ProtectedRoute />}>
+      <Route element={<DashboardLayout />}>
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/admin-products" element={<Products />} />
+        <Route path="/orders" element={<Orders />} />
+        <Route path="/add-products" element={<AddProduct />} />
+        <Route path="/customers" element={<Customers />} />
+        <Route path="/reports" element={<Reports />} />
+        <Route path="/analytics" element={<Analytics />} />
+        <Route path="/settings" element={<Settings />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/addOrders" element={<AddOrders />} />
+        <Route path="/addCustomers" element={<AddCustomers />} />
+      </Route>
+    </Route>
+
+    {/* PROTECTED CUSTOMER ROUTES */}
+    <Route element={<ProtectedRoute />}>
+      <Route path="/customer" element={<CustomerLayout />}>
+        <Route path="products" element={<ProductList />} />
+        <Route path="product/:id" element={<ProductDetails />} />
+        <Route path="cart" element={<Cart />} />
+        <Route path="checkout" element={<Checkout />} />
+        <Route path="order-success" element={<OrderSuccess />} />
+        <Route path="profile" element={<CustomerProfile />} />
+      </Route>
+    </Route>
+
+  </Routes>
+</BrowserRouter>
+
   );
 }
 
