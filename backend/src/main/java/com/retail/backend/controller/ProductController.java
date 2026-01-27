@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/api/admin/products")
 @PreAuthorize("hasRole('ADMIN')")
-@RequestMapping("/api/products")
 public class ProductController {
 
     private final ProductService productService;
@@ -35,8 +35,9 @@ public class ProductController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy) {
 
-        return productService.getProducts(page, size, sortBy);
+        return productService.getAdminProducts(page, size, sortBy);
     }
+
 
     @PutMapping("/{id}")
     public Product updateProduct(

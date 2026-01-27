@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -23,20 +24,18 @@ public class CustomerProductController {
     }
 
     @GetMapping
-    public List<Product> getAllProductsForCustomer() {
-        return productService.getAllProducts();
-    }
-
-    @GetMapping
     public Page<Product> getProducts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
-            @RequestParam(defaultValue = "") String search,
-            @RequestParam(defaultValue = "") String category
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice
     ) {
-        return productService.getProductsForCustomer(
-                page, size, sortBy, search, category
+        return productService.getCustomerProducts(
+                page, size, sortBy, search, category, minPrice, maxPrice
         );
     }
+
 }

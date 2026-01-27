@@ -2,17 +2,17 @@ package com.retail.backend.service;
 
 import com.retail.backend.entity.Product;
 import com.retail.backend.repository.ProductRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
 
-
+import java.math.BigDecimal;
 import java.util.List;
-
+@Slf4j
 @Service
 public class ProductService {
 
@@ -49,28 +49,40 @@ public class ProductService {
         productRepository.deleteById(id);
     }
 
-    public Page<Product> getProducts(int page, int size, String sortBy) {
-        return productRepository.findAll(
-                PageRequest.of(page, size, Sort.by(sortBy))
-        );
-    }
-    public Page<Product> getProductsForCustomer(
+    // ================= CUSTOMER =================
+
+    public Page<Product> getCustomerProducts(
             int page,
             int size,
             String sortBy,
             String search,
-            String category
+            String category,
+            BigDecimal minPrice,
+            BigDecimal maxPrice
     ) {
+        log.info("Customer products API hit");
+
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
 
-        return productRepository
-                .findByNameContainingIgnoreCaseAndCategoryContainingIgnoreCase(
-                        search,
-                        category,
-                        pageable
-                );
+        // normalize empty strings
+        search = (search == null || search.isBlank()) ? null : search;
+        category = (category == null || category.isBlank()) ? null : category;
+
+        return productRepository.findCustomerProducts(
+                search,
+                category,
+                minPrice,
+                maxPrice,
+                pageable
+        );
     }
 
+    // ================= ADMIN =================
+
+    public Page<Product> getAdminProducts(int page, int size, String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        return productRepository.findAll(pageable);
+    }
 
 }
 
