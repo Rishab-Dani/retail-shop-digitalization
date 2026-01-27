@@ -1,14 +1,47 @@
 import { useState } from "react";
+import { forgotPasswordApi } from "../../api/authService";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // later API call
-    setSent(true);
+    setError("");
+
+    if (!email.trim()) {
+      setError("Email is required");
+      return;
+    }   
+  try {
+  setLoading(true);
+  await forgotPasswordApi(email);
+  setSent(true);
+}
+catch (err) {
+  setError(
+    err.response?.data || "Email not found"
+  );
+}finally {
+      setLoading(false);
+    }
   };
+
+    // try {
+    //   setLoading(true);
+    //   await forgotPasswordApi(email);
+    //   setSent(true);
+    // } catch (err) {
+    //   setError(
+    //     err.response?.data?.message ||
+    //     "Email not registered"
+    //   );
+    // }
+
+
+  
 
   return (
     <div className="font-display bg-neutral-50 min-h-screen flex flex-col items-center justify-center px-4 bg-gradient-to-b from-blue-500/5">
@@ -105,14 +138,20 @@ const ForgotPassword = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   className="form-input rounded-lg px-4 py-3 border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
                 />
+                {error && (
+  <p className="text-sm text-red-500 mt-1">{error}</p>
+)}
+
               </div>
 
-              <button
-                type="submit"
-                className="w-full rounded-lg bg-blue-600 py-3 text-white font-semibold hover:bg-blue-700 transition-colors"
-              >
-                Reset password
-              </button>
+             <button
+  type="submit"
+  disabled={loading}
+  className="w-full rounded-lg bg-blue-600 py-3 text-white font-semibold hover:bg-blue-700 transition-colors disabled:opacity-60"
+>
+  {loading ? "Sending..." : "Reset password"}
+</button>
+
             </form>
 
             {/* BACK */}
