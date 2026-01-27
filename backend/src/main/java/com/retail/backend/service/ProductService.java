@@ -2,6 +2,7 @@ package com.retail.backend.service;
 
 import com.retail.backend.entity.Product;
 import com.retail.backend.repository.ProductRepository;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -52,6 +53,22 @@ public class ProductService {
         return productRepository.findAll(
                 PageRequest.of(page, size, Sort.by(sortBy))
         );
+    }
+    public Page<Product> getProductsForCustomer(
+            int page,
+            int size,
+            String sortBy,
+            String search,
+            String category
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+
+        return productRepository
+                .findByNameContainingIgnoreCaseAndCategoryContainingIgnoreCase(
+                        search,
+                        category,
+                        pageable
+                );
     }
 
 
