@@ -28,3 +28,17 @@ export const registerApi = async (data) => {
   const res = await api.post("/api/auth/register", data); // ✅ FIXED
   return res.data;
 };
+
+export const forgotPasswordApi = async (email) => {
+  const res = await api.post("/api/auth/forgot-password", { email });
+  return res.data;
+};
+
+
+export const resetPasswordApi = async (token, newPassword) => {
+  const res = await api.post("/api/auth/reset-password", {
+    token,
+    newPassword,
+  });
+  return res.data;
+};
