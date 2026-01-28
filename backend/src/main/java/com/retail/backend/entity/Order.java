@@ -1,7 +1,6 @@
 package com.retail.backend.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -17,10 +16,10 @@ public class Order {
     @GeneratedValue
     private UUID id;
 
+//@JsonIgnoreProperties({"orders", "password"})
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    @JsonIgnoreProperties({"orders", "password"})
-    private User user;
+    @JoinColumn(name = "customer_id", nullable = false)
+    private Customer customer;
 
     @OneToMany(
             mappedBy = "order",
@@ -36,8 +35,15 @@ public class Order {
     @Column(nullable = false)
     private BigDecimal totalAmount;
 
-    @Column(updatable = false)
+
+    @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
+
 
 
     // getters & setters
@@ -51,12 +57,12 @@ public class Order {
         this.id = id;
     }
 
-    public User getUser() {
-        return user;
+    public Customer getCustomer() {
+        return customer;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
     public OrderStatus getStatus() {

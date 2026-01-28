@@ -1,49 +1,54 @@
 package com.retail.backend.controller;
 
 import com.retail.backend.dto.AddOrderItemsRequest;
+import com.retail.backend.dto.OrderResponse;
 import com.retail.backend.dto.PlaceOrderRequest;
 import com.retail.backend.entity.Order;
 import com.retail.backend.entity.OrderStatus;
 import com.retail.backend.service.OrderService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/customer/orders")
+@RequiredArgsConstructor
 @PreAuthorize("hasRole('CUSTOMER')")
 public class CustomerOrderController {
 
     private final OrderService orderService;
 
-    public CustomerOrderController(OrderService orderService) {
-        this.orderService = orderService;
-    }
-    @PostMapping("/{orderId}/items")
-    public ResponseEntity<String> addItems(
-            @PathVariable UUID orderId,
-            @RequestBody AddOrderItemsRequest request,
-            Authentication authentication
-    ) {
-        orderService.addItemsToOrder(orderId, request);
-        return ResponseEntity.ok("Order items added successfully");
-    }
-
-    // ✅ PLACE ORDER (CUSTOMER)
     @PostMapping
-    public Order placeOrder(
+    public ResponseEntity<OrderResponse> placeOrder(
             @Valid @RequestBody PlaceOrderRequest request,
             Authentication authentication
     ) {
-        return orderService.placeOrder(
-                authentication.getName(),
-                request.getTotalAmount()
+        String email = authentication.getName();
+        return ResponseEntity.ok(
+                orderService.placeOrder(email, request.getTotalAmount())
         );
+    }
+
+    // ✅ PLACE ORDER (CUSTOMER)
+    @PostMapping("/orders")
+    public ResponseEntity<OrderResponse> placeOrder(
+            @RequestBody PlaceOrderRequest request
+    ) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
+
+        OrderResponse response =
+                orderService.placeOrder(email, request.getTotalAmount());
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     // ✅ GET CUSTOMER ORDERS (pagination + sorting + filtering)

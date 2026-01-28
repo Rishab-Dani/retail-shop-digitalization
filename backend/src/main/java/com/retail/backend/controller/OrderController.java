@@ -1,6 +1,7 @@
 package com.retail.backend.controller;
 
 import com.retail.backend.dto.AddOrderItemsRequest;
+import com.retail.backend.dto.OrderResponse;
 import com.retail.backend.dto.PlaceOrderRequest;
 import com.retail.backend.entity.Order;
 import com.retail.backend.entity.OrderStatus;
@@ -29,16 +30,6 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
-    @PostMapping
-    public ResponseEntity<Order> placeOrder(
-            @Valid @RequestBody PlaceOrderRequest request,
-            Authentication authentication
-    ) {
-        String email = authentication.getName();
-        Order order = orderService.placeOrder(email, request.getTotalAmount());
-        return ResponseEntity.ok(order);
-    }
 
     // ✅ FIXED ENDPOINT
     @PostMapping("/{orderId}/items")
