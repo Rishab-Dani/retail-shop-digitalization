@@ -50,8 +50,7 @@ public class OrderService {
     public Order placeOrder(String email, BigDecimal totalAmount) {
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
-
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         Order order = new Order();
         order.setUser(user);

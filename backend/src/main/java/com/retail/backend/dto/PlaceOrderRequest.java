@@ -1,9 +1,15 @@
 package com.retail.backend.dto;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+
 import java.math.BigDecimal;
 
 public class PlaceOrderRequest {
+    @NotNull(message = "Total amount is required")
+    @Positive(message = "Amount must be positive")
     private BigDecimal totalAmount;
+
 
     // getter & setter
 

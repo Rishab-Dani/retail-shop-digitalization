@@ -5,6 +5,7 @@ import com.retail.backend.dto.PlaceOrderRequest;
 import com.retail.backend.entity.Order;
 import com.retail.backend.entity.OrderStatus;
 import com.retail.backend.service.OrderService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +32,7 @@ public class OrderController {
     @PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
     @PostMapping
     public ResponseEntity<Order> placeOrder(
-            @RequestBody PlaceOrderRequest request,
+            @Valid @RequestBody PlaceOrderRequest request,
             Authentication authentication
     ) {
         String email = authentication.getName();
