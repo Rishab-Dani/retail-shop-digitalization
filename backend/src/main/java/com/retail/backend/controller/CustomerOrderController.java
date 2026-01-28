@@ -5,6 +5,7 @@ import com.retail.backend.dto.PlaceOrderRequest;
 import com.retail.backend.entity.Order;
 import com.retail.backend.entity.OrderStatus;
 import com.retail.backend.service.OrderService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -36,7 +37,7 @@ public class CustomerOrderController {
     // ✅ PLACE ORDER (CUSTOMER)
     @PostMapping
     public Order placeOrder(
-            @RequestBody PlaceOrderRequest request,
+            @Valid @RequestBody PlaceOrderRequest request,
             Authentication authentication
     ) {
         return orderService.placeOrder(

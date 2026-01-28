@@ -14,23 +14,6 @@ import java.util.List;
 public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findByStockQuantityLessThanEqual(Integer threshold);
 
-//    @Query("""
-//    SELECT p FROM Product p
-//    WHERE (:search IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%')))
-//      AND (:category IS NULL OR p.category = :category)
-//      AND (:minPrice IS NULL OR p.price >= :minPrice)
-//      AND (:maxPrice IS NULL OR p.price <= :maxPrice)
-//      AND (:inStockOnly = false OR p.stockQuantity > 0)
-//""")
-//    Page<Product> findCustomerProducts(
-//            @Param("search") String search,
-//            @Param("category") String category,
-//            @Param("minPrice") BigDecimal minPrice,
-//            @Param("maxPrice") BigDecimal maxPrice,
-//            @Param("inStockOnly") Boolean inStockOnly,
-//            Pageable pageable
-//    );
-
     @Query("""
     SELECT p FROM Product p
     WHERE (:search IS NULL OR p.name LIKE :search)
