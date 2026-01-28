@@ -25,12 +25,6 @@ public class User {
     private boolean enabled;
     private String name;
 
-    @OneToMany(mappedBy = "user")
-    @JsonIgnore
-    private List<Order> orders;
-
-
-
     // getters & setters
 
 

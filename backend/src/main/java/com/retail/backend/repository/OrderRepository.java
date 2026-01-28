@@ -141,23 +141,28 @@ ORDER BY SUM(oi.quantity) DESC
     long countTotalOrders();
 
     // For CUSTOMER
-    List<Order> findByUserEmail(String email);
 
-    List<Order> findByStatus(OrderStatus status);
+    List<Order> findByCustomer_Email(String email);
 
-    List<Order> findByUserEmailAndStatus(
+    List<Order> findByCustomer_EmailAndStatus(
             String email,
             OrderStatus status
     );
 
-    Page<Order> findByUserEmail(String email, Pageable pageable);
+    Page<Order> findByCustomer_Email(
+            String email,
+            Pageable pageable
+    );
 
-    Page<Order> findByUserEmailAndStatus(
+    Page<Order> findByCustomer_EmailAndStatus(
             String email,
             OrderStatus status,
             Pageable pageable
     );
 
+    // admin / generic
+    List<Order> findByStatus(OrderStatus status);
+    Page<Order> findByStatus(OrderStatus status, Pageable pageable);
 
 }
 

@@ -2,14 +2,12 @@ package com.retail.backend.service;
 
 import com.retail.backend.dto.AddOrderItemRequest;
 import com.retail.backend.dto.AddOrderItemsRequest;
+import com.retail.backend.dto.OrderResponse;
 import com.retail.backend.entity.*;
 import com.retail.backend.exception.AccessDeniedException;
 import com.retail.backend.exception.BusinessException;
 import com.retail.backend.exception.ResourceNotFoundException;
-import com.retail.backend.repository.OrderItemRepository;
-import com.retail.backend.repository.OrderRepository;
-import com.retail.backend.repository.ProductRepository;
-import com.retail.backend.repository.UserRepository;
+import com.retail.backend.repository.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
@@ -18,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,34 +29,41 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final OrderItemRepository orderItemRepository;
-    private final UserRepository userRepository;
+    private final CustomerRepository customerRepository;
 
 
     public OrderService(
             OrderRepository orderRepository,
             ProductRepository productRepository,
             OrderItemRepository orderItemRepository,
-            UserRepository userRepository
+            CustomerRepository customerRepository
     ) {
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.orderItemRepository = orderItemRepository;
-        this.userRepository = userRepository;
+        this.customerRepository = customerRepository;
     }
 
     // STEP 1: Place Order
     @Transactional
-    public Order placeOrder(String email, BigDecimal totalAmount) {
+    public OrderResponse placeOrder(String email, BigDecimal totalAmount) {
 
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        Customer customer = customerRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
 
         Order order = new Order();
-        order.setUser(user);
+        order.setCustomer(customer);
         order.setStatus(OrderStatus.PLACED);
         order.setTotalAmount(totalAmount);
 
-        return orderRepository.save(order);
+        Order saved = orderRepository.save(order);
+
+        return new OrderResponse(
+                saved.getId(),
+                saved.getCreatedAt(),
+                saved.getTotalAmount(),
+                saved.getStatus().name()
+        );
     }
 
     @Transactional
@@ -122,8 +128,9 @@ public class OrderService {
         }
 
         return (status == null)
-                ? orderRepository.findByUserEmail(email)
-                : orderRepository.findByUserEmailAndStatus(email, status);
+                ? orderRepository.findByCustomer_Email(email)
+                : orderRepository.findByCustomer_EmailAndStatus(email, status);
+
     }
 
 
@@ -133,7 +140,7 @@ public class OrderService {
         Order order = orderRepository.findByIdWithItems(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
 
-        if (!isAdmin && !order.getUser().getEmail().equals(email)) {
+        if (!isAdmin && !order.getCustomer().getEmail().equals(email)) {
             throw new AccessDeniedException("Access denied");
         }
 
@@ -177,7 +184,7 @@ public class OrderService {
 
         String loggedInEmail = authentication.getName();
 
-        if (!order.getUser().getEmail().equals(loggedInEmail)) {
+        if (!order.getCustomer().getEmail().equals(loggedInEmail)) {
             throw new AccessDeniedException(
                     "You are not allowed to cancel this order"
             );
@@ -222,7 +229,7 @@ public class OrderService {
         if (isAdmin) {
             return orderRepository.findAll(pageable);
         }
-        return orderRepository.findByUserEmail(email, pageable);
+        return orderRepository.findByCustomer_Email(email, pageable);
     }
 
     @Transactional(readOnly = true)
@@ -282,14 +289,14 @@ public class OrderService {
         Pageable pageable = PageRequest.of(page, size, sort);
 
         if (status != null) {
-            return orderRepository.findByUserEmailAndStatus(
+            return orderRepository.findByCustomer_EmailAndStatus(
                     email,
                     status,
                     pageable
             );
         }
 
-        return orderRepository.findByUserEmail(email, pageable);
+        return orderRepository.findByCustomer_Email(email, pageable);
     }
 
 
