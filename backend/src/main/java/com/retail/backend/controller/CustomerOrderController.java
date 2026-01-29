@@ -2,8 +2,8 @@ package com.retail.backend.controller;
 
 import com.retail.backend.dto.AddOrderItemsRequest;
 import com.retail.backend.dto.OrderResponse;
+import com.retail.backend.dto.OrderSummaryResponse;
 import com.retail.backend.dto.PlaceOrderRequest;
-import com.retail.backend.entity.Order;
 import com.retail.backend.entity.OrderStatus;
 import com.retail.backend.service.OrderService;
 import jakarta.validation.Valid;
@@ -54,7 +54,7 @@ public class CustomerOrderController {
 
     //  GET CUSTOMER ORDERS (pagination + sorting + filtering)
     @GetMapping
-    public Page<Order> getCustomerOrders(
+    public Page<OrderSummaryResponse> getCustomerOrders(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
