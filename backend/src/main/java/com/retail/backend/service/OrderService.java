@@ -133,12 +133,12 @@ public class OrderService {
 
 
     @Transactional(readOnly = true)
-    public OrderDetailsResponse getOrderById(UUID orderId, String email) {
+    public OrderDetailsResponse getOrderById(UUID orderId, String email, boolean isAdmin) {
 
         Order order = orderRepository.findByIdWithItems(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
 
-        if (!order.getCustomer().getEmail().equals(email)) {
+        if (!isAdmin && !order.getCustomer().getEmail().equals(email)) {
             throw new AccessDeniedException("Access denied");
         }
 
@@ -160,7 +160,6 @@ public class OrderService {
                 items
         );
     }
-
 
 
     @Transactional
@@ -233,8 +232,6 @@ public class OrderService {
     }
 
 
-
-
     @Transactional(readOnly = true)
     public Page<Order> getOrderHistory(
             String email,
@@ -281,7 +278,7 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public Page<Order> getCustomerOrders(
+    public Page<OrderSummaryResponse> getCustomerOrders(
             String email,
             OrderStatus status,
             int page,
@@ -289,30 +286,26 @@ public class OrderService {
             String sortBy,
             String sortDir
     ) {
-        // FIX 3 – validate sort field
-        List<String> allowedSortFields =
-                List.of("createdAt", "totalAmount", "status");
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                sortDir.equalsIgnoreCase("desc")
+                        ? Sort.by(sortBy).descending()
+                        : Sort.by(sortBy).ascending()
+        );
 
-        if (!allowedSortFields.contains(sortBy)) {
-            sortBy = "createdAt"; // fallback
-        }
+        Page<Order> orders = (status == null)
+                ? orderRepository.findByCustomer_Email(email, pageable)
+                : orderRepository.findByCustomer_EmailAndStatus(email, status, pageable);
 
-        Sort sort = sortDir.equalsIgnoreCase("desc")
-                ? Sort.by(sortBy).descending()
-                : Sort.by(sortBy).ascending();
-
-        Pageable pageable = PageRequest.of(page, size, sort);
-
-        if (status != null) {
-            return orderRepository.findByCustomer_EmailAndStatus(
-                    email,
-                    status,
-                    pageable
-            );
-        }
-
-        return orderRepository.findByCustomer_Email(email, pageable);
+        return orders.map(order ->
+                new OrderSummaryResponse(
+                        order.getId(),
+                        order.getCreatedAt(),
+                        order.getTotalAmount(),
+                        order.getStatus().name()
+                )
+        );
     }
-
 
 }
