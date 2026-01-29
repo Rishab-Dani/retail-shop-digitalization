@@ -1,8 +1,6 @@
 package com.retail.backend.service;
 
-import com.retail.backend.dto.AddOrderItemRequest;
-import com.retail.backend.dto.AddOrderItemsRequest;
-import com.retail.backend.dto.OrderResponse;
+import com.retail.backend.dto.*;
 import com.retail.backend.entity.*;
 import com.retail.backend.exception.AccessDeniedException;
 import com.retail.backend.exception.BusinessException;
@@ -135,17 +133,34 @@ public class OrderService {
 
 
     @Transactional(readOnly = true)
-    public Order getOrderById(UUID orderId, String email, boolean isAdmin) {
+    public OrderDetailsResponse getOrderById(UUID orderId, String email) {
 
         Order order = orderRepository.findByIdWithItems(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
 
-        if (!isAdmin && !order.getCustomer().getEmail().equals(email)) {
+        if (!order.getCustomer().getEmail().equals(email)) {
             throw new AccessDeniedException("Access denied");
         }
 
-        return order;
+        List<OrderItemResponse> items = order.getItems().stream()
+                .map(item -> new OrderItemResponse(
+                        item.getId(),
+                        item.getProduct().getId(),
+                        item.getProduct().getName(),
+                        item.getQuantity(),
+                        item.getPrice()
+                ))
+                .toList();
+
+        return new OrderDetailsResponse(
+                order.getId(),
+                order.getCreatedAt(),
+                order.getTotalAmount(),
+                order.getStatus().name(),
+                items
+        );
     }
+
 
 
     @Transactional
