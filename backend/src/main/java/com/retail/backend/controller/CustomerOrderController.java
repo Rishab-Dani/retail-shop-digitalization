@@ -9,6 +9,9 @@ import com.retail.backend.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -69,6 +72,26 @@ public class CustomerOrderController {
                 size,
                 sortBy,
                 sortDir
+        );
+    }
+
+    @GetMapping("/orders")
+    public Page<OrderSummaryResponse> getMyOrders(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortDir,
+            Authentication authentication
+    ) {
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                Sort.by(Sort.Direction.fromString(sortDir), sortBy)
+        );
+
+        return orderService.getMyOrdersSummary(
+                authentication.getName(),
+                pageable
         );
     }
 

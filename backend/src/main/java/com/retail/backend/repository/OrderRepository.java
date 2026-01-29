@@ -3,6 +3,7 @@ package com.retail.backend.repository;
 import com.retail.backend.entity.Order;
 import com.retail.backend.entity.OrderStatus;
 import com.retail.backend.repository.projection.DailyMetric;
+import com.retail.backend.repository.projection.OrderSummaryProjection;
 import com.retail.backend.repository.projection.TopProduct;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -163,6 +164,35 @@ ORDER BY SUM(oi.quantity) DESC
     // admin / generic
     List<Order> findByStatus(OrderStatus status);
     Page<Order> findByStatus(OrderStatus status, Pageable pageable);
+
+    @Query("""
+SELECT 
+  o.id as orderId,
+  o.createdAt as createdAt,
+  o.status as status,
+  o.totalAmount as totalAmount,
+  COUNT(oi.id) as itemCount
+FROM Order o
+LEFT JOIN o.items oi
+WHERE o.customer.email = :email
+GROUP BY o.id
+""")
+    Page<OrderSummaryProjection> findOrderSummariesByCustomerEmail(
+            @Param("email") String email,
+            Pageable pageable
+    );
+
+    @Query("""
+SELECT o FROM Order o
+JOIN FETCH o.items oi
+JOIN FETCH oi.product p
+WHERE o.id = :orderId
+AND o.customer.email = :email
+""")
+    Optional<Order> findOrderDetails(
+            @Param("orderId") UUID orderId,
+            @Param("email") String email
+    );
 
 }
 
