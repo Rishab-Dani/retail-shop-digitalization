@@ -16,10 +16,11 @@ public class Order {
     @GeneratedValue
     private UUID id;
 
-//@JsonIgnoreProperties({"orders", "password"})
-    @ManyToOne
-    @JoinColumn(name = "customer_id", nullable = false)
-    private Customer customer;
+
+    @JsonIgnoreProperties({"orders", "password"})
+     @ManyToOne(fetch = FetchType.LAZY)
+     @JoinColumn(name = "customer_id", nullable = false)
+     private Customer customer;
 
     @OneToMany(
             mappedBy = "order",
