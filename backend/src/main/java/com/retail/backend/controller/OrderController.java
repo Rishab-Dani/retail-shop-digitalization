@@ -1,6 +1,7 @@
 package com.retail.backend.controller;
 
 import com.retail.backend.dto.AddOrderItemsRequest;
+import com.retail.backend.dto.OrderDetailsResponse;
 import com.retail.backend.dto.OrderResponse;
 import com.retail.backend.dto.PlaceOrderRequest;
 import com.retail.backend.entity.Order;
@@ -72,18 +73,15 @@ public class OrderController {
 
     @PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
     @GetMapping("/{orderId}")
-    public ResponseEntity<Order> getOrderById(
+    public ResponseEntity<OrderDetailsResponse> getOrder(
             @PathVariable UUID orderId,
             Authentication authentication
     ) {
-        String email = authentication.getName();
-        boolean isAdmin = authentication.getAuthorities()
-                .stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
-
-        Order order = orderService.getOrderById(orderId, email, isAdmin);
-        return ResponseEntity.ok(order);
+        return ResponseEntity.ok(
+                orderService.getOrderById(orderId, authentication.getName())
+        );
     }
+
 
     @PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
     @PutMapping("/{orderId}/cancel")
