@@ -132,34 +132,33 @@ public class OrderService {
     }
 
 
-    @Transactional(readOnly = true)
-    public OrderDetailsResponse getOrderById(UUID orderId, String email, boolean isAdmin) {
-
-        Order order = orderRepository.findByIdWithItems(orderId)
-                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
-
-        if (!isAdmin && !order.getCustomer().getEmail().equals(email)) {
-            throw new AccessDeniedException("Access denied");
-        }
+    public OrderDetailsResponse getOrderById(
+            UUID orderId,
+            String email
+    ) {
+        Order order = orderRepository.findOrderDetails(orderId, email)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Order not found"));
 
         List<OrderItemResponse> items = order.getItems().stream()
-                .map(item -> new OrderItemResponse(
-                        item.getId(),
-                        item.getProduct().getId(),
-                        item.getProduct().getName(),
-                        item.getQuantity(),
-                        item.getPrice()
+                .map(i -> new OrderItemResponse(
+                        i.getId(),
+                        i.getProduct().getId(),
+                        i.getProduct().getName(),
+                        i.getQuantity(),
+                        i.getPrice()
                 ))
                 .toList();
 
         return new OrderDetailsResponse(
                 order.getId(),
                 order.getCreatedAt(),
-                order.getTotalAmount(),
                 order.getStatus().name(),
+                order.getTotalAmount(),
                 items
         );
     }
+
 
 
     @Transactional
@@ -302,10 +301,27 @@ public class OrderService {
                 new OrderSummaryResponse(
                         order.getId(),
                         order.getCreatedAt(),
+                        order.getStatus().name(),
                         order.getTotalAmount(),
-                        order.getStatus().name()
+                        order.getItems().size()
                 )
         );
+
+    }
+
+    public Page<OrderSummaryResponse> getMyOrdersSummary(
+            String email,
+            Pageable pageable
+    ) {
+        return orderRepository
+                .findOrderSummariesByCustomerEmail(email, pageable)
+                .map(p -> new OrderSummaryResponse(
+                        p.getOrderId(),
+                        p.getCreatedAt(),
+                        p.getStatus(),
+                        p.getTotalAmount(),
+                        p.getItemCount()
+                ));
     }
 
 }
