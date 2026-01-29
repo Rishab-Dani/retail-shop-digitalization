@@ -23,16 +23,8 @@ const CustomerProfile = () => {
     totalOrders: 24,
   });
 
-  const [addresses] = useState([
-    {
-      type: "Home",
-      address: "4521 Maple Avenue, Suite 204, Los Angeles, CA 90024",
-    },
-    {
-      type: "Work",
-      address: "Tech Park West, Bldg 4, Santa Monica, CA 90401",
-    },
-  ]);
+const [addresses, setAddresses] = useState([]);
+
 
   const orders = [
     {

@@ -4,7 +4,6 @@ const API = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
 });
 
-// attach token automatically
 API.interceptors.request.use((req) => {
   const token = localStorage.getItem("token");
   if (token) {
@@ -14,3 +13,7 @@ API.interceptors.request.use((req) => {
 });
 
 export const getMyProfile = () => API.get("/customers/me");
+export const getMyOrders = () => API.get("/customers/me/orders");
+export const getMyAddresses = () => API.get("/customers/me/addresses");
+export const updateProfile = (data) =>
+  API.put("/customers/me", data);
