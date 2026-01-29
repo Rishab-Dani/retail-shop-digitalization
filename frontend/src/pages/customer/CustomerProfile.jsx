@@ -4,6 +4,31 @@ import { useNavigate } from "react-router-dom";
 const CustomerProfile = () => {
   const navigate = useNavigate();
 
+
+  useEffect(() => {
+  fetchCustomerData();
+}, []);
+
+const fetchCustomerData = async () => {
+  try {
+    const [profileRes, ordersRes, addressRes] = await Promise.all([
+      getMyProfile(),
+      getMyOrders(),
+      getMyAddresses(),
+    ]);
+
+    setCustomer(profileRes.data);
+    setOrders(ordersRes.data);
+    setAddresses(addressRes.data);
+    setProfilePhoto(profileRes.data.photo);
+  } catch (err) {
+    console.error("Customer fetch failed", err);
+  } finally {
+    setLoading(false);
+  }
+};
+
+
   // ================= UI STATE =================
   const [activeTab, setActiveTab] = useState("overview");
   const [isEditOpen, setIsEditOpen] = useState(false);
@@ -13,51 +38,33 @@ const CustomerProfile = () => {
     "https://i.pravatar.cc/120?img=12"
   );
 
-  const [customer, setCustomer] = useState({
-    name: "Alex Harrison",
-    id: "#88291",
-    joined: "Jan 2022",
-    email: "alex.harrison@email.com",
-    phone: "+1 (555) 012-3456",
-    totalSpent: 4250,
-    totalOrders: 24,
-  });
-
+const [customer, setCustomer] = useState(null);
+const [orders, setOrders] = useState([]);
 const [addresses, setAddresses] = useState([]);
+const [loading, setLoading] = useState(true);
 
-
-  const orders = [
-    {
-      id: "ORD-29831",
-      date: "Oct 24, 2023",
-      items: 3,
-      status: "Shipped",
-      total: 245.99,
-    },
-    {
-      id: "ORD-29750",
-      date: "Oct 12, 2023",
-      items: 1,
-      status: "Delivered",
-      total: 89.0,
-    },
-    {
-      id: "ORD-29622",
-      date: "Sep 28, 2023",
-      items: 5,
-      status: "Delivered",
-      total: 512.45,
-    },
-  ];
 
   // ================= SAVE HANDLER =================
-  const handleSaveProfile = () => {
+ const handleSaveProfile = async () => {
+  try {
+    await updateProfile({
+      name: customer.name,
+      email: customer.email,
+      phone: customer.phone,
+    });
     setIsEditOpen(false);
-    // Later: PUT /customers/:id
-  };
+  } catch (err) {
+    console.error("Update failed", err);
+  }
+};
+
 
   const [editingIndex, setEditingIndex] = useState(null);
 const [tempAddress, setTempAddress] = useState("");
+
+if (loading) {
+  return <p className="text-center py-10">Loading profile...</p>;
+}
 
   return (
     <div className="max-w-7xl mx-auto px-6 lg:px-12 py-8">
