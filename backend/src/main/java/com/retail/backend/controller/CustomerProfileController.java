@@ -3,6 +3,7 @@ package com.retail.backend.controller;
 import com.retail.backend.dto.ChangePasswordRequest;
 import com.retail.backend.dto.CustomerProfileResponse;
 import com.retail.backend.dto.UpdateCustomerProfileRequest;
+import com.retail.backend.service.CustomerService;
 import com.retail.backend.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -14,15 +15,15 @@ import org.springframework.web.bind.annotation.*;
 @PreAuthorize("hasRole('CUSTOMER')")
 public class CustomerProfileController {
 
-    private final UserService userService;
+    private final CustomerService customerService;
 
-    public CustomerProfileController(UserService userService) {
-        this.userService = userService;
+    public CustomerProfileController(CustomerService customerService) {
+        this.customerService = customerService;
     }
 
     @GetMapping("/profile")
     public CustomerProfileResponse getProfile(Authentication authentication) {
-        return userService.getMyProfile(authentication.getName());
+        return customerService.getMyProfile(authentication.getName());
     }
 
     @PutMapping("/profile")
@@ -30,7 +31,7 @@ public class CustomerProfileController {
             @RequestBody @Valid UpdateCustomerProfileRequest request,
             Authentication authentication
     ) {
-        userService.updateMyProfile(authentication.getName(), request);
+        customerService.updateMyProfile(authentication.getName(), request);
         return ResponseEntity.ok("Profile updated successfully");
     }
 
@@ -39,7 +40,7 @@ public class CustomerProfileController {
             @RequestBody @Valid ChangePasswordRequest request,
             Authentication authentication
     ) {
-        userService.changePassword(authentication.getName(), request);
+        customerService.changePassword(authentication.getName(), request);
         return ResponseEntity.ok("Password changed successfully");
     }
 }
