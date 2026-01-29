@@ -199,7 +199,7 @@ const validateLogin = () => {
     setErrors((prev) => ({ ...prev, email: "" }));
   }}
   placeholder="name@company.com"
-  className={`form-input block w-full rounded-lg h-11 px-3.5 pr-10 text-sm border
+  className={`form-input block w-full rounded-lg h-11 px-3.5 pr-10 text-sm text-slate-300 border
     ${errors.email ? "border-red-500" : "border-slate-300"}
     focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}
 />
@@ -232,7 +232,7 @@ const validateLogin = () => {
     setErrors((prev) => ({ ...prev, password: "" }));
   }}
   placeholder="••••••••"
-  className={`form-input block w-full rounded-lg h-11 px-3.5 pr-10 text-sm border
+  className={`form-input block w-full rounded-lg h-11 px-3.5 pr-10 text-sm text-slate-300 border
     ${errors.password ? "border-red-500" : "border-slate-300"}
     focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}
 />
