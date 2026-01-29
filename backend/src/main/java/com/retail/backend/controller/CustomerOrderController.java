@@ -26,21 +26,11 @@ public class CustomerOrderController {
 
     private final OrderService orderService;
 
+
+    //  PLACE ORDER (CUSTOMER)
     @PostMapping
     public ResponseEntity<OrderResponse> placeOrder(
-            @Valid @RequestBody PlaceOrderRequest request,
-            Authentication authentication
-    ) {
-        String email = authentication.getName();
-        return ResponseEntity.ok(
-                orderService.placeOrder(email, request.getTotalAmount())
-        );
-    }
-
-    // ✅ PLACE ORDER (CUSTOMER)
-    @PostMapping("/orders")
-    public ResponseEntity<OrderResponse> placeOrder(
-            @RequestBody PlaceOrderRequest request
+           @Valid @RequestBody PlaceOrderRequest request
     ) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String email = auth.getName();
@@ -51,7 +41,18 @@ public class CustomerOrderController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    // ✅ GET CUSTOMER ORDERS (pagination + sorting + filtering)
+
+    @PostMapping("/{orderId}/items")
+    public ResponseEntity<String> addItems(
+            @PathVariable UUID orderId,
+            @RequestBody AddOrderItemsRequest request
+    ) {
+        orderService.addItemsToOrder(orderId, request);
+        return ResponseEntity.ok("Order items added successfully");
+    }
+
+
+    //  GET CUSTOMER ORDERS (pagination + sorting + filtering)
     @GetMapping
     public Page<Order> getCustomerOrders(
             @RequestParam(defaultValue = "0") int page,
