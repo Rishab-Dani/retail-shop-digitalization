@@ -49,9 +49,13 @@ public class CustomerService {
         return new CustomerProfileResponse(
                 customer.getName(),
                 customer.getEmail(),
+                customer.getPhone(),          // can be null
+                customer.getAvatarUrl(),      // can be null
                 customer.getRole().name(),
-                customer.isActive()
+                customer.isActive(),
+                customer.getCreatedAt()
         );
+
     }
 
     public void updateMyProfile(String email, UpdateCustomerProfileRequest request) {
