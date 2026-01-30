@@ -58,6 +58,7 @@ public class CustomerService {
 
     }
 
+    @Transactional
     public void updateMyProfile(String email, UpdateCustomerProfileRequest request) {
 
         Customer customer = customerRepository.findByEmail(email)
@@ -65,8 +66,14 @@ public class CustomerService {
                         new ResourceNotFoundException("Customer not found"));
 
         customer.setName(request.getName());
+
+        if (request.getPhone() != null) {
+            customer.setPhone(request.getPhone());
+        }
+
         customerRepository.save(customer);
     }
+
 
     public void changePassword(String email, ChangePasswordRequest request) {
 
