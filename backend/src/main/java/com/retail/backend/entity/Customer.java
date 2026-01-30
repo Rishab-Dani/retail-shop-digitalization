@@ -34,7 +34,9 @@ public class Customer {
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     private List<Order> orders = new ArrayList<>();
 
+    @Column(name = "avatar_url")
     private String avatarUrl;
+
 
 
 

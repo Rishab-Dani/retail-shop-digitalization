@@ -5,6 +5,7 @@ import com.retail.backend.dto.CustomerProfileResponse;
 import com.retail.backend.dto.UpdateCustomerProfileRequest;
 import com.retail.backend.entity.Customer;
 import com.retail.backend.entity.PasswordResetToken;
+import com.retail.backend.exception.BadRequestException;
 import com.retail.backend.exception.BusinessException;
 import com.retail.backend.exception.ResourceNotFoundException;
 import com.retail.backend.repository.CustomerRepository;
@@ -13,8 +14,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -74,6 +81,47 @@ public class CustomerService {
         customerRepository.save(customer);
     }
 
+    public void uploadAvatar(MultipartFile file, String email) {
+
+        Customer customer = customerRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+
+        if (file.isEmpty()) {
+            throw new BadRequestException("Avatar file is required");
+        }
+        if (!file.getContentType().startsWith("image/")) {
+            throw new BadRequestException("Only image files are allowed");
+        }
+
+        String contentType = file.getContentType();
+
+        if (contentType == null ||
+                (!contentType.equals("image/jpeg") &&
+                        !contentType.equals("image/png") &&
+                        !contentType.equals("image/jpg"))) {
+            throw new BadRequestException("Only JPG and PNG images are allowed");
+        }
+
+        if (file.getSize() > 2 * 1024 * 1024) {
+            throw new BadRequestException("Avatar size must be under 2MB");
+        }
+
+        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+
+        Path uploadPath = Paths.get("uploads/avatars");
+
+        try {
+            Files.createDirectories(uploadPath);
+            Path filePath = uploadPath.resolve(fileName);
+            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+            customer.setAvatarUrl("/uploads/avatars/" + fileName);
+            customerRepository.save(customer);
+
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to upload avatar", e);
+        }
+    }
 
     public void changePassword(String email, ChangePasswordRequest request) {
 
