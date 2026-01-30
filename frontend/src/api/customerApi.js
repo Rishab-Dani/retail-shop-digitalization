@@ -32,3 +32,15 @@ export const getMyAddresses = () =>
 
 export const updateProfile = (data) =>
   api.put("/api/customer/profile", data);
+
+
+/* ADDRESS APIs */
+export const createAddress = (data) =>
+  API.post("/customers/me/addresses", data);
+
+export const updateAddress = (id, data) =>
+  API.put(`/customers/me/addresses/${id}`, data);
+
+export const removeAddress = (id) =>
+  API.delete(`/customers/me/addresses/${id}`);
+
