@@ -52,8 +52,12 @@ public class UserService {
                 user.getName(),
                 user.getEmail(),
                 user.getRole().name(),
-                user.isEnabled()
+                user.getPhone(),          // can be null
+                user.getAvatarUrl(),      // can be null
+                user.isActive(),
+                user.getCreatedAt()
         );
+
     }
 
     @Transactional
