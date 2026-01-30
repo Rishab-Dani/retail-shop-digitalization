@@ -28,8 +28,9 @@ const [addressForm, setAddressForm] = useState({
   address: "",
 });
 
+            {/* ========================= LOAD DATA ======================== */}
 
-useEffect(() => {
+           useEffect(() => {
   const fetchData = async () => {
     try {
       const profileRes = await getMyProfile();
@@ -47,6 +48,20 @@ useEffect(() => {
   fetchData();
 }, []);
 
+
+const handleSaveProfile = async () => {
+  try {
+    await updateProfile({ name: customer.name });
+    const refreshed = await getMyProfile();
+    setCustomer(refreshed.data);
+    setIsEditOpen(false);
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+
+/*=========================== Address ===========================*/
 const openAddAddress = () => {
   setEditingAddress(null);
   setAddressForm({ type: "HOME", address: "" });
@@ -55,9 +70,13 @@ const openAddAddress = () => {
 
 const openEditAddress = (address) => {
   setEditingAddress(address);
-  setAddressForm(address);
+  setAddressForm({
+    type: address.type,
+    address: address.address,
+  });
   setIsAddressOpen(true);
 };
+
 
 const handleSaveAddress = async () => {
   try {
@@ -75,25 +94,9 @@ const handleSaveAddress = async () => {
   }
 };
 
-const deleteAddress = async (id) => {
-  try {
-    await removeAddress(id);
-    setAddresses(addresses.filter(a => a.id !== id));
-  } catch (e) {
-    console.error(e);
-  }
-};
 
-const handleSaveProfile = async () => {
-  try {
-    await updateProfile({ name: customer.name });
-    const refreshed = await getMyProfile();
-    setCustomer(refreshed.data);
-    setIsEditOpen(false);
-  } catch (e) {
-    console.error(e);
-  }
-};
+
+
 
 
   return (
@@ -235,17 +238,73 @@ const handleSaveProfile = async () => {
       </div>
 
       {/* ================= TABS ================= */}
-      <div className="border-b flex gap-8 mb-6">
-        <button className="border-b-2 border-blue-600 pb-3 font-bold" onClick={() => setActiveTab("overview")}>
-          Overview
-        </button>
-        <button className="pb-3 text-slate-500 hover:text-blue-600" onClick={() => setActiveTab("orders")}>
-          Order History
-        </button>
-        {activeTab === "orders" && (
+ <div className="border-b flex gap-8 mb-6">
+  {activeTab === "addresses" && (
+  <>
+    <div className="flex justify-between mb-4">
+      <h3 className="font-bold text-lg">Saved Addresses</h3>
+      <button
+        onClick={openAddAddress}
+        className="text-blue-600 font-bold"
+      >
+        + Add New
+      </button>
+    </div>
+
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {addresses.map(a => (
+        <div
+          key={a.id}
+          className={`border rounded-xl p-5 relative ${
+            a.isDefault ? "border-blue-500" : "border-slate-200"
+          }`}
+        >
+          {a.isDefault && (
+            <span className="absolute top-4 right-4 bg-blue-600 text-white text-xs px-2 rounded">
+              DEFAULT
+            </span>
+          )}
+
+          <p className="font-bold">{a.type}</p>
+          <p className="text-sm text-slate-500">{a.address}</p>
+
+          <div className="flex gap-4 mt-4 text-xs font-bold">
+            <button onClick={() => openEditAddress(a)}>EDIT</button>
+            <button
+              className="text-red-500"
+              onClick={() => deleteAddress(a.id)}
+            >
+              REMOVE
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
+  </>
+)}
+
+  <button
+    onClick={() => setActiveTab("overview")}
+    className={activeTab === "overview"
+      ? "border-b-2 border-blue-600 pb-3 font-bold"
+      : "pb-3 text-slate-500"}
+  >
+    Overview
+  </button>
+
+  <button
+    onClick={() => setActiveTab("orders")}
+    className={activeTab === "orders"
+      ? "border-b-2 border-blue-600 pb-3 font-bold"
+      : "pb-3 text-slate-500"}
+  >
+    Order History
+  </button>
+
+  {activeTab === "orders" && (
   <div className="bg-white rounded-xl border overflow-hidden">
     <table className="w-full text-sm">
-      <thead className="bg-slate-50 text-slate-500">
+      <thead className="bg-slate-50">
         <tr>
           <th className="p-4 text-left">Order ID</th>
           <th>Date</th>
@@ -256,70 +315,43 @@ const handleSaveProfile = async () => {
       </thead>
       <tbody>
         {orders.map(o => (
-  <tr key={o.id}>
-    <td>{o.id}</td>
-    <td>{new Date(o.createdAt).toLocaleDateString()}</td>
-    <td>{o.items.length}</td>
-    <td>{o.status}</td>
-    <td>₹{o.totalAmount}</td>
-  </tr>
-))}
-
+          <tr key={o.id} className="border-t">
+            <td className="p-4 text-blue-600 font-semibold">{o.id}</td>
+            <td>{new Date(o.createdAt).toLocaleDateString()}</td>
+            <td>{o.items.length}</td>
+            <td>{o.status}</td>
+            <td className="p-4 text-right font-bold">₹{o.totalAmount}</td>
+          </tr>
+        ))}
       </tbody>
     </table>
   </div>
 )}
 
-        <button className="pb-3 text-slate-500 hover:text-blue-600" onClick={() => setActiveTab("addresses")}>
-          Addresses
-        </button>
-        {activeTab === "addresses" && (
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-    {addresses.map((a) => (
-      <div
-        key={a.id}
-        className={`border rounded-xl p-5 ${
-          a.isDefault ? "border-blue-600 " : ""
-        }`}
-      >
-        {a.isDefault && (
-          <span className="text-xs bg-blue-600 text-white px-2 rounded">
-            DEFAULT
-          </span>
-        )}
 
-        <p className="font-bold mt-2">{a.type}</p>
-        <p className="text-sm text-slate-500">{a.address}</p>
+  <button
+    onClick={() => setActiveTab("addresses")}
+    className={activeTab === "addresses"
+      ? "border-b-2 border-blue-600 pb-3 font-bold"
+      : "pb-3 text-slate-500"}
+  >
+    Addresses
+  </button>
+</div>
 
-        <div className="flex gap-4 mt-4 text-xs font-bold">
-          <button onClick={() => openEditAddress(a)}>EDIT</button>
-          <button
-            className="text-red-500"
-            onClick={() => deleteAddress(a.id)}
-          >
-            REMOVE
-          </button>
-        </div>
-      </div>
-    ))}
-  </div>
-)}
 
-      </div>
 
       {/* ================= RECENT ORDERS ================= */}
       <div className="bg-white rounded-xl border shadow-sm overflow-hidden mb-8">
         <div className="px-6 py-5 border-b flex justify-between items-center">
           <h3 className="font-bold text-lg">Recent Orders</h3>
-         <button
+        <button
   onClick={() => setActiveTab("orders")}
-  className="text-blue-600  font-bold"
+  className="text-blue-600 font-bold"
 >
   View All
 </button>
-
-
-        </div>
+</div>
 
         <table className="w-full text-sm">
           <thead className="bg-slate-50 text-slate-500">
@@ -392,15 +424,26 @@ const handleSaveProfile = async () => {
         {editingAddress ? "Edit Address" : "Add Address"}
       </h2>
 
-      <select className="w-full border p-2 rounded mb-3">
-        <option>HOME</option>
-        <option>WORK</option>
-      </select>
+      <select
+  value={addressForm.type}
+  onChange={(e) =>
+    setAddressForm({ ...addressForm, type: e.target.value })
+  }
+  className="w-full border p-2 rounded mb-3"
+>
+  <option value="HOME">HOME</option>
+  <option value="WORK">WORK</option>
+</select>
 
-      <textarea
-        className="w-full border p-2 rounded"
-        placeholder="Full address"
-      />
+<textarea
+  value={addressForm.address}
+  onChange={(e) =>
+    setAddressForm({ ...addressForm, address: e.target.value })
+  }
+  className="w-full border p-2 rounded"
+  placeholder="Full address"
+/>
+
 
       <div className="flex justify-end gap-4 mt-6">
         <button
@@ -409,9 +452,13 @@ const handleSaveProfile = async () => {
         >
           Cancel
         </button>
-        <button className="px-4 py-2 bg-blue-600 text-white rounded">
-          Save
-        </button>
+        <button
+  onClick={handleSaveAddress}
+  className="px-4 py-2 bg-blue-600 text-white rounded"
+>
+  Save
+</button>
+
       </div>
     </div>
   </div>
@@ -419,34 +466,6 @@ const handleSaveProfile = async () => {
 
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="border-2 border-blue-200 rounded-xl p-5 relative">
-            <span className="absolute top-4 right-4 bg-blue-600 text-white text-[10px] font-bold px-2 rounded">
-              DEFAULT
-            </span>
-            <p className="font-bold mb-1">Home</p>
-            <p className="text-sm text-slate-500">
-              4521 Maple Avenue, Suite 204<br />
-              Los Angeles, CA 90024
-            </p>
-            <div className="flex gap-4 mt-4 text-xs font-bold">
-              <button className="text-slate-600">EDIT</button>
-              <button className="text-red-500">REMOVE</button>
-            </div>
-          </div>
-
-          <div className="border rounded-xl p-5">
-            <p className="font-bold mb-1">Work</p>
-            <p className="text-sm text-slate-500">
-              Tech Park West, Bldg 4<br />
-              Santa Monica, CA 90401
-            </p>
-            <div className="flex gap-4 mt-4 text-xs font-bold">
-              <button className="text-slate-600">EDIT</button>
-              <button className="text-red-500">REMOVE</button>
-            </div>
-          </div>
-        </div>
       </div>
 
     </main>
@@ -454,6 +473,7 @@ const handleSaveProfile = async () => {
 };
 
 export default CustomerProfileUI;
+
 
 
 
