@@ -1,5 +1,12 @@
-import { useState } from "react";
+import { useState , useEffect} from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  getMyProfile,
+  getMyOrders,
+  getMyAddresses,
+  updateProfile,
+} from "../../api/customerApi";
+
 
 const CustomerProfile = () => {
   const navigate = useNavigate();
@@ -9,20 +16,32 @@ const CustomerProfile = () => {
   fetchCustomerData();
 }, []);
 
+// const fetchCustomerData = async () => {
+//   try {
+//     const [profileRes, ordersRes, addressRes] = await Promise.all([
+//       getMyProfile(),
+//       getMyOrders(),
+//       getMyAddresses(),
+//     ]);
+
+//     setCustomer(profileRes.data);
+//     setOrders(ordersRes.data.content || []);
+//     setAddresses(addressRes.data.content || addressRes.data || []);
+//   } catch (err) {
+//     console.error("Customer fetch failed", err);
+//   } finally {
+//     setLoading(false);
+//   }
+// };
 const fetchCustomerData = async () => {
   try {
-    const [profileRes, ordersRes, addressRes] = await Promise.all([
-      getMyProfile(),
-      getMyOrders(),
-      getMyAddresses(),
-    ]);
+    const profileRes = await getMyProfile();
+
+    console.log("PROFILE API RESPONSE:", profileRes.data);
 
     setCustomer(profileRes.data);
-    setOrders(ordersRes.data);
-    setAddresses(addressRes.data);
-    setProfilePhoto(profileRes.data.photo);
   } catch (err) {
-    console.error("Customer fetch failed", err);
+    console.error("Profile API failed", err);
   } finally {
     setLoading(false);
   }
@@ -33,12 +52,14 @@ const fetchCustomerData = async () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [isEditOpen, setIsEditOpen] = useState(false);
 
-  // ================= DATA STATE =================
-  const [profilePhoto, setProfilePhoto] = useState(
-    "https://i.pravatar.cc/120?img=12"
-  );
+ 
 
-const [customer, setCustomer] = useState(null);
+const [customer, setCustomer] = useState({
+  name: "",
+  email: "",
+  enabled: true,
+});
+
 const [orders, setOrders] = useState([]);
 const [addresses, setAddresses] = useState([]);
 const [loading, setLoading] = useState(true);
@@ -48,10 +69,9 @@ const [loading, setLoading] = useState(true);
  const handleSaveProfile = async () => {
   try {
     await updateProfile({
-      name: customer.name,
-      email: customer.email,
-      phone: customer.phone,
-    });
+  name: customer.name,
+});
+
     setIsEditOpen(false);
   } catch (err) {
     console.error("Update failed", err);
@@ -70,65 +90,43 @@ if (loading) {
     <div className="max-w-7xl mx-auto px-6 lg:px-12 py-8">
 
       {/* ================= HEADER ================= */}
+
       <div className="bg-white border rounded-xl p-6 mb-8 flex justify-between items-center">
-        <div className="flex items-center gap-6">
+  <div className="flex items-center gap-6">
 
-          {/* PHOTO UPLOAD */}
-          <div className="relative group">
-            <img
-              src={profilePhoto}
-              alt="Customer"
-              className="w-20 h-20 rounded-full border object-cover"
-            />
-            <label className="absolute inset-0 bg-black/50 text-white text-xs flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 cursor-pointer transition">
-              Change
-              <input
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={(e) => {
-                  const file = e.target.files[0];
-                  if (file) {
-                    setProfilePhoto(URL.createObjectURL(file));
-                  }
-                }}
-              />
-            </label>
-          </div>
+    {/* STATIC AVATAR (no upload yet) */}
+    <img
+      src="https://i.pravatar.cc/120?img=12"
+      alt="Customer"
+      className="w-20 h-20 rounded-full border object-cover"
+    />
 
-          <div>
-            <h1 className="text-2xl font-bold">{customer.name}</h1>
-            <p className="text-sm text-slate-500">
-              ID: {customer.id} • Joined {customer.joined}
-            </p>
-            <div className="flex gap-4 mt-2 text-sm text-slate-600">
-              <span>{customer.email}</span>
-              <span>{customer.phone}</span>
-            </div>
-          </div>
-        </div>
+    <div>
+      <h1 className="text-2xl font-bold">{customer.name}</h1>
 
-        <button
-          onClick={() => setIsEditOpen(true)}
-          className="px-5 py-2 border rounded-lg font-semibold hover:bg-slate-50"
-        >
-          Edit Profile
-        </button>
-      </div>
+      <p className="text-sm text-slate-500">{customer.email}</p>
 
-      {/* ================= METRICS ================= */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-        <div className="border rounded-xl p-6">
-          <p className="text-sm text-slate-500">Total Spent</p>
-          <p className="text-2xl font-bold text-primary">
-            ${customer.totalSpent.toFixed(2)}
-          </p>
-        </div>
-        <div className="border rounded-xl p-6">
-          <p className="text-sm text-slate-500">Total Orders</p>
-          <p className="text-2xl font-bold">{customer.totalOrders}</p>
-        </div>
-      </div>
+      <span
+        className={`inline-block mt-2 px-3 py-1 text-xs font-semibold rounded-full ${
+          customer.enabled
+            ? "bg-green-100 text-green-700"
+            : "bg-red-100 text-red-700"
+        }`}
+      >
+        {customer.enabled ? "Active Account" : "Disabled Account"}
+      </span>
+    </div>
+  </div>
+
+  <button
+    onClick={() => setIsEditOpen(true)}
+    className="px-5 py-2 border rounded-lg font-semibold hover:bg-slate-50"
+  >
+    Edit Profile
+  </button>
+</div>
+
+
 
       {/* ================= TABS ================= */}
       <div className="border-b flex gap-8 mb-6">
@@ -164,29 +162,36 @@ if (loading) {
               </thead>
               <tbody>
                 {orders.map((order) => (
-                  <tr
-                    key={order.id}
-                    onClick={() => navigate(`/orders/${order.id}`)}
-                    className="border-t hover:bg-slate-50 cursor-pointer"
-                  >
-                    <td className="p-4 font-medium text-primary">{order.id}</td>
-                    <td>{order.date}</td>
-                    <td>{order.items}</td>
-                    <td>
-                      <span
-                        className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                          order.status === "Delivered"
-                            ? "bg-green-100 text-green-700"
-                            : "bg-blue-100 text-blue-700"
-                        }`}
-                      >
-                        {order.status}
-                      </span>
-                    </td>
-                    <td className="p-4 text-right font-semibold">
-                      ${order.total}
-                    </td>
-                  </tr>
+                <tr
+  key={order.id}
+  onClick={() => navigate(`/orders/${order.id}`)}
+  className="border-t hover:bg-slate-50 cursor-pointer"
+>
+  <td className="p-4 font-medium text-primary">{order.id}</td>
+
+  <td>
+    {new Date(order.createdAt).toLocaleDateString()}
+  </td>
+
+  <td>{order.items.length}</td>
+
+  <td>
+    <span
+      className={`px-3 py-1 rounded-full text-xs font-semibold ${
+        order.status === "DELIVERED"
+          ? "bg-green-100 text-green-700"
+          : "bg-blue-100 text-blue-700"
+      }`}
+    >
+      {order.status}
+    </span>
+  </td>
+
+  <td className="p-4 text-right font-semibold">
+    ₹{order.totalAmount.toFixed(2)}
+  </td>
+</tr>
+
                 ))}
               </tbody>
             </table>
@@ -204,9 +209,10 @@ if (loading) {
               className="border-b py-4 cursor-pointer hover:bg-slate-50"
             >
               <p className="font-semibold text-primary">{o.id}</p>
-              <p className="text-sm text-slate-500">
-                {o.date} • {o.status} • ${o.total}
-              </p>
+             <p className="text-sm text-slate-500">
+  {new Date(o.createdAt).toLocaleDateString()} • {o.status} • ₹{o.totalAmount}
+</p>
+
             </div>
           ))}
         </div>
@@ -305,52 +311,27 @@ if (loading) {
             <h2 className="text-xl font-bold mb-6">Edit Customer</h2>
 
             <div className="space-y-4">
-              <div className="flex items-center gap-4">
-                <img
-                  src={profilePhoto}
-                  className="w-16 h-16 rounded-full border object-cover"
-                />
-                <label className="text-sm font-semibold text-primary cursor-pointer">
-                  Upload Photo
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => {
-                      const file = e.target.files[0];
-                      if (file) {
-                        setProfilePhoto(URL.createObjectURL(file));
-                      }
-                    }}
-                  />
-                </label>
-              </div>
 
-              <input
-                value={customer.name}
-                onChange={(e) =>
-                  setCustomer({ ...customer, name: e.target.value })
-                }
-                className="w-full border p-2 rounded"
-                placeholder="Name"
-              />
-              <input
-                value={customer.email}
-                onChange={(e) =>
-                  setCustomer({ ...customer, email: e.target.value })
-                }
-                className="w-full border p-2 rounded"
-                placeholder="Email"
-              />
-              <input
-                value={customer.phone}
-                onChange={(e) =>
-                  setCustomer({ ...customer, phone: e.target.value })
-                }
-                className="w-full border p-2 rounded"
-                placeholder="Phone"
-              />
-            </div>
+  {/* NAME — editable */}
+  <input
+    value={customer.name}
+    onChange={(e) =>
+      setCustomer({ ...customer, name: e.target.value })
+    }
+    className="w-full border p-2 rounded"
+    placeholder="Name"
+  />
+
+  {/* EMAIL — read-only */}
+  <input
+    value={customer.email}
+    disabled
+    className="w-full border p-2 rounded bg-slate-100 text-slate-500 cursor-not-allowed"
+    placeholder="Email"
+  />
+
+</div>
+
 
             <div className="flex justify-end gap-4 mt-6">
               <button
