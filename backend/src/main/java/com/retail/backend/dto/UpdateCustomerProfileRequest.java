@@ -2,10 +2,12 @@ package com.retail.backend.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 public class UpdateCustomerProfileRequest {
 
     @NotBlank(message = "Name cannot be empty")
+    @Size(min = 2, max = 50)
     private String name;
 
     @Pattern(

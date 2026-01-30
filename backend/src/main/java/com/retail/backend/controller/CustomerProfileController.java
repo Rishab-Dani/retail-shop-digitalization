@@ -28,12 +28,13 @@ public class CustomerProfileController {
 
     @PutMapping("/profile")
     public ResponseEntity<String> updateProfile(
-            @RequestBody @Valid UpdateCustomerProfileRequest request,
+            @Valid @RequestBody UpdateCustomerProfileRequest request,
             Authentication authentication
     ) {
         customerService.updateMyProfile(authentication.getName(), request);
         return ResponseEntity.ok("Profile updated successfully");
     }
+
 
     @PutMapping("/profile/password")
     public ResponseEntity<String> changePassword(
