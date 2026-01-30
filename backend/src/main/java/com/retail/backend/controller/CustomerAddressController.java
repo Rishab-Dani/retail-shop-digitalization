@@ -3,6 +3,7 @@ package com.retail.backend.controller;
 import com.retail.backend.dto.AddressRequest;
 import com.retail.backend.dto.AddressResponse;
 import com.retail.backend.service.AddressService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,25 +27,47 @@ public class CustomerAddressController {
         return addressService.getMyAddresses(auth.getName());
     }
 
+//    @PostMapping
+//    public ResponseEntity<String> addAddress(
+//            @RequestBody AddressRequest request,
+//            Authentication auth
+//    ) {
+//        addressService.addAddress(auth.getName(), request);
+//        return ResponseEntity.status(HttpStatus.CREATED)
+//                .body("Address added successfully");
+//    }
+
+    //    @PutMapping("/{id}")
+//    public ResponseEntity<String> updateAddress(
+//            @PathVariable UUID id,
+//            @RequestBody AddressRequest request,
+//            Authentication auth
+//    ) {
+//        addressService.updateAddress(id, auth.getName(), request);
+//        return ResponseEntity.ok("Address updated successfully");
+//    }
+
     @PostMapping
     public ResponseEntity<String> addAddress(
-            @RequestBody AddressRequest request,
+            @RequestBody @Valid AddressRequest request,
             Authentication auth
     ) {
         addressService.addAddress(auth.getName(), request);
-        return ResponseEntity.status(HttpStatus.CREATED)
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
                 .body("Address added successfully");
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<String> updateAddress(
             @PathVariable UUID id,
-            @RequestBody AddressRequest request,
+            @RequestBody @Valid AddressRequest request,
             Authentication auth
     ) {
         addressService.updateAddress(id, auth.getName(), request);
         return ResponseEntity.ok("Address updated successfully");
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteAddress(

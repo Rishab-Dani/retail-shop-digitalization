@@ -14,4 +14,5 @@ public interface AddressRepository extends JpaRepository<Address, UUID> {
     Optional<Address> findByIdAndCustomer_Email(UUID id, String email);
 
     void deleteByIdAndCustomer_Email(UUID id, String email);
+
 }
