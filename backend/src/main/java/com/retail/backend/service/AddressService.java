@@ -66,8 +66,14 @@ public class AddressService {
     }
 
     public void deleteAddress(UUID id, String email) {
-        addressRepository.deleteByIdAndCustomer_Email(id, email);
+        Address address = addressRepository
+                .findByIdAndCustomer_Email(id, email)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Address not found"));
+
+        addressRepository.delete(address);
     }
+
 
     private void unsetDefault(Long customerId) {
         addressRepository.findAll().stream()
