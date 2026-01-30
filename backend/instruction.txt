@@ -90,3 +90,96 @@ if you want to undo last commit then use this command
 git revert HEAD
 
 eg: Revert "remove environment config"
+
+
+
+## Address files: .java files
+
+Address,
+AddressResponse,
+AddressRequest,
+AddressService,
+AddressRepository,
+CustomerAddressRequest.
+
+## customer profiles: .java files
+
+Customer,
+CustomerProfileController,
+CustomerProfileRequest,
+CustomerProfileResponse,
+UpdateCustomerProfileRequest,
+ChangePasswordRequest,
+CustomerUserDetailService,
+CustomerService.
+
+## Customer Authentication files: .java files
+
+Customer,
+AuthController,
+ForgotPasswordRequest,
+ResetPasswordRequest,
+LoginRequest,
+LoginResponse,
+RegisterResponse,
+RegisterRequest,
+PasswordResetToken,
+Role,
+PasswordResetTokenRepository,
+CustomerRepository,
+JwtService,
+JwtAuthEntryPoint,
+JwtAuthenticationFilter,
+CustomerService,
+AuthService,
+EmailService.
+
+## Customer Product Management files : .java files
+
+Product,
+CustomerProductController,
+ProductRepository,
+ProductService,
+
+## Customer Order Management files: .java files
+
+Order,
+OrderItem,
+OrderStatus,
+CustomerOrderController,
+AddOrderItemRequest,
+AddOrderItemsRequest,
+OrderDetailsResponse,
+OrderItemRequest,
+OrderItemResponse,
+OrderRequest,
+OrderResponse,
+OrderSummaryResponse,
+PlaceOrderResponse,
+OrderSummaryProjection,
+OrderRepository,
+OrderItemRepository,
+OrderService.
+
+## Dashboard Management files: .java files
+
+DailyMetric,
+DashboardMetricResponse,
+TopProductMetric,
+DashboardSummary,
+DashboardService,
+
+Projection:
+DailyMetric,
+DailyOrderMetric,
+DailyRevenueMetric,
+RevenueByStatus,
+TopProduct
+
+
+
+
+
+
+
+
