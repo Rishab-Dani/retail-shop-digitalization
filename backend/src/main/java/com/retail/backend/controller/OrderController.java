@@ -2,8 +2,6 @@ package com.retail.backend.controller;
 
 import com.retail.backend.dto.AddOrderItemsRequest;
 import com.retail.backend.dto.OrderDetailsResponse;
-import com.retail.backend.dto.OrderResponse;
-import com.retail.backend.dto.PlaceOrderRequest;
 import com.retail.backend.entity.Order;
 import com.retail.backend.entity.OrderStatus;
 import com.retail.backend.service.OrderService;
@@ -36,7 +34,7 @@ public class OrderController {
     @PostMapping("/{orderId}/items")
     public ResponseEntity<String> addItems(
             @PathVariable UUID orderId,
-            @RequestBody AddOrderItemsRequest request
+             @Valid @RequestBody AddOrderItemsRequest request
     ) {
         orderService.addItemsToOrder(orderId, request);
         return ResponseEntity.ok("Order items added successfully");
