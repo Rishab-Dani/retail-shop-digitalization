@@ -29,7 +29,7 @@ import ProductDetails from "./pages/Customer/ProductDetails";
 import Cart from "./pages/Customer/Cart";
 import Checkout from "./pages/Customer/Checkout";
 import OrderSuccess from "./pages/Customer/OrderSuccess"
-import CustomerProfile from "./pages/Customer/CustomerProfile";
+import CustomerProfile from "./pages/customer/CustomerProfile";
 
 // Protected Route
 import ProtectedRoute from "./routes/ProtectedRoute";
