@@ -449,13 +449,14 @@
 import { useEffect, useState } from "react";
 import {
   getMyProfile,
-  updateProfile,
   getMyOrders,
   getMyAddresses,
+  updateProfile,
   createAddress,
   updateAddress,
   removeAddress,
 } from "../../api/customerApi";
+
 
 const CustomerProfileUI = () => {
   /* ======================= STATE ======================= */
@@ -560,8 +561,14 @@ const CustomerProfileUI = () => {
       {/* ================= PROFILE HEADER ================= */}
       <div className="bg-white rounded-xl border p-6 mb-8 shadow-sm flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">{customer.name}</h1>
-          <p className="text-slate-500">{customer.email}</p>
+          <h1 className="text-3xl font-bold">
+  {customer.name || "—"}
+</h1>
+
+<div className="text-xs font-medium bg-slate-100 px-3 py-1.5 rounded-lg">
+  {customer.email || "—"}
+</div>
+
         </div>
         <button
           onClick={() => setIsEditOpen(true)}
