@@ -27,26 +27,6 @@ public class CustomerAddressController {
         return addressService.getMyAddresses(auth.getName());
     }
 
-//    @PostMapping
-//    public ResponseEntity<String> addAddress(
-//            @RequestBody AddressRequest request,
-//            Authentication auth
-//    ) {
-//        addressService.addAddress(auth.getName(), request);
-//        return ResponseEntity.status(HttpStatus.CREATED)
-//                .body("Address added successfully");
-//    }
-
-    //    @PutMapping("/{id}")
-//    public ResponseEntity<String> updateAddress(
-//            @PathVariable UUID id,
-//            @RequestBody AddressRequest request,
-//            Authentication auth
-//    ) {
-//        addressService.updateAddress(id, auth.getName(), request);
-//        return ResponseEntity.ok("Address updated successfully");
-//    }
-
     @PostMapping
     public ResponseEntity<String> addAddress(
             @RequestBody @Valid AddressRequest request,

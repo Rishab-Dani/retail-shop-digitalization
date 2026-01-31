@@ -100,7 +100,7 @@ AddressResponse,
 AddressRequest,
 AddressService,
 AddressRepository,
-CustomerAddressRequest.
+CustomerAddressController.
 
 ## customer profiles: .java files
 
