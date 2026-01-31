@@ -1,23 +1,3 @@
-// import axios from "axios";
-
-// const API = axios.create({
-//   baseURL: import.meta.env.VITE_API_BASE_URL,
-// });
-
-// API.interceptors.request.use((req) => {
-//   const token = localStorage.getItem("token");
-//   if (token) {
-//     req.headers.Authorization = `Bearer ${token}`;
-//   }
-//   return req;
-// });
-
-// export const getMyProfile = () => API.get("/customers/me");
-// export const getMyOrders = () => API.get("/customers/me/orders");
-// export const getMyAddresses = () => API.get("/customers/me/addresses");
-// export const updateProfile = (data) =>
-//   API.put("/customers/me", data);
-
 import api from "./axios";
 
 // Backend-confirmed endpoints
@@ -36,11 +16,11 @@ export const updateProfile = (data) =>
 
 /* ADDRESS APIs */
 export const createAddress = (data) =>
-  API.post("/customers/me/addresses", data);
+  api.post("/customers/me/addresses", data);
 
 export const updateAddress = (id, data) =>
-  API.put(`/customers/me/addresses/${id}`, data);
+  api.put(`/customers/me/addresses/${id}`, data);
 
 export const removeAddress = (id) =>
-  API.delete(`/customers/me/addresses/${id}`);
+  api.delete(`/customers/me/addresses/${id}`);
 
