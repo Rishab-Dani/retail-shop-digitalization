@@ -7,7 +7,7 @@ import {
   updateProfile,
   createAddress,
   updateAddress,
-  removeAddress,
+  removeAddress
 } from "../../api/customerApi";
 
 
