@@ -2,12 +2,14 @@ package com.retail.backend.config;
 
 import com.retail.backend.security.JwtAuthenticationFilter;
 import com.retail.backend.security.JwtAuthEntryPoint;
+import com.retail.backend.service.AdminUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -24,45 +26,55 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity
 public class SecurityConfig {
-
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final JwtAuthEntryPoint jwtAuthEntryPoint;
-    private final CustomUserDetailsService customUserDetailsService;
     private final PasswordEncoder passwordEncoder;
-
-
+    private final AdminUserDetailsService adminUserDetailsService;
+    private final CustomUserDetailsService customUserDetailsService;
 
     public SecurityConfig(
             JwtAuthenticationFilter jwtAuthenticationFilter,
             JwtAuthEntryPoint jwtAuthEntryPoint,
-            CustomUserDetailsService customUserDetailsService,
-            PasswordEncoder passwordEncoder
+            PasswordEncoder passwordEncoder,
+            AdminUserDetailsService adminUserDetailsService,
+            CustomUserDetailsService customUserDetailsService
     ) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.jwtAuthEntryPoint = jwtAuthEntryPoint;
-        this.customUserDetailsService = customUserDetailsService;
         this.passwordEncoder = passwordEncoder;
+        this.adminUserDetailsService = adminUserDetailsService;
+        this.customUserDetailsService = customUserDetailsService;
     }
 
-    // ✅ DaoAuthenticationProvider (MANDATORY)
+    // 🔐 ADMIN → users table
     @Bean
-    public DaoAuthenticationProvider authenticationProvider() {
+    public DaoAuthenticationProvider adminAuthProvider() {
         DaoAuthenticationProvider provider =
-                new DaoAuthenticationProvider(customUserDetailsService);
-
+                new DaoAuthenticationProvider(adminUserDetailsService);
         provider.setPasswordEncoder(passwordEncoder);
         return provider;
     }
 
-
-    // 🔑 REQUIRED for AuthController
+    // 🔐 CUSTOMER → customers table
     @Bean
-    public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration configuration) throws Exception {
-        return configuration.getAuthenticationManager();
+    public DaoAuthenticationProvider customerAuthProvider() {
+        DaoAuthenticationProvider provider =
+                new DaoAuthenticationProvider(customUserDetailsService);
+        provider.setPasswordEncoder(passwordEncoder);
+        return provider;
+    }
+
+    // ✅ SINGLE AuthenticationManager
+    @Bean
+    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
+        return http
+                .getSharedObject(AuthenticationManagerBuilder.class)
+                .authenticationProvider(adminAuthProvider())
+                .authenticationProvider(customerAuthProvider())
+                .build();
     }
 
     @Bean
@@ -76,19 +88,26 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
 
-                        // Public
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
-                        .requestMatchers("/api/auth/register").permitAll()
+                        // 🔓 PUBLIC AUTH
+                        .requestMatchers(
+                                "/api/auth/**",
+                                "/api/admin/auth/login"
+                        ).permitAll()
 
+                        // 🔐 ADMIN APIs
+                        .requestMatchers("/api/admin/**")
+                        .hasRole("ADMIN")
 
-                        // Orders
-                        .requestMatchers("/api/orders/**").authenticated()
+                        // 🔐 CUSTOMER APIs
+                        .requestMatchers("/api/customer/**")
+                        .hasRole("CUSTOMER")
 
-                        // Everything else
+                        // 🔐 ORDERS
+                        .requestMatchers("/api/orders/**")
+                        .authenticated()
+
                         .anyRequest().authenticated()
                 )
-                .authenticationProvider(authenticationProvider())
                 .exceptionHandling(ex ->
                         ex.authenticationEntryPoint(jwtAuthEntryPoint)
                 )
@@ -98,6 +117,7 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
@@ -129,6 +149,5 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-
 
 }
