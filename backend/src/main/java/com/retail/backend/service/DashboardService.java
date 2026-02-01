@@ -126,9 +126,6 @@ public class DashboardService {
             dashboard.setDailyOrders(dailyOrders);
 
             // 4️⃣ Daily revenue
-//            LocalDateTime sevenDaysAgo =
-//                    LocalDate.now().minusDays(7).atStartOfDay();
-
             List<com.retail.backend.dto.dashboard.DailyMetric> dailyRevenue =
                     orderRepository.dailyRevenue(sevenDaysAgo)
                             .stream()
