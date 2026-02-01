@@ -5,8 +5,9 @@ import {
   getMyOrders,
   getMyAddresses,
   updateProfile,
-  createAddress,      // ✅ ADD THIS
-  updateAddress       // (already using it)
+  createAddress,
+  updateAddress,
+  removeAddress,
 } from "../../api/customerApi";
 
 
@@ -97,17 +98,27 @@ const openEditAddress = (address) => {
 
 const handleSaveAddress = async () => {
   try {
-    if (editingAddress) {
-      await updateAddress(editingAddress.id, addressForm);
-    } else {
-      await createAddress(addressForm);
+    if (!addressForm.address.trim()) {
+      alert("Address cannot be empty");
+      return;
     }
+
+    const payload = {
+      type: addressForm.type,          // "HOME" | "WORK"
+      address: addressForm.address,    // string
+      isDefault: false                 // REQUIRED
+    };
+
+    await createAddress(payload);
 
     const refreshed = await getMyAddresses();
     setAddresses(refreshed.data);
+
     setIsAddressOpen(false);
-  } catch (e) {
-    console.error(e);
+    setAddressForm({ type: "HOME", address: "" });
+    setEditingAddress(null);
+  } catch (err) {
+    console.error("Address save failed", err);
   }
 };
 
