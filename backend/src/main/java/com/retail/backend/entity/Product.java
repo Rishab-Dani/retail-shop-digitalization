@@ -12,10 +12,6 @@ import java.time.LocalDateTime;
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
 
-        @Column(nullable = false)
-        private boolean active = true;
-
-
         @NotBlank(message = "Product name must not be empty")
         @Column(nullable = false)
         private String name;
@@ -33,6 +29,9 @@ import java.time.LocalDateTime;
         private Integer stockQuantity;
 
         private LocalDateTime createdAt = LocalDateTime.now();
+
+        @Column(nullable = false)
+        private Boolean active = true;
 
         // Getters and Setters
         public Long getId() {
@@ -79,12 +78,11 @@ import java.time.LocalDateTime;
             return createdAt;
         }
 
-
-        public boolean isActive() {
+        public Boolean getActive() {
             return active;
         }
 
-        public void setActive(boolean active) {
+        public void setActive(Boolean active) {
             this.active = active;
         }
 

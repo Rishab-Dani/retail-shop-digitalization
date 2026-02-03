@@ -46,9 +46,14 @@ public class ProductService {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
+        if (!product.getActive()) {
+            throw new RuntimeException("Product already deleted");
+        }
+
         product.setActive(false);
         productRepository.save(product);
     }
+
 
 
     // ================= CUSTOMER =================
