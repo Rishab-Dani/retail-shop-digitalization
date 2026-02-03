@@ -17,7 +17,6 @@ api.interceptors.request.use(config => {
 export default api;
 
 
-
 // api.interceptors.request.use((config) => {
 //   const isAuthApi =
 //     config.url.includes("/auth/login") ||

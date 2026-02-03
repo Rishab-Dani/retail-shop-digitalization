@@ -79,7 +79,7 @@ const handleSaveProfile = async () => {
 };
 
 
-/*=========================== Address ===========================*/
+{/*=========================== Address ===========================*/}
 const openAddAddress = () => {
   setEditingAddress(null);
   setAddressForm({ type: "HOME", address: "" });
