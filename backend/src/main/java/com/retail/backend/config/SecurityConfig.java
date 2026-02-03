@@ -95,8 +95,10 @@ public class SecurityConfig {
                         ).permitAll()
 
                         // 🔐 ADMIN APIs
-                        .requestMatchers("/api/admin/**")
-                        .hasRole("ADMIN")
+                        .requestMatchers(
+                                "/api/admin/**",
+                                "/api/dashboard/**"     // ✅ ADD THIS
+                        ).hasRole("ADMIN")
 
                         // 🔐 CUSTOMER APIs
                         .requestMatchers("/api/customer/**")

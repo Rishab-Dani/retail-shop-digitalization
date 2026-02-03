@@ -4,9 +4,9 @@ import com.retail.backend.dto.DashboardSummary;
 import com.retail.backend.dto.dashboard.DashboardMetricsResponse;
 import com.retail.backend.dto.dashboard.TopProductMetric;
 import com.retail.backend.entity.Product;
+import com.retail.backend.repository.CustomerRepository;
 import com.retail.backend.repository.OrderRepository;
 import com.retail.backend.repository.ProductRepository;
-import com.retail.backend.repository.UserRepository;
 import com.retail.backend.repository.projection.RevenueByStatus;
 
 import org.springframework.data.domain.PageRequest;
@@ -24,16 +24,16 @@ public class DashboardService {
 
     private final ProductRepository productRepository;
     private final OrderRepository orderRepository;
-    private final UserRepository userRepository;
+    private final CustomerRepository customerRepository;
 
     public DashboardService(
             ProductRepository productRepository,
             OrderRepository orderRepository,
-            UserRepository userRepository
+            CustomerRepository customerRepository
     ) {
         this.productRepository = productRepository;
         this.orderRepository = orderRepository;
-        this.userRepository = userRepository;
+        this.customerRepository = customerRepository;
     }
 
     // ===============================
@@ -94,7 +94,7 @@ public class DashboardService {
 
             // 1️⃣ Base KPIs
             dashboard.setTotalOrders(orderRepository.countTotalOrders());
-            dashboard.setTotalCustomers(userRepository.countCustomers());
+            dashboard.setTotalCustomers(customerRepository.countCustomers());
             dashboard.setTotalRevenue(
                     Optional.ofNullable(orderRepository.totalRevenue())
                             .orElse(BigDecimal.ZERO)

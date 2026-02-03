@@ -1,5 +1,6 @@
 package com.retail.backend.security;
 
+import com.retail.backend.service.AdminUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,14 +18,16 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-    private final CustomUserDetailsService userDetailsService;
+    private final AdminUserDetailsService userDetailsService;
+
 
     public JwtAuthenticationFilter(
             JwtService jwtService,
-            CustomUserDetailsService userDetailsService) {
+            AdminUserDetailsService userDetailsService) {
         this.jwtService = jwtService;
         this.userDetailsService = userDetailsService;
     }
+
 
     @Override
     protected void doFilterInternal(
@@ -32,6 +35,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
+
+        System.out.println("JWT FILTER HIT: " + request.getRequestURI());
+        System.out.println("AUTH HEADER: " + request.getHeader("Authorization"));
+
 
         final String authHeader = request.getHeader("Authorization");
 
@@ -74,6 +81,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
+
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
