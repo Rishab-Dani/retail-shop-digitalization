@@ -12,6 +12,10 @@ import java.time.LocalDateTime;
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
 
+        @Column(nullable = false)
+        private boolean active = true;
+
+
         @NotBlank(message = "Product name must not be empty")
         @Column(nullable = false)
         private String name;
@@ -73,6 +77,19 @@ import java.time.LocalDateTime;
 
         public LocalDateTime getCreatedAt() {
             return createdAt;
+        }
+
+
+        public boolean isActive() {
+            return active;
+        }
+
+        public void setActive(boolean active) {
+            this.active = active;
+        }
+
+        public void setCreatedAt(LocalDateTime createdAt) {
+            this.createdAt = createdAt;
         }
     }
 
