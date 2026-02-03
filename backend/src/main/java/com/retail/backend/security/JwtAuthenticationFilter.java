@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -18,16 +19,18 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-    private final AdminUserDetailsService userDetailsService;
-
+    private final AdminUserDetailsService adminUserDetailsService;
+    private final CustomUserDetailsService customUserDetailsService;
 
     public JwtAuthenticationFilter(
             JwtService jwtService,
-            AdminUserDetailsService userDetailsService) {
+            AdminUserDetailsService adminUserDetailsService,
+            CustomUserDetailsService customUserDetailsService
+    ) {
         this.jwtService = jwtService;
-        this.userDetailsService = userDetailsService;
+        this.adminUserDetailsService = adminUserDetailsService;
+        this.customUserDetailsService = customUserDetailsService;
     }
-
 
     @Override
     protected void doFilterInternal(
@@ -36,25 +39,32 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
 
-        System.out.println("JWT FILTER HIT: " + request.getRequestURI());
-        System.out.println("AUTH HEADER: " + request.getHeader("Authorization"));
-
-
-        final String authHeader = request.getHeader("Authorization");
+        String authHeader = request.getHeader("Authorization");
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        final String token = authHeader.substring(7);
-        final String username = jwtService.extractUsername(token);
+        String token = authHeader.substring(7);
+        String username = jwtService.extractUsername(token);
 
         if (username != null &&
                 SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            UserDetails userDetails =
-                    userDetailsService.loadUserByUsername(username);
+            UserDetails userDetails;
+
+            // 🔥 SINGLE RULE
+
+            try {
+                // 1️⃣ Try ADMIN (users table)
+                userDetails = adminUserDetailsService.loadUserByUsername(username);
+            } catch (UsernameNotFoundException ex) {
+                // 2️⃣ If not admin → try CUSTOMER (customers table)
+                userDetails = customUserDetailsService.loadUserByUsername(username);
+            }
+
+
 
             if (jwtService.validateToken(token, userDetails)) {
 
@@ -66,29 +76,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         );
 
                 authentication.setDetails(
-                        new WebAuthenticationDetailsSource()
-                                .buildDetails(request)
+                        new WebAuthenticationDetailsSource().buildDetails(request)
                 );
 
-                // 🔥🔥 THIS WAS MISSING / BROKEN 🔥🔥
-                SecurityContextHolder
-                        .getContext()
-                        .setAuthentication(authentication);
-
-                System.out.println("AUTH SET IN CONTEXT = " + authentication);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
 
         filterChain.doFilter(request, response);
     }
 
-
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getServletPath();
         return path.startsWith("/api/auth/")
-                || path.equals("/api/admin/auth/login");
+                || path.startsWith("/api/admin/auth/");
     }
-
-
 }
