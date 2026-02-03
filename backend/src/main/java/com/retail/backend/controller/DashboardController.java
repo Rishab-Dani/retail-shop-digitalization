@@ -1,13 +1,13 @@
 package com.retail.backend.controller;
 
-import com.retail.backend.dto.DashboardSummary;
-import com.retail.backend.dto.dashboard.DashboardMetricsResponse;
-import com.retail.backend.entity.Product;
-import com.retail.backend.service.DashboardService;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+        import com.retail.backend.dto.DashboardSummary;
+        import com.retail.backend.dto.dashboard.DashboardMetricsResponse;
+        import com.retail.backend.entity.Product;
+        import com.retail.backend.service.DashboardService;
+        import org.springframework.security.access.prepost.PreAuthorize;
+        import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+        import java.util.List;
 
 @RestController
 @RequestMapping("/api/dashboard")

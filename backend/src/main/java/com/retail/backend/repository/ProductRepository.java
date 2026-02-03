@@ -13,10 +13,19 @@ import java.util.List;
 // low stock counter
 public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findByStockQuantityLessThanEqual(Integer threshold);
+    List<Product> findByActiveTrue();
+
+    @Query("""
+SELECT COUNT(p)
+FROM Product p
+WHERE p.active = true
+""")
+    long countActiveProducts();
 
     @Query("""
     SELECT p FROM Product p
-    WHERE (:search IS NULL OR p.name LIKE :search)
+    WHERE p.active = true
+      AND (:search IS NULL OR p.name LIKE :search)
       AND (:category IS NULL OR p.category = :category)
       AND (:minPrice IS NULL OR p.price >= :minPrice)
       AND (:maxPrice IS NULL OR p.price <= :maxPrice)
@@ -30,7 +39,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             @Param("inStockOnly") boolean inStockOnly,
             Pageable pageable
     );
-
 
 
 
