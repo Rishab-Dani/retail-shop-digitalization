@@ -19,36 +19,41 @@ public class ProductController {
     public ProductController(ProductService productService) {
         this.productService = productService;
     }
-    @PostMapping("/admin/products")
+
+    // CREATE
+    @PostMapping
     public Product createProduct(@Valid @RequestBody Product product) {
         return productService.createProduct(product);
     }
 
+    // READ (all)
     @GetMapping
     public List<Product> getAllProducts() {
         return productService.getAllProducts();
     }
 
+    // PAGINATION + SORT (admin view)
     @GetMapping("/page")
     public Page<Product> getProductsWithPagination(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "id") String sortBy) {
-
+            @RequestParam(defaultValue = "id") String sortBy
+    ) {
         return productService.getAdminProducts(page, size, sortBy);
     }
 
-
+    // UPDATE
     @PutMapping("/{id}")
     public Product updateProduct(
             @PathVariable Long id,
-            @Valid @RequestBody Product product) {
+            @Valid @RequestBody Product product
+    ) {
         return productService.updateProduct(id, product);
     }
 
+    // DELETE
     @DeleteMapping("/{id}")
     public void deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
     }
-
 }
