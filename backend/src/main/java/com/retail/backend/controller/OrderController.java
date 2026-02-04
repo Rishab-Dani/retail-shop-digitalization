@@ -2,6 +2,7 @@ package com.retail.backend.controller;
 
 import com.retail.backend.dto.AddOrderItemsRequest;
 import com.retail.backend.dto.OrderDetailsResponse;
+import com.retail.backend.dto.OrderSummaryResponse;
 import com.retail.backend.entity.Order;
 import com.retail.backend.entity.OrderStatus;
 import com.retail.backend.service.OrderService;
@@ -20,7 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 @RestController
-@RequestMapping("/api/orders")
+@RequestMapping("/api/admin/orders")
 public class OrderController {
 
     private final OrderService orderService;
@@ -42,57 +43,45 @@ public class OrderController {
 
     // GET /api/orders?page=0&size=5
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
-    public ResponseEntity<Page<Order>> getOrders(
-            Authentication authentication,
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Page<OrderSummaryResponse>> getOrders(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
-            @RequestParam(defaultValue = "createdAt,desc") String sort
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortDir
     ) {
-        boolean isAdmin = authentication.getAuthorities()
-                .stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
-
         Pageable pageable = PageRequest.of(
                 page,
                 size,
-                Sort.by(sort.split(",")[0]).descending()
+                Sort.by(Sort.Direction.fromString(sortDir), sortBy)
         );
 
         return ResponseEntity.ok(
-                orderService.getOrderHistory(
-                        authentication.getName(),
-                        isAdmin,
-                        pageable
-                )
+                orderService.getAllOrdersSummary(pageable)
         );
     }
 
 
     @GetMapping("/{orderId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<OrderDetailsResponse> getOrder(
-            @PathVariable UUID orderId,
-            Authentication authentication
+            @PathVariable UUID orderId
     ) {
         return ResponseEntity.ok(
-                orderService.getOrderById(
-                        orderId,
-                        authentication.getName()
-                )
+                orderService.getOrderDetailsForAdmin(orderId)
         );
     }
 
 
-
-    @PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
-    @PutMapping("/{orderId}/cancel")
-    public ResponseEntity<String> cancelOrder(
-            @PathVariable UUID orderId,
-            Authentication authentication
-    ) {
-        orderService.cancelOrder(orderId);
-        return ResponseEntity.ok("Order cancelled successfully");
-    }
+//    @PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
+//    @PutMapping("/{orderId}/cancel")
+//    public ResponseEntity<String> cancelOrder(
+//            @PathVariable UUID orderId,
+//            Authentication authentication
+//    ) {
+//        orderService.cancelOrder(orderId);
+//        return ResponseEntity.ok("Order cancelled successfully");
+//    }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{orderId}/status")

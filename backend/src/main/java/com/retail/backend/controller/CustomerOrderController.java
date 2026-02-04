@@ -1,9 +1,6 @@
 package com.retail.backend.controller;
 
-import com.retail.backend.dto.AddOrderItemsRequest;
-import com.retail.backend.dto.OrderResponse;
-import com.retail.backend.dto.OrderSummaryResponse;
-import com.retail.backend.dto.PlaceOrderRequest;
+import com.retail.backend.dto.*;
 import com.retail.backend.entity.OrderStatus;
 import com.retail.backend.service.OrderService;
 import jakarta.validation.Valid;
@@ -92,6 +89,19 @@ public class CustomerOrderController {
         return orderService.getMyOrdersSummary(
                 authentication.getName(),
                 pageable
+        );
+    }
+
+    @GetMapping("/{orderId}")
+    public ResponseEntity<OrderDetailsResponse> getOrder(
+            @PathVariable UUID orderId,
+            Authentication authentication
+    ) {
+        return ResponseEntity.ok(
+                orderService.getOrderByIdForCustomer(
+                        orderId,
+                        authentication.getName()
+                )
         );
     }
 

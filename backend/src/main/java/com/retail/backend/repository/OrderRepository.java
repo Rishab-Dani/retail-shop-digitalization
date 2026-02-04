@@ -144,6 +144,7 @@ ORDER BY SUM(oi.quantity) DESC
     // For CUSTOMER
 
     List<Order> findByCustomer_Email(String email);
+    Optional<Order> findByIdAndCustomerEmail(UUID id, String email);
 
     List<Order> findByCustomer_EmailAndStatus(
             String email,
@@ -193,6 +194,31 @@ AND o.customer.email = :email
             @Param("orderId") UUID orderId,
             @Param("email") String email
     );
+
+    @Query("""
+SELECT o FROM Order o
+JOIN FETCH o.items oi
+JOIN FETCH oi.product p
+WHERE o.id = :orderId
+AND o.customer.email = :email
+""")
+    Optional<Order> findOrderDetails(
+            @Param("orderId") UUID orderId
+    );
+
+    @Query("""
+SELECT 
+  o.id as orderId,
+  o.createdAt as createdAt,
+  o.status as status,
+  o.totalAmount as totalAmount,
+  COUNT(i.id) as itemCount
+FROM Order o
+LEFT JOIN o.items i
+GROUP BY o.id
+""")
+    Page<OrderSummaryProjection> findAllOrderSummaries(Pageable pageable);
+
 
 }
 
