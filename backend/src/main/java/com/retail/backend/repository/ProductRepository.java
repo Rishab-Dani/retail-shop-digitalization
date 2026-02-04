@@ -16,10 +16,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findByActiveTrue();
 
     @Query("""
-SELECT COUNT(p)
-FROM Product p
-WHERE p.active = true
-""")
+   SELECT COUNT(p)
+   FROM Product p
+   WHERE p.active = true
+   """)
     long countActiveProducts();
 
     @Query("""

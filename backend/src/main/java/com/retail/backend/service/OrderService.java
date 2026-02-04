@@ -132,11 +132,38 @@ public class OrderService {
     }
 
 
-    public OrderDetailsResponse getOrderById(
+    public OrderDetailsResponse getOrderByIdForCustomer(
             UUID orderId,
             String email
     ) {
         Order order = orderRepository.findOrderDetails(orderId, email)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Order not found"));
+
+        List<OrderItemResponse> items = order.getItems().stream()
+                .map(i -> new OrderItemResponse(
+                        i.getId(),
+                        i.getProduct().getId(),
+                        i.getProduct().getName(),
+                        i.getQuantity(),
+                        i.getPrice()
+                ))
+                .toList();
+
+        return new OrderDetailsResponse(
+                order.getId(),
+                order.getCreatedAt(),
+                order.getStatus().name(),
+                order.getTotalAmount(),
+                items
+        );
+    }
+
+
+    public OrderDetailsResponse getOrderByIdForAdmin(
+            UUID orderId
+    ) {
+        Order order = orderRepository.findOrderDetails(orderId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Order not found"));
 
@@ -322,6 +349,40 @@ public class OrderService {
                         p.getTotalAmount(),
                         p.getItemCount()
                 ));
+    }
+
+    public Page<OrderSummaryResponse> getAllOrdersSummary(Pageable pageable) {
+        return orderRepository.findAllOrderSummaries(pageable)
+                .map(p -> new OrderSummaryResponse(
+                        p.getOrderId(),
+                        p.getCreatedAt(),
+                        p.getStatus(),
+                        p.getTotalAmount(),
+                        p.getItemCount()
+                ));
+    }
+    public OrderDetailsResponse getOrderDetailsForAdmin(UUID orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        return mapToOrderDetails(order);
+    }
+    private OrderDetailsResponse mapToOrderDetails(Order order) {
+        return new OrderDetailsResponse(
+                order.getId(),
+                order.getCreatedAt(),
+                order.getStatus().name(),
+                order.getTotalAmount(),
+                order.getItems().stream()
+                        .map(i -> new OrderItemResponse(
+                                i.getId(),
+                                i.getProduct().getId(),
+                                i.getProduct().getName(),
+                                i.getQuantity(),
+                                i.getPrice()
+                        ))
+                        .toList()
+        );
     }
 
 }
