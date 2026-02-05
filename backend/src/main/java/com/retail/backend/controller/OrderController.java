@@ -94,16 +94,16 @@ public class OrderController {
     }
 
 
-
-    // GET /api/orders/status?status=CONFIRMED
     @GetMapping("/status")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<Order>> getOrdersByStatus(
-            @RequestParam OrderStatus status
+    public ResponseEntity<Page<OrderSummaryResponse>> getOrdersByStatus(
+            @RequestParam OrderStatus status,
+            Pageable pageable
     ) {
         return ResponseEntity.ok(
-                orderService.getOrdersByStatus(status)
+                orderService.getOrdersByStatus(status, pageable)
         );
     }
+
 
 }

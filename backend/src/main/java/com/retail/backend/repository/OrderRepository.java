@@ -219,6 +219,40 @@ GROUP BY o.id
 """)
     Page<OrderSummaryProjection> findAllOrderSummaries(Pageable pageable);
 
+    @Query("""
+SELECT
+ o.id as orderId,
+ o.createdAt as createdAt,
+ o.status as status,
+ o.totalAmount as totalAmount,
+ COUNT(i.id) as itemCount
+FROM Order o
+LEFT JOIN o.items i
+WHERE o.status = :status
+GROUP BY o.id
+ORDER BY o.createdAt DESC
+""")
+    Page<OrderSummaryProjection> findOrderSummariesByStatus(
+            @Param("status") OrderStatus status,
+            Pageable pageable
+    );
+    @Query("""
+SELECT
+  o.id as orderId,
+  o.createdAt as createdAt,
+  o.status as status,
+  o.totalAmount as totalAmount,
+  COUNT(oi.id) as itemCount
+FROM Order o
+LEFT JOIN o.items oi
+WHERE o.status = :status
+GROUP BY o.id
+ORDER BY o.createdAt DESC
+""")
+    Page<OrderSummaryProjection> findOrdersSummaryByStatus(
+            @Param("status") OrderStatus status,
+            Pageable pageable
+    );
 
 }
 
