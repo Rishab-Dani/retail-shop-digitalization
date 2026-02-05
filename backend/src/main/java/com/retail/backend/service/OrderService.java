@@ -271,8 +271,19 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public List<Order> getOrdersByStatus(OrderStatus status) {
-        return orderRepository.findByStatus(status);
+    public Page<OrderSummaryResponse> getOrdersByStatus(
+            OrderStatus status,
+            Pageable pageable
+    ) {
+        return orderRepository
+                .findOrdersSummaryByStatus(status, pageable)
+                .map(p -> new OrderSummaryResponse(
+                        p.getOrderId(),
+                        p.getCreatedAt(),
+                        p.getStatus(),
+                        p.getTotalAmount(),
+                        p.getItemCount()
+                ));
     }
 
     private void validateOrderStatusTransition(OrderStatus current, OrderStatus next) {
