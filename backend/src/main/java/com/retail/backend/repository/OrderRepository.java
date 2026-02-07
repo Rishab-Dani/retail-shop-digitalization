@@ -238,11 +238,11 @@ ORDER BY o.createdAt DESC
     );
     @Query("""
 SELECT
-  o.id as orderId,
-  o.createdAt as createdAt,
-  o.status as status,
-  o.totalAmount as totalAmount,
-  COUNT(oi.id) as itemCount
+  o.id AS orderId,
+  o.createdAt AS createdAt,
+  o.status AS status,
+  o.totalAmount AS totalAmount,
+  COUNT(oi.id) AS itemCount
 FROM Order o
 LEFT JOIN o.items oi
 WHERE o.status = :status
