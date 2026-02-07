@@ -93,7 +93,6 @@ public class OrderController {
         return ResponseEntity.ok("Order status updated to " + status);
     }
 
-
     @GetMapping("/status")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<OrderSummaryResponse>> getOrdersByStatus(
@@ -104,6 +103,5 @@ public class OrderController {
                 orderService.getOrdersByStatus(status, pageable)
         );
     }
-
 
 }
