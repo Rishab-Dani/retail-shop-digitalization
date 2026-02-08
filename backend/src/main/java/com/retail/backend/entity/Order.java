@@ -45,7 +45,8 @@ public class Order {
         this.createdAt = LocalDateTime.now();
     }
 
-
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private OrderAddress orderAddress;
 
     // getters & setters
 
@@ -96,5 +97,13 @@ public class Order {
 
     public void setItems(List<OrderItem> items) {
         this.items = items;
+    }
+
+    public OrderAddress getOrderAddress() {
+        return orderAddress;
+    }
+
+    public void setOrderAddress(OrderAddress orderAddress) {
+        this.orderAddress = orderAddress;
     }
 }
