@@ -36,7 +36,11 @@ public class CustomerOrderController {
         String email = auth.getName();
 
         OrderResponse response =
-                orderService.placeOrder(email, request.getTotalAmount());
+                orderService.placeOrder(
+                        email,
+                        request.getTotalAmount(),
+                        request.getAddressId()
+                );
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

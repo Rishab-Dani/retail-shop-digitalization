@@ -5,9 +5,11 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 
-public record  OrderResponse(
+public record OrderResponse(
         UUID orderId,
         LocalDateTime createdAt,
         BigDecimal totalAmount,
-        String status
+        String status,
+        UUID addressId
 ) {}
+

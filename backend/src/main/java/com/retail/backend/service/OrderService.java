@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,31 +27,54 @@ public class OrderService {
     private final ProductRepository productRepository;
     private final OrderItemRepository orderItemRepository;
     private final CustomerRepository customerRepository;
+    private final AddressRepository addressRepository;
+
 
 
     public OrderService(
             OrderRepository orderRepository,
             ProductRepository productRepository,
             OrderItemRepository orderItemRepository,
-            CustomerRepository customerRepository
+            CustomerRepository customerRepository,
+            AddressRepository addressRepository
     ) {
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.orderItemRepository = orderItemRepository;
         this.customerRepository = customerRepository;
+        this.addressRepository = addressRepository;
     }
+
 
     // STEP 1: Place Order
     @Transactional
-    public OrderResponse placeOrder(String email, BigDecimal totalAmount) {
+    public OrderResponse placeOrder(
+            String email,
+            BigDecimal totalAmount,
+            UUID addressId
+    ) {
 
         Customer customer = customerRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+
+        // 🔐 Step 11: Validate address ownership
+        Address address = addressRepository
+                .findByIdAndCustomer_Id(addressId, customer.getId())
+                .orElseThrow(() -> new BusinessException("Address not found"));
 
         Order order = new Order();
         order.setCustomer(customer);
         order.setStatus(OrderStatus.PLACED);
         order.setTotalAmount(totalAmount);
+
+        // 📦 Step 11: Create snapshot
+        OrderAddress snapshot = new OrderAddress();
+        snapshot.setAddress(address.getAddress());
+        snapshot.setType(address.getType());
+        snapshot.setOrder(order);
+
+
+        order.setOrderAddress(snapshot);
 
         Order saved = orderRepository.save(order);
 
@@ -60,9 +82,12 @@ public class OrderService {
                 saved.getId(),
                 saved.getCreatedAt(),
                 saved.getTotalAmount(),
-                saved.getStatus().name()
+                saved.getStatus().name(),
+                address.getId()
         );
+
     }
+
 
     @Transactional
     public void addItemsToOrder(UUID orderId, AddOrderItemsRequest request) {
