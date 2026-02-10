@@ -157,60 +157,22 @@ public class OrderService {
     }
 
 
-    public OrderDetailsResponse getOrderByIdForCustomer(
-            UUID orderId,
-            String email
-    ) {
+    public OrderDetailsResponse getOrderByIdForCustomer(UUID orderId, String email) {
+
         Order order = orderRepository.findOrderDetails(orderId, email)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Order not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
 
-        List<OrderItemResponse> items = order.getItems().stream()
-                .map(i -> new OrderItemResponse(
-                        i.getId(),
-                        i.getProduct().getId(),
-                        i.getProduct().getName(),
-                        i.getQuantity(),
-                        i.getPrice()
-                ))
-                .toList();
-
-        return new OrderDetailsResponse(
-                order.getId(),
-                order.getCreatedAt(),
-                order.getStatus().name(),
-                order.getTotalAmount(),
-                items
-        );
+        return mapToOrderDetails(order);
     }
 
 
-    public OrderDetailsResponse getOrderByIdForAdmin(
-            UUID orderId
-    ) {
+    public OrderDetailsResponse getOrderByIdForAdmin(UUID orderId) {
+
         Order order = orderRepository.findOrderDetails(orderId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Order not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
 
-        List<OrderItemResponse> items = order.getItems().stream()
-                .map(i -> new OrderItemResponse(
-                        i.getId(),
-                        i.getProduct().getId(),
-                        i.getProduct().getName(),
-                        i.getQuantity(),
-                        i.getPrice()
-                ))
-                .toList();
-
-        return new OrderDetailsResponse(
-                order.getId(),
-                order.getCreatedAt(),
-                order.getStatus().name(),
-                order.getTotalAmount(),
-                items
-        );
+        return mapToOrderDetails(order);
     }
-
 
 
     @Transactional
@@ -404,6 +366,16 @@ public class OrderService {
         return mapToOrderDetails(order);
     }
     private OrderDetailsResponse mapToOrderDetails(Order order) {
+
+        OrderShippingAddressResponse shippingAddress = null;
+
+        if (order.getOrderAddress() != null) {
+            shippingAddress = new OrderShippingAddressResponse(
+                    order.getOrderAddress().getType(),
+                    order.getOrderAddress().getAddress()
+            );
+        }
+
         return new OrderDetailsResponse(
                 order.getId(),
                 order.getCreatedAt(),
@@ -417,7 +389,8 @@ public class OrderService {
                                 i.getQuantity(),
                                 i.getPrice()
                         ))
-                        .toList()
+                        .toList(),
+                shippingAddress
         );
     }
 

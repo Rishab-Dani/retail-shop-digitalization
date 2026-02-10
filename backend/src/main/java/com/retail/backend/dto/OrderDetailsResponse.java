@@ -10,5 +10,12 @@ public record OrderDetailsResponse(
         LocalDateTime createdAt,
         String status,
         BigDecimal totalAmount,
-        List<OrderItemResponse> items
-) {}
+        List<OrderItemResponse> items,
+        OrderShippingAddressResponse shippingAddress
+        ) {
+    public OrderShippingAddressResponse getShippingAddress() {
+    return shippingAddress;
+}
+}
+
+
