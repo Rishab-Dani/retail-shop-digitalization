@@ -394,4 +394,19 @@ public class OrderService {
         );
     }
 
+    @Transactional(readOnly = true)
+    public Page<OrderDetailsResponse> getCustomerOrdersWithAddress(
+            String email,
+            Pageable pageable
+    ) {
+        return orderRepository.findByCustomer_Email(email, pageable)
+                .map(this::mapToOrderDetails);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<OrderDetailsResponse> getAllOrdersWithAddress(Pageable pageable) {
+        return orderRepository.findAll(pageable)
+                .map(this::mapToOrderDetails);
+    }
+
 }
