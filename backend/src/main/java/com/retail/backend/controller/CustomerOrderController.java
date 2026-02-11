@@ -118,4 +118,12 @@ public class CustomerOrderController {
         return ResponseEntity.ok("Order cancelled successfully");
     }
 
+    @GetMapping("/details")
+    public Page<OrderDetailsResponse> getMyOrdersWithAddress(
+            Pageable pageable,
+            Authentication auth
+    ) {
+        return orderService.getCustomerOrdersWithAddress(auth.getName(), pageable);
+    }
+
 }

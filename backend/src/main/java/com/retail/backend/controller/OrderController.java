@@ -104,4 +104,9 @@ public class OrderController {
         );
     }
 
+    @GetMapping("/details")
+    public Page<OrderDetailsResponse> getAllOrdersWithAddress(Pageable pageable) {
+        return orderService.getAllOrdersWithAddress(pageable);
+    }
+
 }
