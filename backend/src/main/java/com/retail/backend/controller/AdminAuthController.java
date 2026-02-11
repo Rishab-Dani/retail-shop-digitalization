@@ -28,7 +28,7 @@ public class AdminAuthController {
         this.jwtService = jwtService;
     }
 
-    @PostMapping("/api/admin/auth/login")
+    @PostMapping("/login")
     public ResponseEntity<LoginResponse> adminLogin(
             @RequestBody LoginRequest request
     ) {
