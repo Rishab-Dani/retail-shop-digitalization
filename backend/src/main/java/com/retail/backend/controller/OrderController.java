@@ -6,6 +6,7 @@ import com.retail.backend.dto.OrderSummaryResponse;
 import com.retail.backend.entity.Order;
 import com.retail.backend.entity.OrderStatus;
 import com.retail.backend.service.OrderService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -42,6 +43,7 @@ public class OrderController {
     }
 
     // GET /api/orders?page=0&size=5
+    @Operation(summary = "Get paginated customer orders (summary view)")
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<OrderSummaryResponse>> getOrders(
@@ -61,7 +63,7 @@ public class OrderController {
         );
     }
 
-
+    @Operation(summary = "Get paginated customer orders (summary view)")
     @GetMapping("/{orderId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<OrderDetailsResponse> getOrder(
@@ -93,6 +95,7 @@ public class OrderController {
         return ResponseEntity.ok("Order status updated to " + status);
     }
 
+    @Operation(summary = "Get paginated customer orders (summary view)")
     @GetMapping("/status")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<OrderSummaryResponse>> getOrdersByStatus(
