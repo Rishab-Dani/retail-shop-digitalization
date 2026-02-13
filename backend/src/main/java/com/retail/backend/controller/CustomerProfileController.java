@@ -5,6 +5,7 @@ import com.retail.backend.dto.CustomerProfileResponse;
 import com.retail.backend.dto.UpdateCustomerProfileRequest;
 import com.retail.backend.exception.BadRequestException;
 import com.retail.backend.service.CustomerService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,10 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api/customer")
 @PreAuthorize("hasRole('CUSTOMER')")
+@Tag(
+        name = "Customer Profile",
+        description = "Customer profile management APIs"
+)
 public class CustomerProfileController {
 
     private final CustomerService customerService;

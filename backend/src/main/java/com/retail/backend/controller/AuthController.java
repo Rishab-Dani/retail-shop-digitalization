@@ -4,6 +4,7 @@ import com.retail.backend.dto.*;
 import com.retail.backend.service.CustomerService;
 import com.retail.backend.security.JwtService;
 import com.retail.backend.service.AuthService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,10 @@ import java.util.Map;
 
 @Slf4j
 @RestController
+@Tag(
+        name = "Authentication",
+        description = "Customer authentication APIs (login, register, password management)"
+)
 @RequestMapping("/api/auth")
 public class AuthController {
 

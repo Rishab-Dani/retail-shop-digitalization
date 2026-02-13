@@ -3,6 +3,7 @@ package com.retail.backend.controller;
 import com.retail.backend.dto.LoginRequest;
 import com.retail.backend.dto.LoginResponse;
 import com.retail.backend.security.JwtService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,10 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequestMapping("/api/admin/auth")
+@Tag(
+        name = "Authentication",
+        description = "Admin authentication APIs (login)"
+)
 public class AdminAuthController {
 
     private final AuthenticationManager authenticationManager;

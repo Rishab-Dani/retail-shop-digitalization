@@ -7,6 +7,7 @@ import com.retail.backend.entity.Order;
 import com.retail.backend.entity.OrderStatus;
 import com.retail.backend.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -23,6 +24,10 @@ import org.springframework.data.domain.Pageable;
 
 @RestController
 @RequestMapping("/api/admin/orders")
+@Tag(
+        name = "Admin Orders",
+        description = "Admin order management and lifecycle control APIs"
+)
 public class OrderController {
 
     private final OrderService orderService;

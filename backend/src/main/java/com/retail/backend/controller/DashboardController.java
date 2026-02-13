@@ -4,6 +4,7 @@ package com.retail.backend.controller;
         import com.retail.backend.dto.dashboard.DashboardMetricsResponse;
         import com.retail.backend.entity.Product;
         import com.retail.backend.service.DashboardService;
+        import io.swagger.v3.oas.annotations.tags.Tag;
         import org.springframework.security.access.prepost.PreAuthorize;
         import org.springframework.web.bind.annotation.*;
 
@@ -13,6 +14,10 @@ package com.retail.backend.controller;
 @RequestMapping("/api/dashboard")
 @PreAuthorize("hasRole('ADMIN')")
 @CrossOrigin // frontend ready
+@Tag(
+        name = "Dashboard & Analytics",
+        description = "Admin analytics and business intelligence APIs"
+)
 public class DashboardController {
 
     private final DashboardService dashboardService;
