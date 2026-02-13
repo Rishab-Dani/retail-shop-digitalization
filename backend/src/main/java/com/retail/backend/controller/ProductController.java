@@ -2,6 +2,7 @@ package com.retail.backend.controller;
 
 import com.retail.backend.entity.Product;
 import com.retail.backend.service.ProductService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -12,6 +13,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/admin/products")
 @PreAuthorize("hasRole('ADMIN')")
+@Tag(
+        name = "Products",
+        description = "Product catalog and inventory management APIs"
+)
 public class ProductController {
 
     private final ProductService productService;

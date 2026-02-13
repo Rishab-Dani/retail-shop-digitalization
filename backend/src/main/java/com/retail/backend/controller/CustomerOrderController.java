@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -27,6 +28,10 @@ import java.util.UUID;
 @RequestMapping("/api/customer/orders")
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('CUSTOMER')")
+@Tag(
+        name = "Customer Orders",
+        description = "Customer order placement and tracking APIs"
+)
 public class CustomerOrderController {
 
     private final OrderService orderService;

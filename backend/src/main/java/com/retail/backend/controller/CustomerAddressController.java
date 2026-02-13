@@ -3,6 +3,7 @@ package com.retail.backend.controller;
 import com.retail.backend.dto.AddressRequest;
 import com.retail.backend.dto.AddressResponse;
 import com.retail.backend.service.AddressService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,10 @@ import java.util.UUID;
 @RequestMapping("/api/customer/addresses")
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('CUSTOMER')")
+@Tag(
+        name = "Customer Addresses",
+        description = "Manage customer shipping and billing addresses"
+)
 public class CustomerAddressController {
 
     private final AddressService addressService;
