@@ -506,28 +506,18 @@ const [addressForm, setAddressForm] = useState({
 
 
 
-           useEffect(() => {
+
+useEffect(() => {
   const fetchData = async () => {
     try {
-      const [profileRes, ordersRes, addressRes] = await Promise.all([
-  getMyProfile(),
-  getMyOrders(),
-  getMyAddresses(),
-]);
+      const profileRes = await getMyProfile();
+      setCustomer(profileRes.data);
 
-setCustomer(profileRes.data);
+      const ordersRes = await getMyOrders();
+      setOrders(ordersRes.data.content || []); // paginated fix
 
-setOrders(
-  Array.isArray(ordersRes.data)
-    ? ordersRes.data
-    : ordersRes.data.content || ordersRes.data.data || []
-);
-
-setAddresses(
-  Array.isArray(addressRes.data)
-    ? addressRes.data
-    : addressRes.data.content || addressRes.data.data || []
-);
+      const addressRes = await getMyAddresses();
+      setAddresses(addressRes.data || []);
 
     } catch (err) {
       console.error("Customer fetch failed", err);
@@ -569,7 +559,10 @@ const openEditAddress = (address) => {
 
 const handleSaveAddress = async () => {
   try {
-    if (!addressForm.address.trim()) return;
+    if (!addressForm.address.trim()) {
+      alert("Address cannot be empty");
+      return;
+    }
 
     const payload = {
       type: addressForm.type,
@@ -577,27 +570,19 @@ const handleSaveAddress = async () => {
       isDefault: false
     };
 
-    if (editingAddress) {
-      await updateAddress(editingAddress.id, payload);
-    } else {
-      await createAddress(payload);
-    }
+    await createAddress(payload);
 
     const refreshed = await getMyAddresses();
-    setAddresses(
-      Array.isArray(refreshed.data)
-        ? refreshed.data
-        : refreshed.data.content || []
-    );
+    setAddresses(refreshed.data);
 
     setIsAddressOpen(false);
-    setEditingAddress(null);
     setAddressForm({ type: "HOME", address: "" });
 
   } catch (err) {
-    console.error("Address save failed", err);
+    console.error("Address save failed", err.response?.data || err);
   }
 };
+
 
 
 
@@ -850,7 +835,7 @@ const handleSaveAddress = async () => {
         </tr>
       </thead>
       <tbody>
-        {orders.map(o => (
+        {Array.isArray(orders) && orders.map(o => (
           <tr key={o.id} className="border-t">
             <td className="p-4 text-blue-600 font-semibold">{o.id}</td>
             <td>{new Date(o.createdAt).toLocaleDateString()}</td>
