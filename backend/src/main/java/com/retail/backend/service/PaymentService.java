@@ -61,6 +61,8 @@ public class PaymentService {
 
         // 🔥 Simulate payment gateway result
         boolean paymentSuccess = ThreadLocalRandom.current().nextBoolean();
+        //boolean paymentSuccess = true;
+
 
         if (paymentSuccess) {
             payment.setStatus(PaymentStatus.SUCCESS);
