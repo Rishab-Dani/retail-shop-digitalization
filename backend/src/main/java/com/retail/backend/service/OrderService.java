@@ -64,7 +64,7 @@ public class OrderService {
 
         Order order = new Order();
         order.setCustomer(customer);
-        order.setStatus(OrderStatus.PLACED);
+        order.setStatus(OrderStatus.PENDING_PAYMENT);
         order.setTotalAmount(totalAmount);
 
         // 📦 Step 11: Create snapshot
