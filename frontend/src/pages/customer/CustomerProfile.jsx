@@ -573,7 +573,11 @@ const handleSaveAddress = async () => {
     await createAddress(payload);
 
     const refreshed = await getMyAddresses();
-    setAddresses(refreshed.data);
+    setAddresses(
+  Array.isArray(refreshed.data)
+    ? refreshed.data
+    : refreshed.data.content || refreshed.data.data || []
+);
 
     setIsAddressOpen(false);
     setAddressForm({ type: "HOME", address: "" });
