@@ -10,21 +10,21 @@ import java.util.UUID;
 public class Payment {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
-    @OneToOne
-    @JoinColumn(name = "order_id", nullable = false, unique = true)
-    private Order order;
-
-    @Enumerated(EnumType.STRING)
-    private PaymentStatus status;
 
     private BigDecimal amount;
 
     private String transactionId;
 
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus status;
+
     private LocalDateTime createdAt;
+
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    private Order order;
 
     @PrePersist
     public void onCreate() {
