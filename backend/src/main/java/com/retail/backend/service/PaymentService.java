@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 public class PaymentService {
@@ -26,8 +25,13 @@ public class PaymentService {
         this.orderRepository = orderRepository;
     }
 
+    /**
+     * STEP 1:
+     * Create a payment entry with INITIATED status.
+     * Order remains PENDING_PAYMENT.
+     */
     @Transactional
-    public Payment processPayment(UUID orderId) {
+    public Payment createPayment(UUID orderId) {
 
         // 🔍 Fetch order
         Order order = orderRepository.findById(orderId)
@@ -43,14 +47,14 @@ public class PaymentService {
             throw new AccessDeniedException("You are not allowed to pay for this order");
         }
 
-        // 🚫 Status validation
+        // 🚫 Order must be in PENDING_PAYMENT
         if (order.getStatus() != OrderStatus.PENDING_PAYMENT) {
             throw new BusinessException("Order is not eligible for payment");
         }
 
-        // 🚫 Prevent duplicate payment
+        // 🚫 Prevent duplicate successful payment
         if (paymentRepository.findByOrder_Id(orderId).isPresent()) {
-            throw new BusinessException("Payment already processed for this order");
+            throw new BusinessException("Payment already exists for this order");
         }
 
         // 💳 Create payment
@@ -58,21 +62,38 @@ public class PaymentService {
         payment.setOrder(order);
         payment.setAmount(order.getTotalAmount());
         payment.setStatus(PaymentStatus.INITIATED);
+        payment.setTransactionId(UUID.randomUUID().toString());
 
-        // 🔥 Simulate payment gateway result
-        boolean paymentSuccess = ThreadLocalRandom.current().nextBoolean();
-        //boolean paymentSuccess = true;
+        return paymentRepository.save(payment);
+    }
 
+    /**
+     * STEP 2:
+     * Complete payment based on gateway response.
+     */
+    @Transactional
+    public Payment completePayment(UUID paymentId, boolean success) {
 
-        if (paymentSuccess) {
+        Payment payment = paymentRepository.findById(paymentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Payment not found"));
+
+        Order order = payment.getOrder();
+
+        // 🚫 Only INITIATED payments can be completed
+        if (payment.getStatus() != PaymentStatus.INITIATED) {
+            throw new BusinessException("Payment is already completed");
+        }
+
+        if (success) {
             payment.setStatus(PaymentStatus.SUCCESS);
             order.setStatus(OrderStatus.CONFIRMED);
         } else {
             payment.setStatus(PaymentStatus.FAILED);
-            order.setStatus(OrderStatus.CANCELLED);
-        }
 
-        payment.setTransactionId(UUID.randomUUID().toString());
+            // ❗ Do NOT auto-cancel order
+            // Allow retry
+            order.setStatus(OrderStatus.PENDING_PAYMENT);
+        }
 
         paymentRepository.save(payment);
         orderRepository.save(order);
